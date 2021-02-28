@@ -16,10 +16,10 @@ private:
 
 	std::vector<CourseModule*> Courses; //Container holding all the user's courses.
 	CourseModule* addCourse(std::string sub, int num); //Checks if course is in list of courses then adds it if it isn't. This is the ONLY way you should be creating courses. 
-	CourseModule* addCourse(std::string str);
+	//CourseModule* addCourse(std::string str);
 	CourseModule* addCourse(CourseModule* course);
 	void addMultiplePrereqs(CourseModule* course, const std::vector<CourseModule*> &prereqs);
-	void removeCourse(std::vector<CourseModule*>::iterator courseIt); //method to remove a course from the list of courses DOESN'T check if course exists
+	void removeCourse(CourseModule* course); //method to remove a course from the list of courses DOESN'T check if course exists
 
 	void readData(); //Reads data from dataFile file and populates the list of courses from that data
 	void readPrerequisites(CourseModule* course, std::string str); //Enters all courses (format ex: CECS 100) from a string into a course's prerequisites. Does not check validity
@@ -37,10 +37,10 @@ private:
 	bool hasOneSpace(std::string str); //Checks if the input has multiple spaces. Used in inputValidCourse
 	bool allInts(std::string str); //Checks if course number portion of input is only integers
 	int enterInteger(); //Asks to input an integer then retries if the input is not valid.
-	std::string inputValidCourse(std::string message = ""); //Asks to input a course then retries if the course entered is invalid
-	std::vector<CourseModule*> inputValidCourses(std::string message = ""); //Same as inputValidCourse but it reads a line of courses and returns a container holding pointers to all the entered courses
-	std::string inputNewValidCourse(std::string message = ""); //Same as inputValidCourse but it does not check if the course entered already exists. This is used to add a course.
-	std::vector<CourseModule*> inputNewValidCourses(std::string message = ""); //Same as inputValidCourses but it does not check if the course entered already exists. This is used to add a course.
+	CourseModule *inputValidCourse(); //Asks to input a course then retries if the course entered is invalid
+	std::vector<CourseModule*> inputValidCourses(); //Same as inputValidCourse but it reads a line of courses and returns a container holding pointers to all the entered courses
+	CourseModule *inputNewValidCourse(); //Same as inputValidCourse but it does not check if the course entered already exists. This is used to add a course.
+	//std::vector<CourseModule*> inputNewValidCourses(); //Same as inputValidCourses but it does not check if the course entered already exists. This is used to add a course.
 
 public:
 	Menu ();

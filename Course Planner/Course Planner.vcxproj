@@ -115,14 +115,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Menu\Menu\InputChecker.cpp" />
+    <ClCompile Include="CourseInputChecker.cpp" />
     <ClCompile Include="CourseModule.cpp" />
+    <ClCompile Include="InputChecker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Menu\Menu\InputChecker.h" />
+    <ClInclude Include="CourseInputChecker.h" />
     <ClInclude Include="CourseModule.h" />
+    <ClInclude Include="InputChecker.h" />
     <ClInclude Include="Menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

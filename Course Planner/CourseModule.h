@@ -1,7 +1,8 @@
-#ifndef CourseModule_H
-#define CourseModule_H
+#ifndef COURSE_MODULE_H
+#define COURSE_MODULE_H
 #include <vector>
 #include <string>
+#include <iostream>
 
 
 /*
@@ -43,6 +44,8 @@ public:
 	std::vector<CourseModule*>* getPrerequisiteFor();
 
 	bool dataComplete();
+
+	friend std::ostream &operator<<(std::ostream &os, const CourseModule &course);
 };
 
-#endif // !course_module
+#endif

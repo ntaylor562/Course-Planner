@@ -2,8 +2,10 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <algorithm>
 #include "Menu.h"
 #include "CourseModule.h"
+#include "CourseInputChecker.h"
 
 Menu::Menu() {
 	readData();
@@ -14,16 +16,11 @@ void Menu::readData() {
 
 	if (!inFile.is_open()) {
 		std::cout << "The file " << dataFile << " does not exist. Would you like to create one? (y/n)" << std::endl;
-		std::string input;
-		std::getline(std::cin, input);
-		std::cout << std::endl;
-		while (input != "Y" && input != "y" && input != "N" && input != "n") {
-			std::cout << "Input invalid. Create file? (y/n) ";
-			std::getline(std::cin, input);
-			std::cout << std::endl;
-		}
 
-		if (input == "Y" || input == "y") {
+		bool createNewFile = InputChecker::getBool("Input invalid. Create file? (y/n) ");
+		std::cout << std::endl;
+
+		if (createNewFile) {
 			std::ofstream file;
 			file.open(dataFile);
 			file.close();
@@ -96,26 +93,24 @@ void Menu::readData() {
 }
 
 void Menu::readPrerequisites(CourseModule* course, std::string str) {
-
 	std::string sub;
+	int num = 0;
 
 	do {
+		sub = str.substr(0, str.find_first_of("1234567890") - 1);
+		str = str.substr(str.find_first_of("1234567890"), str.length() - 1);
+		std::size_t endNum = str.find_first_not_of("1234567890");
 
-		if (str.find(' ', str.find(' ') + 1) == std::string::npos) { //if there's only one space (there's only one course entered)
-			sub = str;
+		if (endNum != std::string::npos) {
+			num = std::stoi(str.substr(0, endNum));
+			str = str.substr(endNum + 1, str.size() - 1);
+		}
+		else {
+			num = std::stoi(str);
 			str = "";
 		}
-		else { //There are multiple courses
-			sub = str.substr(0, str.find(' ', str.find(' ') + 1));
-			str = str.substr(str.find(' ', str.find(' ') + 1) + 1, str.length() - 1);
-		}
-		
-		CourseModule* temp = courseSearch(sub);
-		
-		if (temp == nullptr) {
-			temp = new CourseModule(sub);
-			Courses.push_back(temp);
-		}
+
+		CourseModule *temp = addCourse(sub, num);
 		course->addPrerequisite(temp);
 	} while (str.find(' ') != std::string::npos);
 }
@@ -153,6 +148,7 @@ CourseModule* Menu::courseSearch(std::string sub, int num) {
 	}
 	return nullptr;
 }
+
 CourseModule * Menu::courseSearch(std::string str) {
 	return courseSearch(str.substr(0, str.find(' ')), std::stoi(str.substr(str.find(' ') + 1, str.length() - 1)));
 }
@@ -185,7 +181,7 @@ void Menu::printAllCourses() {
 			++count;
 		} else {
 			std::cout << std::endl << std::setw(distance) << course;
-			count = 1;
+			count = 2;
 		}
 	}
 	std::cout << std::endl;
@@ -321,14 +317,13 @@ void Menu::subMenuCourseAdd() {
 	std::cout << "Add a Course" << std::endl << std::endl;
 	printAllCourses();
 	std::cout << std::endl;
-	std::string input = inputNewValidCourse("Enter the course's subject and number (ex: CECS 100) or enter 0 to cancel: ");
-	if (input == "") return; //Cancel
+	CourseModule *course = inputNewValidCourse();
+	if (course == nullptr) return; //Cancel
 
-	CourseModule* course = addCourse(input);
-
-	std::cout << "The course " << input << " has been added." << std::endl << std::endl;
+	std::cout << "The course " << *course << " has been added." << std::endl << std::endl;
 	system("pause");
 	system("cls");
+
 	
 	struct option {
 		int assignedNum;
@@ -406,7 +401,7 @@ void Menu::subMenuCourseAdd() {
 			printAllCourses();
 			std::cout << std::endl;
 
-			std::vector<CourseModule*> prerecVect = inputNewValidCourses("Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel : ");
+			std::vector<CourseModule*> prerecVect = inputValidCourses();
 
 			if (!prerecVect.empty()) {
 				addMultiplePrereqs(course, prerecVect);
@@ -432,14 +427,20 @@ void Menu::subMenuCourseRemove() {
 	printAllCourses();
 	std::cout << std::endl;
 
-	std::string input = inputValidCourse("Enter a course (ex: CECS 100) to remove or enter 0 to cancel: ");
-	if (input == "") return;
-	std::vector<CourseModule*>::iterator course = courseSearchIt(input);
+	CourseModule *course = inputValidCourse();
+	if (course == nullptr) return;
+	if (std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+		std::cout << "The course you entered has not been added and therefore cannot be deleted." << std::endl << std::endl;
+		system("pause");
+		system("cls");
+		return;
+	}
 
 	system("cls");
 
+	std::string input;
 	std::cout << "Remove a Course" << std::endl << std::endl 
-		<< "Are you sure you want to delete " << (*course)->getCourseSubject() << " " << (*course)->getCourseNumber()
+		<< "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
 		<< "? (y/n) ";
 	std::getline(std::cin, input);
 	while (input != "Y" && input != "y" && input != "N" && input != "n") {
@@ -493,210 +494,67 @@ int Menu::enterInteger() {
 	return std::stoi(input);
 }
 
-std::string Menu::inputValidCourse(std::string message) {
-	std::string input;
-	bool recheck;
-	do {
-		recheck = false;
-		input = inputNewValidCourse(message); //checks all the other things
-		if (input == "") return "";
-		if (input.length() < 3) recheck = true; //A course name can't be less than 3 characters since there's a subject, space, and number
-		if (courseSearch(input) == nullptr) { //Course was not found
-			std::cout << "The course you entered does not exist. ";
-			recheck = true;
-		}
+CourseModule *Menu::inputValidCourse() {
+	std::cout << "Enter course (ex. CECS 100) or enter 0 to cancel: ";
+	std::string input = CourseInputChecker::getCourses();
+	if (input == "") return nullptr;
 
-		if (recheck) {
-			std::cout << "\"" << input << "\" invalid. " << message;
-			std::getline(std::cin, input);
-			std::cout << std::endl;
-		}
-	} while (recheck);
-	return input;
+	int num;
+	std::string sub = input.substr(0, input.find_first_of("1234567890") - 1);
+	input = input.substr(input.find_first_of("1234567890"), std::string::npos);
+	if (input.find_first_of(' ') == std::string::npos) {
+		num = std::stoi(input);
+		input = "";
+	}
+	else {
+		num = std::stoi(input.substr(0, input.find_first_of(' ')));
+	}
+	return courseSearch(sub, num);
+
 }
 
-std::vector<CourseModule*> Menu::inputValidCourses(std::string message) {
+CourseModule *Menu::inputNewValidCourse() {
+	std::cout << "Enter course (ex. CECS 100) or enter 0 to cancel: ";
+	std::string input = CourseInputChecker::getCourses();
+	if (input == "") return nullptr;
+
+	int num;
+	std::string sub = input.substr(0, input.find_first_of("1234567890") - 1);
+	input = input.substr(input.find_first_of("1234567890"), std::string::npos);
+	if (input.find_first_of(' ') == std::string::npos) {
+		num = std::stoi(input);
+		input = "";
+	}
+	else {
+		num = std::stoi(input.substr(0, input.find_first_of(' ')));
+	}
+	return addCourse(sub, num);
+
+}
+
+std::vector<CourseModule*> Menu::inputValidCourses() {
 	std::vector<CourseModule*> result;
 
-	std::cout << message;
-	std::string input;
-	std::getline(std::cin, input);
-	std::cout << std::endl;
+	std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel : ";
+	std::string input = CourseInputChecker::getCourses();
 
 	std::string sub;
-	bool recheck = false;
-	bool multiple;
-
-	std::string badInput;
-
-	do {
-		multiple = input.find(' ', input.find(' ') + 1) != std::string::npos; //If there's more than one space (there's multiple courses entered)
-
-		if (input == "0") break;
-		if (!recheck) { //If last time we didn't make a mistake in the input
-			if (input[0] == '0') { //If the user enters 0 somewhere, it cuts off the rest of the input
-				if (input.length() < 3 && input[1] == ' ') break;
-			}
-
-			if (input.length() < 3) { //A course name can't be less than 3 characters since there's a subject, space, and number
-				recheck = true;
-				std::cout << "\"" << sub << "\" invalid. " << message;
-				std::getline(std::cin, badInput);
-				std::cout << std::endl;
-				continue;
-			}
-		} else { //Same thing except it's if there's a bad input
-			multiple = true;
-			if (badInput[0] == '0') {
-				if (badInput.length() < 3) break;
-				else if (badInput[1] == ' ') break;
-			}
-
-			if (badInput.length() < 3) {
-				recheck = true;
-				std::cout << "\"" << sub << "\" invalid. " << message;
-				std::getline(std::cin, badInput);
-				std::cout << std::endl;
-				continue;
-			}
+	int num;
+	while (input != "") {
+		sub = input.substr(0, input.find_first_of("1234567890") - 1);
+		input = input.substr(input.find_first_of("1234567890"), std::string::npos);
+		if (input.find_first_of(' ') == std::string::npos) {
+			num = std::stoi(input);
+			input = "";
+		}
+		else {
+			num = std::stoi(input.substr(0, input.find_first_of(' ')));
+			input = input.substr(input.find_first_of(' '), std::string::npos);
 		}
 
-		if (recheck) { //This makes it so that we kind of pause entering other courses and focus on fixing this bad one.
-			sub = badInput;
-		} else if (!multiple) { //Only one course left in the input
-			sub = input;
-		} else { //There are multiple courses
-			sub = input.substr(0, input.find(' ', input.find(' ') + 1));
-			input = input.substr(input.find(' ', input.find(' ') + 1) + 1, input.length() - 1);
-		}
+		result.push_back(addCourse(sub, num));
+	}
 
-		recheck = false;
-		if (!hasOneSpace(sub)) recheck = true; //There is not one space in the input
-		else if (sub.find(' ') == 0 || sub.find(' ') == sub.length() - 1) recheck = true; //The space is at the beginning or end
-		else if (!allInts(sub.substr(sub.find(' ') + 1, sub.length() - 1))) recheck = true; //The course number part of input does not contain all integers
-		else if (courseSearch(input) == nullptr) { //Course was not found
-			std::cout << "The course you entered does not exist. ";
-			recheck = true;
-		}
-
-		if (recheck) {
-			std::cout << "\"" << sub << "\" invalid. ";
-			badInput = inputValidCourse(message);
-			if (badInput == "") badInput = "0";
-
-			if (sub == input) {
-				CourseModule* course = addCourse(sub);
-				result.push_back(course);
-				break;
-			}
-		} else { //If the input was valid, push it to the result vector
-			CourseModule* course = addCourse(sub);
-			result.push_back(course);
-		}
-	} while (recheck || multiple);
-	return result;
-}
-
-std::string Menu::inputNewValidCourse(std::string message) {
-
-	std::cout << message;
-	std::string input;
-	std::getline(std::cin, input);
-	std::cout << std::endl;
-
-	bool recheck;
-
-	do {
-		recheck = false;
-
-		if (input == "0") return "";
-
-		else if (!hasOneSpace(input)) recheck = true; //There is not one space in the input
-		else if (input.find(' ') == 0 || input.find(' ') == input.length() - 1) recheck = true; //The space is at the beginning or end
-		else if (!allInts(input.substr(input.find(' ') + 1, input.length() - 1))) recheck = true; //The course number part of input does not contain all integers
-		
-
-		if (recheck) {
-			std::cout << "\"" << input << "\" invalid. " << message;
-			std::getline(std::cin, input);
-			std::cout << std::endl;
-		}
-	} while (recheck);
-	return input;
-}
-
-std::vector<CourseModule*> Menu::inputNewValidCourses(std::string message) { //Used when adding a list of prerequisites
-	std::vector<CourseModule*> result;
-
-	std::cout << message;
-	std::string input;
-	std::getline(std::cin, input);
-	std::cout << std::endl;
-
-	std::string sub, badInput;
-	bool recheck = false;
-	bool multiple;
-
-	do {
-		multiple = input.find(' ', input.find(' ') + 1) != std::string::npos; //If there's more than one space (there's multiple courses entered)
-
-		if (input == "0") break;
-		if (!recheck) { //If last time we didn't make a mistake in the input
-			if (input[0] == '0') { //If the user enters 0 somewhere, it cuts off the rest of the input
-				if (input.length() < 3 && input[1] == ' ') break;
-			}
-
-			if (input.length() < 3) { //A course name can't be less than 3 characters since there's a subject, space, and number0
-				recheck = true;
-				std::cout << "\"" << sub << "\" invalid. " << message;
-				std::getline(std::cin, badInput);
-				std::cout << std::endl;
-				continue;
-			}
-		} else { //Same thing except it's if there's a bad input
-			multiple = true;
-			if (badInput[0] == '0') {
-				if (badInput.length() < 3 && badInput[1] == ' ') break;
-			}
-
-			if (badInput.length() < 3) {
-				recheck = true;
-				std::cout << "\"" << sub << "\" invalid. " << message;
-				std::getline(std::cin, badInput);
-				std::cout << std::endl;
-				continue;
-			}
-		}
-
-		if (recheck) { //This makes it so that we kind of pause entering other courses and focus on fixing this bad one.
-			sub = badInput;
-		} else if (!multiple) { //Only one course left in the input
-			sub = input;
-		} else { //There are multiple courses
-			sub = input.substr(0, input.find(' ', input.find(' ') + 1));
-			input = input.substr(input.find(' ', input.find(' ') + 1) + 1, input.length() - 1);
-		}
-
-		recheck = false;
-		if (!hasOneSpace(sub)) recheck = true; //There is not one space in the input
-		else if (sub.find(' ') == 0 || sub.find(' ') == sub.length() - 1) recheck = true; //The space is at the beginning or end
-		else if (!allInts(sub.substr(sub.find(' ') + 1, sub.length() - 1))) recheck = true; //The course number part of input does not contain all integers
-
-		if (recheck) {
-			std::cout << "\"" << sub << "\" invalid. ";
-			badInput = inputNewValidCourse(message);
-			if (badInput == "") badInput = "0";
-
-			if (sub == input) {
-				CourseModule* course = addCourse(sub);
-				result.push_back(course);
-				break;
-			}
-		} else { //If the input was valid, push it to the result vector
-			CourseModule* course = addCourse(sub);
-			result.push_back(course);
-		}
-	} while (recheck || multiple);
 	return result;
 }
 
@@ -710,13 +568,18 @@ void Menu::subMenuCourseEdit() {
 	std::cout << "Edit a course" << std::endl << std::endl;
 	printAllCourses();
 	std::cout << std::endl;
-	std::string input = inputValidCourse("Enter a course (ex: CECS 100) to edit or enter 0 to cancel: ");
-	if (input == "") return;
+	CourseModule* course = inputValidCourse();
+	if (course == nullptr) return;
+	if(std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+		std::cout << "The course you entered has not been added and therefore cannot be edited." << std::endl << std::endl;
+		system("pause");
+		system("cls");
+		return;
+	}
 
 	system("cls");
 
-	CourseModule* course = courseSearch(input);
-
+	std::string input;
 	int userChoice;
 	do {
 		std::cout << "Edit a Course" << std::endl << std::endl;
@@ -806,7 +669,7 @@ void Menu::subMenuCourseEdit() {
 					break;
 				case 2: {
 					std::cout << fullCourseInfo(course) << std::endl;
-					std::vector<CourseModule*> prereqCourses = inputValidCourses("Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel: ");
+					std::vector<CourseModule*> prereqCourses = inputValidCourses();
 
 					if (prereqCourses.empty()) break;
 
@@ -844,16 +707,6 @@ CourseModule* Menu::addCourse(std::string sub, int num) {
 	}
 	return toBeAdded;
 }
-CourseModule* Menu::addCourse(std::string str) {
-	CourseModule* toBeAdded = courseSearch(str);
-	if (toBeAdded == nullptr) {
-		toBeAdded = new CourseModule(str);
-		Courses.push_back(toBeAdded);
-	}
-	return toBeAdded;
-}
-
-
 
 CourseModule* Menu::addCourse(CourseModule* course) {
 	CourseModule* toBeAdded = courseSearch(course->getCourseSubject(), course->getCourseNumber());
@@ -870,7 +723,8 @@ void Menu::addMultiplePrereqs(CourseModule* course, const std::vector<CourseModu
 	}
 }
 
-void Menu::removeCourse(std::vector<CourseModule*>::iterator courseIt) {
+void Menu::removeCourse(CourseModule *course) {
+	std::vector<CourseModule*>::iterator courseIt = std::find(Courses.begin(), Courses.end(), course);
 	delete* courseIt; //deallocating memory and removing this course from any courses that have it as a prerequisite
 	Courses.erase(courseIt); //removing the course's pointer from the list of courses
 }

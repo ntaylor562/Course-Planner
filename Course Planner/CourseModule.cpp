@@ -118,3 +118,8 @@ bool CourseModule::dataComplete() {
 	if (courseDescription == "") return false;
 	return true;
 }
+
+std::ostream &operator<<(std::ostream &os, const CourseModule &course) {
+	os << course.courseSubject << " " << course.courseNumber;
+	return os;
+}

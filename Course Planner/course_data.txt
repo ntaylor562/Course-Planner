@@ -46,6 +46,13 @@ Course Description: Advanced introduction to the fundamentals of computer scienc
 Prerequisites: CECS 274
 -
 Course Subject: CECS
+Course Number: 274
+Course Title: Object Oriented Programming and Data Structures
+Units: 3
+Course Description: Disciplined methods of design, coding and testing using the Java programming language. Data abstraction, object-oriented design. Introduction to data structures (linked lists, stacks, queues and trees.) Recursion. Sorting and searching.
+Prerequisites: CECS 174
+-
+Course Subject: CECS
 Course Number: 326
 Course Title: Operating Systems
 Units: 3
@@ -115,13 +122,6 @@ Units: 3
 Course Description: An introduction to the fundamentals of cryptography and information and computer security. Basic concepts, theories and protocols in computer security. Basic cryptography, software security, operating system security, database security, network security, human factors, social engineering, digital forensics, privacy and anonymity.
 Prerequisites: CECS 229 CECS 275
 -
-Course Subject: E_E
-Course Number: 381
-Course Title: Probability and Statistics with Applications to Computing
-Units: 3
-Course Description: Applications of probability and statistics to computing. Topics include random variables and their statistics, probability distributions, Markov chains, Bayesian networks, sampling techniques, hypothesis testing, regression and analytic methods. Programming assignments using Python.
-Prerequisites: CECS 229
--
 Course Subject: ENGR
 Course Number: 350
 Course Title: Computers, Ethics and Society
@@ -148,10 +148,10 @@ Course Title: Scientific Research Communication
 Units: 3
 Course Description: Introduction to technical writing for students pursuing research careers. Accessing and using research literature. Writing technical and research reports for various purposes and audiences. Oral presentation of research and scientific information. Includes intensive writing.
 -
-Course Subject: CECS
-Course Number: 274
-Course Title: Object Oriented Programming and Data Structures
+Course Subject: E E
+Course Number: 381
+Course Title: Probability and Statistics with Applications to Computing
 Units: 3
-Course Description: Disciplined methods of design, coding and testing using the Java programming language. Data abstraction, object-oriented design. Introduction to data structures (linked lists, stacks, queues and trees.) Recursion. Sorting and searching.
-Prerequisites: CECS 174
+Course Description: Applications of probability and statistics to computing. Topics include random variables and their statistics, probability distributions, Markov chains, Bayesian networks, sampling techniques, hypothesis testing, regression and analytic methods. Programming assignments using Python.
+Prerequisites: CECS 229
 -

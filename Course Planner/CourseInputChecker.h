@@ -5,12 +5,18 @@
 #include "CourseModule.h"
 #include "InputChecker.h"
 
+/**
+ * @brief Used to get input specifically for courses
+*/
 class CourseInputChecker : InputChecker {
 public:
-	//Asks for input until the user inputs one or multiple valid courses, repeating when the input is invalid
-	//Programmer has the option to include an error message
-	//Example: "CECS 228 CECS 123" is a valid input while "123 blah" is not a valid input'
-	//Returns a string easy to parse into a list of courses
+	/** 
+	 * @brief Asks for input until user inputs one or more valid courses, repeating when input is invalid\n
+	 * @details Example: "CECS 228 CECS 123" is a valid input while "123 blah" is not a valid input
+	 * @details test test test
+	 * @param message Option to provide an error message specified by message parameter
+	 * @return String easy to parse into a list of courses
+	*/
 	static std::string getCourses(std::string message = "");
 };
 

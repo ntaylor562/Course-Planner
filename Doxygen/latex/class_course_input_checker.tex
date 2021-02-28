@@ -1,0 +1,56 @@
+\hypertarget{class_course_input_checker}{}\doxysection{Course\+Input\+Checker Class Reference}
+\label{class_course_input_checker}\index{CourseInputChecker@{CourseInputChecker}}
+
+
+Used to get input specifically for courses.  
+
+
+
+
+{\ttfamily \#include $<$Course\+Input\+Checker.\+h$>$}
+
+Inheritance diagram for Course\+Input\+Checker\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_course_input_checker}
+\end{center}
+\end{figure}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::string \mbox{\hyperlink{class_course_input_checker_ac73d0bd3ef29d2e23a3e596fb26c3b41}{get\+Courses}} (std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Asks for input until user inputs one or more valid courses, repeating when input is invalid~\newline
+. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Used to get input specifically for courses. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_course_input_checker_ac73d0bd3ef29d2e23a3e596fb26c3b41}\label{class_course_input_checker_ac73d0bd3ef29d2e23a3e596fb26c3b41}} 
+\index{CourseInputChecker@{CourseInputChecker}!getCourses@{getCourses}}
+\index{getCourses@{getCourses}!CourseInputChecker@{CourseInputChecker}}
+\doxysubsubsection{\texorpdfstring{getCourses()}{getCourses()}}
+{\footnotesize\ttfamily std\+::string Course\+Input\+Checker\+::get\+Courses (\begin{DoxyParamCaption}\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Asks for input until user inputs one or more valid courses, repeating when input is invalid~\newline
+. 
+
+Example\+: \char`\"{}\+CECS 228 CECS 123\char`\"{} is a valid input while \char`\"{}123 blah\char`\"{} is not a valid input
+
+test test test 
+\begin{DoxyParams}{Parameters}
+{\em message} & Option to provide an error message specified by message parameter \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String easy to parse into a list of courses 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Course Planner/Course\+Input\+Checker.\+h\item 
+Course Planner/Course\+Input\+Checker.\+cpp\end{DoxyCompactItemize}

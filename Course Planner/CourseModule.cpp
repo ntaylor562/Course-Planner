@@ -69,6 +69,7 @@ std::string CourseModule::getPrereqsAsString() const {
 
 //Adds course to list of prerequisites using a linear search to determine repeats (will improve in future)
 void CourseModule::addPrerequisite(CourseModule* course) {
+	if (course == this) return;
 	for (std::vector<CourseModule*>::iterator it = prerequisites.begin(); it != prerequisites.end(); ++it) {
 		if (course == *it) return;
 	} //Ensures no duplicates

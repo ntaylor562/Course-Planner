@@ -52,13 +52,6 @@ private:
 	*/
 	void removePrerequisiteFor(CourseModule* course);
 
-	/**
-	 * @brief Gets the list of courses this course is a prerequisite for
-	 * @details returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
-	*/
-	std::vector<CourseModule *> *getPrerequisiteFor();
-
 public:
 
 	/**
@@ -123,6 +116,13 @@ public:
 	 * @return Pointer to a vector containing a list of pointers to courses this course has as prerequisites
 	*/
 	std::vector<CourseModule*>* getPrerequisites();
+
+	/**
+	 * @brief Gets the list of courses this course is a prerequisite for
+	 * @details returns a pointer to the list of prerequisites to save memory
+	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
+	*/
+	std::vector<CourseModule *> *getPrerequisiteFor();
 
 	/**
 	 * @brief Checks whether all fields have been filled out for this course

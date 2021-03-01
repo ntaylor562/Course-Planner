@@ -158,6 +158,8 @@ std::vector<CourseModule*>::iterator Menu::courseSearchIt(std::string sub, int n
 }
 
 void Menu::printAllCourses() {
+	if (Courses.empty()) return;
+
 	int distance = 15;
 	int coursesPerLine = 5;
 	std::cout << std::left << "Current list of courses:\n\n";
@@ -179,6 +181,8 @@ void Menu::printAllCourses() {
 }
 
 void Menu::printAllIncompleteDataCourses() {
+	if (Courses.empty()) return;
+
 	std::vector<CourseModule*>::iterator it;
 	bool empty = true;
 	for (it = Courses.begin(); it != Courses.end(); ++it) {
@@ -215,6 +219,8 @@ void Menu::printAllIncompleteDataCourses() {
 }
 
 void Menu::printAllCourseData() {
+	if (Courses.empty()) return;
+
 	std::cout << "Current list of courses and their data:\n\n";
 	std::vector<CourseModule*>::iterator it;
 	for (it = Courses.begin(); it != Courses.end() - 1; ++it) {
@@ -239,6 +245,7 @@ std::string Menu::fullCourseInfo(CourseModule* course) {
 
 void Menu::mainMenu() {
 	bool exit = false;
+	bool autoSave = false;
 	while (!exit) {
 		std::cout << "Main Menu" << std::endl
 			<< "0 - Exit" << std::endl
@@ -246,7 +253,8 @@ void Menu::mainMenu() {
 			<< "2 - Add a course" << std::endl
 			<< "3 - Remove a course" << std::endl
 			<< "4 - Edit an existing course" << std::endl
-			<< "5 - Save courses" << std::endl << std::endl;
+			<< "5 - Save courses" << std::endl
+			<< "6 - Toggle Autosave (" << ((autoSave) ? "ON" : "OFF") << ")" << std::endl;
 
 		std::cout << "Enter a choice: ";
 		int userChoice = InputChecker::getInt();
@@ -256,6 +264,13 @@ void Menu::mainMenu() {
 			break;
 		case 1:
 			system("cls");
+
+			if (Courses.empty()) {
+				std::cout << "List of courses is empty." << std::endl << std::endl;
+				system("pause");
+				break;
+			}
+
 			printAllCourseData();
 			std::cout << std::endl;
 			printAllIncompleteDataCourses();
@@ -282,12 +297,18 @@ void Menu::mainMenu() {
 			std::cout << "Data has been saved to " << dataFile << std::endl << std::endl;
 			system("pause");
 			break;
+		case 6: 
+			autoSave = !autoSave;
+			std::cout << "Autosave is now " << ((autoSave) ? "on" : "OFF") << "." << std::endl << std::endl;
+			system("pause");
+			break;
 		default:
 			std::cout << "Invalid choice." << std::endl << std::endl;
 			system("pause");
 			break;
 		}
 		system("cls");
+		if(autoSave) saveData();
 	}
 }
 
@@ -417,8 +438,16 @@ void Menu::subMenuCourseRemove() {
 	system("cls");
 
 	std::string input;
-	std::cout << "Remove a Course" << std::endl << std::endl 
-		<< "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
+	std::cout << "Remove a Course" << std::endl << std::endl;
+	if (!course->getPrerequisiteFor()->empty()) {
+		std::cout << *course << " is a prerequisite for ";
+		for (std::vector<CourseModule *>::const_iterator i = course->getPrerequisiteFor()->begin(); i < course->getPrerequisiteFor()->end() - 1; ++i) {
+			std::cout << **i << ", ";
+		}
+		std::cout << **(course->getPrerequisiteFor()->end() - 1) << std::endl;
+	}
+
+		std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
 		<< "? (y/n) ";
 	std::getline(std::cin, input);
 	while (input != "Y" && input != "y" && input != "N" && input != "n") {

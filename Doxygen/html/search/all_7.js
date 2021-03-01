@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['removeprerequisite_13',['removePrerequisite',['../class_course_module.html#a41f9734d719401d0618be5e15bfa7b9c',1,'CourseModule']]]
+  ['operator_3c_3c_22',['operator&lt;&lt;',['../class_course_module.html#a8b608b3241554e9de32361490a106560',1,'CourseModule']]]
 ];

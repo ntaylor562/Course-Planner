@@ -32,36 +32,32 @@ void {\bfseries set\+Units} (int num)
 \mbox{\Hypertarget{class_course_module_a0c6da9a5ea79aae630a8fded4c2ace9d}\label{class_course_module_a0c6da9a5ea79aae630a8fded4c2ace9d}} 
 void {\bfseries set\+Description} (std\+::string)
 \item 
-\mbox{\Hypertarget{class_course_module_a90f8a5a2a228ecd7ee1076a19db5fcac}\label{class_course_module_a90f8a5a2a228ecd7ee1076a19db5fcac}} 
-std\+::string {\bfseries get\+Course\+Subject} ()
+\mbox{\Hypertarget{class_course_module_a387b0cf78f06e59aa7008bee2b0fd28d}\label{class_course_module_a387b0cf78f06e59aa7008bee2b0fd28d}} 
+std\+::string {\bfseries get\+Course\+Subject} () const
 \item 
-\mbox{\Hypertarget{class_course_module_a3ea9d5d1f3489111f478ac135c5ebb16}\label{class_course_module_a3ea9d5d1f3489111f478ac135c5ebb16}} 
-int {\bfseries get\+Course\+Number} ()
+\mbox{\Hypertarget{class_course_module_aa3385a6fde8a2a6ca3ba205b58b8b3d3}\label{class_course_module_aa3385a6fde8a2a6ca3ba205b58b8b3d3}} 
+int {\bfseries get\+Course\+Number} () const
 \item 
-\mbox{\Hypertarget{class_course_module_a69eaef8a32c9388e3ac7aca7bd921495}\label{class_course_module_a69eaef8a32c9388e3ac7aca7bd921495}} 
-std\+::string {\bfseries get\+Course\+Title} ()
+\mbox{\Hypertarget{class_course_module_aae9dd349ab96201fb5c0ca60a151bf43}\label{class_course_module_aae9dd349ab96201fb5c0ca60a151bf43}} 
+std\+::string {\bfseries get\+Course\+Title} () const
 \item 
-\mbox{\Hypertarget{class_course_module_a0269e8daf693fc6080f3c308630d79be}\label{class_course_module_a0269e8daf693fc6080f3c308630d79be}} 
-int {\bfseries get\+Units} ()
+\mbox{\Hypertarget{class_course_module_aca3b4a170f2229b7175afceec5793d66}\label{class_course_module_aca3b4a170f2229b7175afceec5793d66}} 
+int {\bfseries get\+Units} () const
 \item 
-\mbox{\Hypertarget{class_course_module_a07bbdc1e4d7c4b8388df7af46b52990c}\label{class_course_module_a07bbdc1e4d7c4b8388df7af46b52990c}} 
-std\+::string {\bfseries get\+Description} ()
+\mbox{\Hypertarget{class_course_module_adcaa2c8fabeb2e86e8b32880f595512b}\label{class_course_module_adcaa2c8fabeb2e86e8b32880f595512b}} 
+std\+::string {\bfseries get\+Description} () const
 \item 
-std\+::string \mbox{\hyperlink{class_course_module_abf5b6fea8cc8ad9f874cf9cc858d8f43}{get\+Prereqs\+As\+String}} ()
+std\+::string \mbox{\hyperlink{class_course_module_a2d9224cef5f1971502e731258e2fb7cd}{get\+Course\+Name}} () const
+\item 
+std\+::string \mbox{\hyperlink{class_course_module_a494e9ac2fb33aff86905539fdd4b06ff}{get\+Prereqs\+As\+String}} () const
 \begin{DoxyCompactList}\small\item\em Puts the prerequisite courses for this course into a string including only the course subject and course number. \end{DoxyCompactList}\item 
-std\+::string \mbox{\hyperlink{class_course_module_a77e35745bab9b981053d9d2a1a319fe3}{get\+Prereq\+For\+As\+String}} ()
-\begin{DoxyCompactList}\small\item\em Puts the courses this course is a prerequisite for into a string including only the course subject and course number. \end{DoxyCompactList}\item 
-std\+::string \mbox{\hyperlink{class_course_module_ab5b29d59fb733503ca41add3f8e1d671}{get\+Course\+Name}} ()
-\item 
 void \mbox{\hyperlink{class_course_module_a5779cf679c6c30a5f3b96f96fac84123}{add\+Prerequisite}} (\mbox{\hyperlink{class_course_module}{Course\+Module}} $\ast$course)
 \begin{DoxyCompactList}\small\item\em Adds a prerequisite to this course. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{class_course_module_a41f9734d719401d0618be5e15bfa7b9c}{remove\+Prerequisite}} (\mbox{\hyperlink{class_course_module}{Course\+Module}} $\ast$course)
 \begin{DoxyCompactList}\small\item\em Removes a course from this course\textquotesingle{}s prerequisites. \end{DoxyCompactList}\item 
 std\+::vector$<$ \mbox{\hyperlink{class_course_module}{Course\+Module}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_course_module_a7634df9e10dde64a03a0342efa191827}{get\+Prerequisites}} ()
 \begin{DoxyCompactList}\small\item\em Gets the list of prerequisites for this course. \end{DoxyCompactList}\item 
-std\+::vector$<$ \mbox{\hyperlink{class_course_module}{Course\+Module}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_course_module_a9836dbdebbc8fabceb3196da8502a7e3}{get\+Prerequisite\+For}} ()
-\begin{DoxyCompactList}\small\item\em Gets the list of courses this course is a prerequisite for. \end{DoxyCompactList}\item 
-bool \mbox{\hyperlink{class_course_module_acf19b6ef6a05d7a83fdd210833a30fe9}{data\+Complete}} ()
+bool \mbox{\hyperlink{class_course_module_a7f7484fa71bc32ce9d2fc6fa7fe7780b}{data\+Complete}} () const
 \begin{DoxyCompactList}\small\item\em Checks whether all fields have been filled out for this course. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Friends}
 \begin{DoxyCompactItemize}
@@ -117,11 +113,11 @@ Adds a prerequisite to this course.
 {\em course} & Pointer to the course we\textquotesingle{}re adding as a prerequisite \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{class_course_module_acf19b6ef6a05d7a83fdd210833a30fe9}\label{class_course_module_acf19b6ef6a05d7a83fdd210833a30fe9}} 
+\mbox{\Hypertarget{class_course_module_a7f7484fa71bc32ce9d2fc6fa7fe7780b}\label{class_course_module_a7f7484fa71bc32ce9d2fc6fa7fe7780b}} 
 \index{CourseModule@{CourseModule}!dataComplete@{dataComplete}}
 \index{dataComplete@{dataComplete}!CourseModule@{CourseModule}}
 \doxysubsubsection{\texorpdfstring{dataComplete()}{dataComplete()}}
-{\footnotesize\ttfamily bool Course\+Module\+::data\+Complete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily bool Course\+Module\+::data\+Complete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
@@ -130,33 +126,20 @@ Checks whether all fields have been filled out for this course.
 \begin{DoxyReturn}{Returns}
 True if the course subject, number, units, title, and description all have values, false otherwise 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_course_module_ab5b29d59fb733503ca41add3f8e1d671}\label{class_course_module_ab5b29d59fb733503ca41add3f8e1d671}} 
+\mbox{\Hypertarget{class_course_module_a2d9224cef5f1971502e731258e2fb7cd}\label{class_course_module_a2d9224cef5f1971502e731258e2fb7cd}} 
 \index{CourseModule@{CourseModule}!getCourseName@{getCourseName}}
 \index{getCourseName@{getCourseName}!CourseModule@{CourseModule}}
 \doxysubsubsection{\texorpdfstring{getCourseName()}{getCourseName()}}
-{\footnotesize\ttfamily std\+::string Course\+Module\+::get\+Course\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily std\+::string Course\+Module\+::get\+Course\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 \begin{DoxyReturn}{Returns}
-String representing this course\textquotesingle{}s subject and number 
+String representing this course\textquotesingle{}s subject, course number, and course title 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_course_module_a77e35745bab9b981053d9d2a1a319fe3}\label{class_course_module_a77e35745bab9b981053d9d2a1a319fe3}} 
-\index{CourseModule@{CourseModule}!getPrereqForAsString@{getPrereqForAsString}}
-\index{getPrereqForAsString@{getPrereqForAsString}!CourseModule@{CourseModule}}
-\doxysubsubsection{\texorpdfstring{getPrereqForAsString()}{getPrereqForAsString()}}
-{\footnotesize\ttfamily std\+::string Course\+Module\+::get\+Prereq\+For\+As\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-Puts the courses this course is a prerequisite for into a string including only the course subject and course number. 
-
-\begin{DoxyReturn}{Returns}
-String containing course subjects and numbers this course is a prerequisite for separated by spaces. Returns empty string if this course is not a prerequisite for any courses 
-\end{DoxyReturn}
-\mbox{\Hypertarget{class_course_module_abf5b6fea8cc8ad9f874cf9cc858d8f43}\label{class_course_module_abf5b6fea8cc8ad9f874cf9cc858d8f43}} 
+\mbox{\Hypertarget{class_course_module_a494e9ac2fb33aff86905539fdd4b06ff}\label{class_course_module_a494e9ac2fb33aff86905539fdd4b06ff}} 
 \index{CourseModule@{CourseModule}!getPrereqsAsString@{getPrereqsAsString}}
 \index{getPrereqsAsString@{getPrereqsAsString}!CourseModule@{CourseModule}}
 \doxysubsubsection{\texorpdfstring{getPrereqsAsString()}{getPrereqsAsString()}}
-{\footnotesize\ttfamily std\+::string Course\+Module\+::get\+Prereqs\+As\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily std\+::string Course\+Module\+::get\+Prereqs\+As\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
@@ -164,19 +147,6 @@ Puts the prerequisite courses for this course into a string including only the c
 
 \begin{DoxyReturn}{Returns}
 String containing course subjects and numbers of this course\textquotesingle{}s prerequisites separated by spaces. Returns empty string if there are no prerequisites 
-\end{DoxyReturn}
-\mbox{\Hypertarget{class_course_module_a9836dbdebbc8fabceb3196da8502a7e3}\label{class_course_module_a9836dbdebbc8fabceb3196da8502a7e3}} 
-\index{CourseModule@{CourseModule}!getPrerequisiteFor@{getPrerequisiteFor}}
-\index{getPrerequisiteFor@{getPrerequisiteFor}!CourseModule@{CourseModule}}
-\doxysubsubsection{\texorpdfstring{getPrerequisiteFor()}{getPrerequisiteFor()}}
-{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{class_course_module}{Course\+Module}} $\ast$ $>$ $\ast$ Course\+Module\+::get\+Prerequisite\+For (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-
-
-Gets the list of courses this course is a prerequisite for. 
-
-returns a pointer to the list of prerequisites to save memory \begin{DoxyReturn}{Returns}
-Pointer to a vector containing a list of pointers to courses this course is a prerequisite for 
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_course_module_a7634df9e10dde64a03a0342efa191827}\label{class_course_module_a7634df9e10dde64a03a0342efa191827}} 
 \index{CourseModule@{CourseModule}!getPrerequisites@{getPrerequisites}}

@@ -5,12 +5,12 @@
 #include <exception>
 
 //Used to get an integer from user input in the console
-//If user's input breaks the input stream, we output errorMessage and try getting input again until the user enters a valid input
-int InputChecker::getInt(std::string errorMessage) {
+//If user's input breaks the input stream, we output message and try getting input again until the user enters a valid input
+int InputChecker::getInt(std::string message) {
 	int input;
 	std::cin >> input;
 	while (!std::cin) {
-		std::cout << errorMessage;
+		std::cout << message;
 		std::cin.clear();
 		std::cin.ignore(1000000, '\n');
 		std::cin >> input;
@@ -20,12 +20,12 @@ int InputChecker::getInt(std::string errorMessage) {
 }
 
 //Used to get a double from user input in the console
-//If user's input breaks the input stream, we output errorMessage and try getting input again until the user enters a valid input
-double InputChecker::getDouble(std::string errorMessage) {
+//If user's input breaks the input stream, we output message and try getting input again until the user enters a valid input
+double InputChecker::getDouble(std::string message) {
 	double input;
 	std::cin >> input;
 	while (!std::cin) {
-		std::cout << errorMessage;
+		std::cout << message;
 		std::cin.clear();
 		std::cin.ignore(1000000, '\n');
 		std::cin >> input;
@@ -34,15 +34,15 @@ double InputChecker::getDouble(std::string errorMessage) {
 	return input;
 }
 
-//Used to get an integer within a specified range, starting at start and ending at end (inclusive), from the console
-//If user's input breaks the input stream or input is out of range, we output errorMessage and try getting input 
+//Used to get an integer within a specified range, starting at begin and ending at end (inclusive), from the console
+//If user's input breaks the input stream or input is out of range, we output message and try getting input 
 //again until the user enters a valid input.
-int InputChecker::getIntRange(int start, int end, std::string errorMessage) throw(std::range_error) {
-	if (start > end) throw std::range_error("Start point of range is greater than end point. Invalid range.");
+int InputChecker::getIntRange(int begin, int end, std::string message) throw(std::range_error) {
+	if (begin > end) throw std::range_error("Start point of range is greater than end point. Invalid range.");
 	int input;
 	std::cin >> input;
-	while (!std::cin || input < start || input > end) {
-		std::cout << errorMessage;
+	while (!std::cin || input < begin || input > end) {
+		std::cout << message;
 		std::cin.clear();
 		std::cin.ignore(1000000, '\n');
 		std::cin >> input;
@@ -51,15 +51,15 @@ int InputChecker::getIntRange(int start, int end, std::string errorMessage) thro
 	return input;
 }
 
-//Used to get a double within a specified range, starting at start and ending at end (inclusive), from the console
-//If user's input breaks the input stream or input is out of range, we output errorMessage and try getting input
+//Used to get a double within a specified range, starting at begin and ending at end (inclusive), from the console
+//If user's input breaks the input stream or input is out of range, we output message and try getting input
 //again until the user enters a valid input.
-double InputChecker::getDoubleRange(double start, double end, std::string errorMessage) throw(std::range_error) {
-	if (start > end) throw std::range_error("Start point of range is greater than end point. Invalid range.");
+double InputChecker::getDoubleRange(double begin, double end, std::string message) throw(std::range_error) {
+	if (begin > end) throw std::range_error("Start point of range is greater than end point. Invalid range.");
 	int input;
 	std::cin >> input;
-	while (!std::cin || input < start || input > end) {
-		std::cout << errorMessage;
+	while (!std::cin || input < begin || input > end) {
+		std::cout << message;
 		std::cin.clear();
 		std::cin.ignore(1000000, '\n');
 		std::cin >> input;
@@ -77,7 +77,7 @@ std::string InputChecker::getString() {
 }
 
 //Returns a boolean value that user enters into the console
-bool InputChecker::getBool(std::string errorMessage) {
+bool InputChecker::getBool(std::string message) {
 	std::set<std::string> yesList;
 	yesList.insert("y");
 	yesList.insert("yes");
@@ -114,7 +114,7 @@ bool InputChecker::getBool(std::string errorMessage) {
 
 		if (yesList.find(input) == yesList.end() && noList.find(input) == noList.end()) {
 			std::cin.ignore(1000000, '\n');
-			std::cout << errorMessage;
+			std::cout << message;
 			std::cin >> input;
 			for (char &x : input)
 				x = std::tolower(x);

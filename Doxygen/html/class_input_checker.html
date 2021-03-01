@@ -68,6 +68,11 @@ $(function() {
 <div class="title">InputChecker Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Used to error check and get user's input from std::cin.  
+ <a href="class_input_checker.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_input_checker_8h_source.html">InputChecker.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for InputChecker:</div>
 <div class="dyncontent">
@@ -80,25 +85,268 @@ Inheritance diagram for InputChecker:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af296b7e761f3150f408c645c88e08133"><td class="memItemLeft" align="right" valign="top"><a id="af296b7e761f3150f408c645c88e08133"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>getInt</b> (std::string=&quot;&quot;)</td></tr>
-<tr class="separator:af296b7e761f3150f408c645c88e08133"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3f74d186bab30da038217dd41e8b1ad"><td class="memItemLeft" align="right" valign="top"><a id="ac3f74d186bab30da038217dd41e8b1ad"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><b>getDouble</b> (std::string=&quot;&quot;)</td></tr>
-<tr class="separator:ac3f74d186bab30da038217dd41e8b1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a212cdf1e2d304231b6b21242c1d92c00"><td class="memItemLeft" align="right" valign="top"><a id="a212cdf1e2d304231b6b21242c1d92c00"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>getIntRange</b> (int, int, std::string=&quot;&quot;)</td></tr>
-<tr class="separator:a212cdf1e2d304231b6b21242c1d92c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a156d184dcf347fc0aabab1551593286c"><td class="memItemLeft" align="right" valign="top"><a id="a156d184dcf347fc0aabab1551593286c"></a>
-static double&#160;</td><td class="memItemRight" valign="bottom"><b>getDoubleRange</b> (double, double, std::string=&quot;&quot;)</td></tr>
-<tr class="separator:a156d184dcf347fc0aabab1551593286c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27f0374ee3e601f2a0f9e57c9eccb524"><td class="memItemLeft" align="right" valign="top"><a id="a27f0374ee3e601f2a0f9e57c9eccb524"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getString</b> ()</td></tr>
+<tr class="memitem:a29dc39e263daa99680cb0528a54a0236"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#a29dc39e263daa99680cb0528a54a0236">getInt</a> (std::string message=&quot;&quot;)</td></tr>
+<tr class="memdesc:a29dc39e263daa99680cb0528a54a0236"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an integer from user input in the console.  <a href="class_input_checker.html#a29dc39e263daa99680cb0528a54a0236">More...</a><br /></td></tr>
+<tr class="separator:a29dc39e263daa99680cb0528a54a0236"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af181af941a47a13fa5dcf3531eb75d9f"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#af181af941a47a13fa5dcf3531eb75d9f">getDouble</a> (std::string message=&quot;&quot;)</td></tr>
+<tr class="memdesc:af181af941a47a13fa5dcf3531eb75d9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a double from user input in the console.  <a href="class_input_checker.html#af181af941a47a13fa5dcf3531eb75d9f">More...</a><br /></td></tr>
+<tr class="separator:af181af941a47a13fa5dcf3531eb75d9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fa6caf8cc0c5ee7d849960000457a52"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#a5fa6caf8cc0c5ee7d849960000457a52">getIntRange</a> (int begin, int end, std::string message=&quot;&quot;)</td></tr>
+<tr class="memdesc:a5fa6caf8cc0c5ee7d849960000457a52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an integer within the range [begin, end] from user input in the console.  <a href="class_input_checker.html#a5fa6caf8cc0c5ee7d849960000457a52">More...</a><br /></td></tr>
+<tr class="separator:a5fa6caf8cc0c5ee7d849960000457a52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac75a1ef7298ff8adf338ed56078f4a02"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#ac75a1ef7298ff8adf338ed56078f4a02">getDoubleRange</a> (double begin, double end, std::string message=&quot;&quot;)</td></tr>
+<tr class="memdesc:ac75a1ef7298ff8adf338ed56078f4a02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a double within the range [begin, end] from user input in the console.  <a href="class_input_checker.html#ac75a1ef7298ff8adf338ed56078f4a02">More...</a><br /></td></tr>
+<tr class="separator:ac75a1ef7298ff8adf338ed56078f4a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27f0374ee3e601f2a0f9e57c9eccb524"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#a27f0374ee3e601f2a0f9e57c9eccb524">getString</a> ()</td></tr>
+<tr class="memdesc:a27f0374ee3e601f2a0f9e57c9eccb524"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a string. Equivalent to using std::cin str;.  <a href="class_input_checker.html#a27f0374ee3e601f2a0f9e57c9eccb524">More...</a><br /></td></tr>
 <tr class="separator:a27f0374ee3e601f2a0f9e57c9eccb524"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac316d2f6f03270fa57a181a6a1a17783"><td class="memItemLeft" align="right" valign="top"><a id="ac316d2f6f03270fa57a181a6a1a17783"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>getBool</b> (std::string=&quot;&quot;)</td></tr>
-<tr class="separator:ac316d2f6f03270fa57a181a6a1a17783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26652b79f72e6dd36b4253de28b4bbe1"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input_checker.html#a26652b79f72e6dd36b4253de28b4bbe1">getBool</a> (std::string message=&quot;&quot;)</td></tr>
+<tr class="memdesc:a26652b79f72e6dd36b4253de28b4bbe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc.  <a href="class_input_checker.html#a26652b79f72e6dd36b4253de28b4bbe1">More...</a><br /></td></tr>
+<tr class="separator:a26652b79f72e6dd36b4253de28b4bbe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Used to error check and get user's input from std::cin. </p>
+<p>If input is invalid (a character in an integer, double is out of range, etc.), we repeat until we get valid input Programmer has the option to include an error message when input is invalid </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a26652b79f72e6dd36b4253de28b4bbe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26652b79f72e6dd36b4253de28b4bbe1">&#9670;&nbsp;</a></span>getBool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool InputChecker::getBool </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>message</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Error message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True or false, depending on the user's input </dd></dl>
+
+</div>
+</div>
+<a id="af181af941a47a13fa5dcf3531eb75d9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af181af941a47a13fa5dcf3531eb75d9f">&#9670;&nbsp;</a></span>getDouble()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double InputChecker::getDouble </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>message</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a double from user input in the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Error message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double entered by user </dd></dl>
+
+</div>
+</div>
+<a id="ac75a1ef7298ff8adf338ed56078f4a02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac75a1ef7298ff8adf338ed56078f4a02">&#9670;&nbsp;</a></span>getDoubleRange()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double InputChecker::getDoubleRange </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>begin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>message</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a double within the range [begin, end] from user input in the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">begin</td><td>Start of range </td></tr>
+    <tr><td class="paramname">end</td><td>End of range </td></tr>
+    <tr><td class="paramname">message</td><td>Error message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double entered by user </dd></dl>
+
+</div>
+</div>
+<a id="a29dc39e263daa99680cb0528a54a0236"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29dc39e263daa99680cb0528a54a0236">&#9670;&nbsp;</a></span>getInt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int InputChecker::getInt </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>message</em> = <code>&quot;&quot;</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets an integer from user input in the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>Error message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int entered by user </dd></dl>
+
+</div>
+</div>
+<a id="a5fa6caf8cc0c5ee7d849960000457a52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fa6caf8cc0c5ee7d849960000457a52">&#9670;&nbsp;</a></span>getIntRange()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int InputChecker::getIntRange </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>begin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>message</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets an integer within the range [begin, end] from user input in the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">begin</td><td>Start of range </td></tr>
+    <tr><td class="paramname">end</td><td>End of range </td></tr>
+    <tr><td class="paramname">message</td><td>Error message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int entered by user </dd></dl>
+
+</div>
+</div>
+<a id="a27f0374ee3e601f2a0f9e57c9eccb524"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27f0374ee3e601f2a0f9e57c9eccb524">&#9670;&nbsp;</a></span>getString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string InputChecker::getString </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a string. Equivalent to using std::cin str;. </p>
+<dl class="section return"><dt>Returns</dt><dd>std::string entered by user </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>Course Planner/<a class="el" href="_input_checker_8h_source.html">InputChecker.h</a></li>
 <li>Course Planner/InputChecker.cpp</li>

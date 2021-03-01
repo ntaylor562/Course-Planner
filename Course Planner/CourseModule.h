@@ -52,6 +52,13 @@ private:
 	*/
 	void removePrerequisiteFor(CourseModule* course);
 
+	/**
+	 * @brief Gets the list of courses this course is a prerequisite for
+	 * @details returns a pointer to the list of prerequisites to save memory
+	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
+	*/
+	std::vector<CourseModule *> *getPrerequisiteFor();
+
 public:
 
 	/**
@@ -79,29 +86,23 @@ public:
 	void setUnits(int num);
 	void setDescription(std::string);
 
-	std::string getCourseSubject();
-	int getCourseNumber();
-	std::string getCourseTitle();
-	int getUnits();
-	std::string getDescription();
+	std::string getCourseSubject() const;
+	int getCourseNumber() const;
+	std::string getCourseTitle() const;
+	int getUnits() const;
+	std::string getDescription() const;
+
+	/**
+	 * @return String representing this course's subject, course number, and course title
+	*/
+	std::string getCourseName() const;
 
 
 	/**
 	 * @brief Puts the prerequisite courses for this course into a string including only the course subject and course number
 	 * @return String containing course subjects and numbers of this course's prerequisites separated by spaces. Returns empty string if there are no prerequisites
 	*/
-	std::string getPrereqsAsString();
-
-	/**
-	 * @brief Puts the courses this course is a prerequisite for into a string including only the course subject and course number
-	 * @return String containing course subjects and numbers this course is a prerequisite for separated by spaces. Returns empty string if this course is not a prerequisite for any courses
-	*/
-	std::string getPrereqForAsString();
-
-	/**
-	 * @return String representing this course's subject and number
-	*/
-	std::string getCourseName();
+	std::string getPrereqsAsString() const;
 
 	/**
 	 * @brief Adds a prerequisite to this course
@@ -124,17 +125,10 @@ public:
 	std::vector<CourseModule*>* getPrerequisites();
 
 	/**
-	 * @brief Gets the list of courses this course is a prerequisite for
-	 * @details returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
-	*/
-	std::vector<CourseModule*>* getPrerequisiteFor();
-
-	/**
 	 * @brief Checks whether all fields have been filled out for this course
 	 * @return True if the course subject, number, units, title, and description all have values, false otherwise
 	*/
-	bool dataComplete();
+	bool dataComplete() const;
 
 	/**
 	 * @brief Overloaded << operator to more easily print a course

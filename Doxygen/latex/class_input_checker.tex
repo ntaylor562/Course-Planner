@@ -1,5 +1,14 @@
 \hypertarget{class_input_checker}{}\doxysection{Input\+Checker Class Reference}
 \label{class_input_checker}\index{InputChecker@{InputChecker}}
+
+
+Used to error check and get user\textquotesingle{}s input from std\+::cin.  
+
+
+
+
+{\ttfamily \#include $<$Input\+Checker.\+h$>$}
+
 Inheritance diagram for Input\+Checker\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -9,24 +18,137 @@ Inheritance diagram for Input\+Checker\+:\begin{figure}[H]
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{class_input_checker_af296b7e761f3150f408c645c88e08133}\label{class_input_checker_af296b7e761f3150f408c645c88e08133}} 
-static int {\bfseries get\+Int} (std\+::string=\char`\"{}\char`\"{})
-\item 
-\mbox{\Hypertarget{class_input_checker_ac3f74d186bab30da038217dd41e8b1ad}\label{class_input_checker_ac3f74d186bab30da038217dd41e8b1ad}} 
-static double {\bfseries get\+Double} (std\+::string=\char`\"{}\char`\"{})
-\item 
-\mbox{\Hypertarget{class_input_checker_a212cdf1e2d304231b6b21242c1d92c00}\label{class_input_checker_a212cdf1e2d304231b6b21242c1d92c00}} 
-static int {\bfseries get\+Int\+Range} (int, int, std\+::string=\char`\"{}\char`\"{})
-\item 
-\mbox{\Hypertarget{class_input_checker_a156d184dcf347fc0aabab1551593286c}\label{class_input_checker_a156d184dcf347fc0aabab1551593286c}} 
-static double {\bfseries get\+Double\+Range} (double, double, std\+::string=\char`\"{}\char`\"{})
-\item 
+static int \mbox{\hyperlink{class_input_checker_a29dc39e263daa99680cb0528a54a0236}{get\+Int}} (std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets an integer from user input in the console. \end{DoxyCompactList}\item 
+static double \mbox{\hyperlink{class_input_checker_af181af941a47a13fa5dcf3531eb75d9f}{get\+Double}} (std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets a double from user input in the console. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{class_input_checker_a5fa6caf8cc0c5ee7d849960000457a52}{get\+Int\+Range}} (int begin, int end, std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets an integer within the range \mbox{[}begin, end\mbox{]} from user input in the console. \end{DoxyCompactList}\item 
+static double \mbox{\hyperlink{class_input_checker_ac75a1ef7298ff8adf338ed56078f4a02}{get\+Double\+Range}} (double begin, double end, std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets a double within the range \mbox{[}begin, end\mbox{]} from user input in the console. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{class_input_checker_a27f0374ee3e601f2a0f9e57c9eccb524}{get\+String}} ()
+\begin{DoxyCompactList}\small\item\em Gets a string. Equivalent to using std\+::cin str;. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_input_checker_a26652b79f72e6dd36b4253de28b4bbe1}{get\+Bool}} (std\+::string message=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Used to error check and get user\textquotesingle{}s input from std\+::cin. 
+
+If input is invalid (a character in an integer, double is out of range, etc.), we repeat until we get valid input Programmer has the option to include an error message when input is invalid 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_input_checker_a26652b79f72e6dd36b4253de28b4bbe1}\label{class_input_checker_a26652b79f72e6dd36b4253de28b4bbe1}} 
+\index{InputChecker@{InputChecker}!getBool@{getBool}}
+\index{getBool@{getBool}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getBool()}{getBool()}}
+{\footnotesize\ttfamily bool Input\+Checker\+::get\+Bool (\begin{DoxyParamCaption}\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True or false, depending on the user\textquotesingle{}s input 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_input_checker_af181af941a47a13fa5dcf3531eb75d9f}\label{class_input_checker_af181af941a47a13fa5dcf3531eb75d9f}} 
+\index{InputChecker@{InputChecker}!getDouble@{getDouble}}
+\index{getDouble@{getDouble}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getDouble()}{getDouble()}}
+{\footnotesize\ttfamily double Input\+Checker\+::get\+Double (\begin{DoxyParamCaption}\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets a double from user input in the console. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double entered by user 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_input_checker_ac75a1ef7298ff8adf338ed56078f4a02}\label{class_input_checker_ac75a1ef7298ff8adf338ed56078f4a02}} 
+\index{InputChecker@{InputChecker}!getDoubleRange@{getDoubleRange}}
+\index{getDoubleRange@{getDoubleRange}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getDoubleRange()}{getDoubleRange()}}
+{\footnotesize\ttfamily double Input\+Checker\+::get\+Double\+Range (\begin{DoxyParamCaption}\item[{double}]{begin,  }\item[{double}]{end,  }\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets a double within the range \mbox{[}begin, end\mbox{]} from user input in the console. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & Start of range \\
+\hline
+{\em end} & End of range \\
+\hline
+{\em message} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+double entered by user 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_input_checker_a29dc39e263daa99680cb0528a54a0236}\label{class_input_checker_a29dc39e263daa99680cb0528a54a0236}} 
+\index{InputChecker@{InputChecker}!getInt@{getInt}}
+\index{getInt@{getInt}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getInt()}{getInt()}}
+{\footnotesize\ttfamily int Input\+Checker\+::get\+Int (\begin{DoxyParamCaption}\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets an integer from user input in the console. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int entered by user 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_input_checker_a5fa6caf8cc0c5ee7d849960000457a52}\label{class_input_checker_a5fa6caf8cc0c5ee7d849960000457a52}} 
+\index{InputChecker@{InputChecker}!getIntRange@{getIntRange}}
+\index{getIntRange@{getIntRange}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getIntRange()}{getIntRange()}}
+{\footnotesize\ttfamily int Input\+Checker\+::get\+Int\+Range (\begin{DoxyParamCaption}\item[{int}]{begin,  }\item[{int}]{end,  }\item[{std\+::string}]{message = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets an integer within the range \mbox{[}begin, end\mbox{]} from user input in the console. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & Start of range \\
+\hline
+{\em end} & End of range \\
+\hline
+{\em message} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int entered by user 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_input_checker_a27f0374ee3e601f2a0f9e57c9eccb524}\label{class_input_checker_a27f0374ee3e601f2a0f9e57c9eccb524}} 
-static std\+::string {\bfseries get\+String} ()
-\item 
-\mbox{\Hypertarget{class_input_checker_ac316d2f6f03270fa57a181a6a1a17783}\label{class_input_checker_ac316d2f6f03270fa57a181a6a1a17783}} 
-static bool {\bfseries get\+Bool} (std\+::string=\char`\"{}\char`\"{})
-\end{DoxyCompactItemize}
+\index{InputChecker@{InputChecker}!getString@{getString}}
+\index{getString@{getString}!InputChecker@{InputChecker}}
+\doxysubsubsection{\texorpdfstring{getString()}{getString()}}
+{\footnotesize\ttfamily std\+::string Input\+Checker\+::get\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Gets a string. Equivalent to using std\+::cin str;. 
+
+\begin{DoxyReturn}{Returns}
+std\+::string entered by user 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

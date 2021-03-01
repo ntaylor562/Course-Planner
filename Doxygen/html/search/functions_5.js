@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['_7ecoursemodule_29',['~CourseModule',['../class_course_module.html#a0f1b3143ee4a1cc6e52d13d3c37acdf6',1,'CourseModule']]]
+  ['mainmenu_58',['mainMenu',['../class_menu.html#aef9edee86d2ea460606361c92e061583',1,'Menu']]],
+  ['menu_59',['Menu',['../class_menu.html#ad466dd83355124a6ed958430450bfe94',1,'Menu']]]
 ];

@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <algorithm>
 #include "Menu.h"
-#include "CourseModule.h"
 #include "CourseInputChecker.h"
 
 Menu::Menu() {
@@ -134,9 +133,9 @@ void Menu::saveData() {
 }
 
 void Menu::runMenu() {
-	std::cout << "Welcome to Course Manager" << std::endl
-		<< "This application allows you to add a list of courses and their information\nto help manage all the classes you "
-		<< "need to take." << std::endl << std::endl;
+	std::cout << "Welcome to Course Planner" << std::endl
+		<< "This application allows you to add a list of courses and their information" << std::endl
+		<< "to help manage all the classes you need to take." << std::endl << std::endl;
 
 	mainMenu();
 }
@@ -149,10 +148,6 @@ CourseModule* Menu::courseSearch(std::string sub, int num) {
 	return nullptr;
 }
 
-CourseModule * Menu::courseSearch(std::string str) {
-	return courseSearch(str.substr(0, str.find(' ')), std::stoi(str.substr(str.find(' ') + 1, str.length() - 1)));
-}
-
 std::vector<CourseModule*>::iterator Menu::courseSearchIt(std::string sub, int num) {
 	std::vector<CourseModule*>::iterator courseIterator;
 	for (courseIterator = Courses.begin(); courseIterator != Courses.end(); ++courseIterator) {
@@ -160,10 +155,6 @@ std::vector<CourseModule*>::iterator Menu::courseSearchIt(std::string sub, int n
 			return courseIterator;
 	}
 	return courseIterator;
-}
-
-std::vector<CourseModule*>::iterator Menu::courseSearchIt(std::string str) {
-	return courseSearchIt(str.substr(0, str.find(' ')), std::stoi(str.substr(str.find(' ') + 1, str.length() - 1)));
 }
 
 void Menu::printAllCourses() {
@@ -216,7 +207,7 @@ void Menu::printAllIncompleteDataCourses() {
 				++count;
 			} else {
 				std::cout << std::endl << std::setw(distance) << course;
-				count = 1;
+				count = 2;
 			}
 		}
 	}
@@ -246,21 +237,6 @@ std::string Menu::fullCourseInfo(CourseModule* course) {
 	return result;
 }
 
-int Menu::readIntInput() {
-	std::string input;
-
-
-	std::getline(std::cin, input);
-	if (input == "") return -1;
-
-	for (int i = 0; i < input.length(); ++i) {
-		if (input[i] < '0' || input[i] > '9') {
-			return -1;
-		}
-	}
-	return std::stoi(input);
-}
-
 void Menu::mainMenu() {
 	bool exit = false;
 	while (!exit) {
@@ -273,7 +249,7 @@ void Menu::mainMenu() {
 			<< "5 - Save courses" << std::endl << std::endl;
 
 		std::cout << "Enter a choice: ";
-		int userChoice = readIntInput();
+		int userChoice = InputChecker::getInt();
 		switch (userChoice) {
 		case 0:
 			exit = true;
@@ -283,6 +259,8 @@ void Menu::mainMenu() {
 			printAllCourseData();
 			std::cout << std::endl;
 			printAllIncompleteDataCourses();
+			std::cout << std::endl;
+			printAllCourses();
 			std::cout << std::endl;
 
 			system("pause");
@@ -365,7 +343,7 @@ void Menu::subMenuCourseAdd() {
 		std::cout << std::endl;
 
 		std::cout << "Enter a choice: ";
-		userChoice = readIntInput();
+		userChoice = InputChecker::getInt();
 		std::cout << std::endl;
 
 		std::string temp;
@@ -381,7 +359,7 @@ void Menu::subMenuCourseAdd() {
 		}
 		else if (userChoice == units.assignedNum) {
 			std::cout << units.description << enter0 << ": ";
-			int num = enterInteger();
+			int num = InputChecker::getInt();
 			if (num > 0) {
 				course->setUnits(num);
 				std::cout << std::endl << "Course units added." << std::endl << std::endl;
@@ -455,43 +433,6 @@ void Menu::subMenuCourseRemove() {
 		system("pause");
 	}
 	else return;
-}
-
-bool Menu::hasOneSpace(std::string str) {
-	bool hasSpace = false;
-	for (int i = 0; i < str.length(); ++i) {
-		if (hasSpace && str[i] == ' ') return true;
-
-		if (str[i] == ' ' && !hasSpace)
-			hasSpace = true;
-	}
-	return hasSpace;
-}
-
-bool Menu::allInts(std::string str) {
-	for (int i = 0; i < str.length(); ++i) {
-		if (str[i] < '0' || str[i] > '9') return false;
-	}
-	return true;
-}
-
-int Menu::enterInteger() {
-	bool recheck;
-	std::string input;
-	do {
-		recheck = false;
-		std::getline(std::cin, input);
-
-		for (int i = 0; i < input.length(); ++i) {
-			if (input[i] < '0' || input[i] > '9') recheck = true;
-		}
-
-		if (recheck) {
-			std::cout << "Invalid input. Enter an integer: ";
-		}
-
-	} while (recheck);
-	return std::stoi(input);
 }
 
 CourseModule *Menu::inputValidCourse() {
@@ -590,7 +531,7 @@ void Menu::subMenuCourseEdit() {
 			<< "3 - Edit course description" << std::endl
 			<< "4 - Edit course prerequisites" << std::endl << std::endl
 			<< "Enter a choice: ";
-		userChoice = readIntInput();
+		userChoice = InputChecker::getInt();
 		std::cout << std::endl;
 		switch (userChoice) {
 			int choice;
@@ -615,7 +556,7 @@ void Menu::subMenuCourseEdit() {
 
 			std::cout << "Enter new course units or enter 0 to cancel: ";
 
-			int num = enterInteger();
+			int num = InputChecker::getInt();
 
 			if (num == 0) break;
 
@@ -649,7 +590,7 @@ void Menu::subMenuCourseEdit() {
 					<< "2 - Remove prerequisite" << std::endl << std::endl
 					<< "Enter choice: ";
 
-				choice = readIntInput();
+				choice = InputChecker::getInt();
 				std::cout << std::endl;
 
 				std::string temp;
@@ -725,6 +666,7 @@ void Menu::addMultiplePrereqs(CourseModule* course, const std::vector<CourseModu
 
 void Menu::removeCourse(CourseModule *course) {
 	std::vector<CourseModule*>::iterator courseIt = std::find(Courses.begin(), Courses.end(), course);
-	delete* courseIt; //deallocating memory and removing this course from any courses that have it as a prerequisite
-	Courses.erase(courseIt); //removing the course's pointer from the list of courses
+	if (courseIt == Courses.end()) return;
+	delete* courseIt; //Deallocating memory and removing this course from any courses that have it as a prerequisite
+	Courses.erase(courseIt); //Removing the course's pointer from the list of courses
 }

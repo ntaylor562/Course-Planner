@@ -299,7 +299,7 @@ void Menu::mainMenu() {
 			break;
 		case 6: 
 			autoSave = !autoSave;
-			std::cout << "Autosave is now " << ((autoSave) ? "on" : "off") << "." << std::endl << std::endl;
+			std::cout << "Autosave is now " << ((autoSave) ? "on" : "OFF") << "." << std::endl << std::endl;
 			system("pause");
 			break;
 		default:

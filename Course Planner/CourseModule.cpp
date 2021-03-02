@@ -126,14 +126,6 @@ bool CourseModule::dataComplete() const {
 	return true;
 }
 
-bool CourseModule::operator==(const CourseModule &c) const {
-	return (this->courseSubject == c.courseSubject) && (this->courseNumber == c.courseNumber);
-}
-
-bool CourseModule::operator<(const CourseModule &c) const {
-	return (this->courseSubject < c.courseSubject) && (this->courseNumber < c.courseNumber);
-}
-
 //Inserts course subject followed by course number into the ostream given
 std::ostream &operator<<(std::ostream &os, const CourseModule &course) {
 	os << course.courseSubject + " " + std::to_string(course.courseNumber);

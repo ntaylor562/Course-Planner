@@ -115,7 +115,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CourseGraph.cpp" />
     <ClCompile Include="CourseInputChecker.cpp" />
     <ClCompile Include="CourseModule.cpp" />
     <ClCompile Include="InputChecker.cpp" />

@@ -138,6 +138,16 @@ public:
 	 * @return The ostream variable passed in
 	*/
 	friend std::ostream &operator<<(std::ostream &os, const CourseModule &course);
+
+	/**
+	 * @brief Used to determine if two course names are the same (Ex. CECS 100 == CECS 100 is true)
+	 * @details ONLY checks course subject and course number are the same
+	 * @param c Course we're comparing to
+	 * @return True if course subject and course number are matching, false otherwise
+	*/
+	bool operator==(const CourseModule &c) const;
+
+	bool operator<(const CourseModule &c) const;
 };
 
 #endif

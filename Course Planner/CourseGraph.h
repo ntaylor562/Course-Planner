@@ -18,13 +18,16 @@ private:
 	*/
 	struct vertex {
 		CourseModule course;
-		std::list<vertex *> adjacentVertices;
+		std::list<std::set<vertex>::iterator> adjacentVertices;
 
-		bool operator==(const vertex &v) {
+		bool operator==(const vertex &v) const {
 			return course == v.course;
 		}
-		bool operator<(const vertex &v) {
+		bool operator<(const vertex &v) const {
 			return course < v.course;
+		}
+		bool operator>(const vertex &v) const {
+			return course > v.course;
 		}
 	};
 
@@ -33,10 +36,20 @@ private:
 public:
 
 	/**
-	 * @brief If the course is not already a vertex, create a new vertex with value c
+	 * @brief If the course is not already a vertex, insert a new vertex with value c
 	 * @param c Course being added to the graph
 	*/
-	void addCourse(const CourseModule &c);
+	void insert(CourseModule c);
+
+	/**
+	 * @brief Prints all vertices
+	*/
+	void printCourses() const;
+
+	/**
+	 * @brief Adds a directed edge from u to v
+	*/
+	void addEdge(CourseModule &u, CourseModule &v);
 
 };
 

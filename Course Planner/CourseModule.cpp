@@ -131,7 +131,15 @@ bool CourseModule::operator==(const CourseModule &c) const {
 }
 
 bool CourseModule::operator<(const CourseModule &c) const {
-	return (this->courseSubject < c.courseSubject) && (this->courseNumber < c.courseNumber);
+	if (this->courseSubject < c.courseSubject) return true;
+	if ((this->courseSubject == c.courseSubject) && (this->courseNumber < c.courseNumber)) return true;
+	return false;
+}
+
+bool CourseModule::operator>(const CourseModule &c) const {
+	if (this->courseSubject > c.courseSubject) return true;
+	if ((this->courseSubject == c.courseSubject) && (this->courseNumber > c.courseNumber)) return true;
+	return false;
 }
 
 //Inserts course subject followed by course number into the ostream given

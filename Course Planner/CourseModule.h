@@ -147,7 +147,20 @@ public:
 	*/
 	bool operator==(const CourseModule &c) const;
 
+	/**
+	 * @brief First compares subject then compares course number
+	 * @param c Course being compared
+	 * @return Compares strings of this course and course c, then compares course numbers if subjects are equal
+	*/
 	bool operator<(const CourseModule &c) const;
+
+	/**
+	 * @brief First compares subject then compares course number
+	 * @param c Course being compared
+	 * @return Compares strings of this course and course c, then compares course numbers if subjects are equal
+	*/
+	bool operator>(const CourseModule &c) const;
+
 };
 
 #endif

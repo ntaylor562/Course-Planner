@@ -123,6 +123,7 @@
     <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CourseGraph.h" />
     <ClInclude Include="CourseInputChecker.h" />
     <ClInclude Include="CourseModule.h" />
     <ClInclude Include="InputChecker.h" />

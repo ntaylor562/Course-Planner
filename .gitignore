@@ -3,7 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,c++
 
 # Doxygen files
-Doxygen/
+[Dd]oxygen/
 
 ### C++ ###
 # Prerequisites

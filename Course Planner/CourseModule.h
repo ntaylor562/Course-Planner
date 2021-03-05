@@ -65,7 +65,9 @@ public:
 	 * @param prereqs Vector containing a list of pointers to courses this course has as prerequisites
 	*/
 	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = 0, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
-	
+
+	CourseModule(const CourseModule &c);
+
 	/**
 	 * @brief Destructor that goes through the list of courses this course is a prerequisite for and removes this course from their prerequisites
 	*/

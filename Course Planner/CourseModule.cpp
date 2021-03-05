@@ -7,6 +7,14 @@
 CourseModule::CourseModule(std::string subject, int number, std::string title, int numOfUnits, std::string description, std::vector<CourseModule*> prereqs) :
 	courseSubject(subject), courseNumber(number), courseTitle(title), units(numOfUnits), courseDescription(description), prerequisites(prereqs) {}
 
+CourseModule::CourseModule(const CourseModule &c) {
+	courseSubject = c.courseSubject;
+	courseNumber = c.courseNumber;
+	units = c.units;
+	courseTitle = c.courseTitle;
+	courseDescription = c.courseDescription;
+}
+
 //Destructor removing this course from other course's prerequisites
 CourseModule::~CourseModule() {
 	if (!prerequisiteFor.empty()) {

@@ -17,9 +17,9 @@ private:
 
 	
 
-	std::vector<vertex>::iterator searchVertices(const CourseModule &c);
+	std::vector<vertex*>::iterator searchVertices(const CourseModule &c);
 
-	std::vector<vertex> vertices;
+	std::vector<vertex*> vertices;
 
 public:
 
@@ -30,7 +30,7 @@ public:
 	 * @param c Course being added to the graph
 	 * @return Iterator pointing to the course we inserteda
 	*/
-	std::vector<vertex>::iterator insert(const CourseModule &c);
+	std::vector<vertex*>::iterator insert(const CourseModule &c);
 
 	/**
 	 * @brief Prints all vertices

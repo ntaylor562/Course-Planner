@@ -30,6 +30,21 @@ std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 	vertices.insert(index, new vertex{ CourseModule(c) });
 	return searchVertices(c);
 }
+
+void CourseGraph::remove(const CourseModule &c) {
+	std::vector<vertex *>::iterator toBeRemoved = searchVertices(c);
+
+	for (auto &i : (*toBeRemoved)->prerequisiteFor) { //Remove this course from other course's prerequisites
+		i->prerequisites.remove(*toBeRemoved);
+	}
+	for (auto &i : (*toBeRemoved)->prerequisites) { //Remove connections to vertices this course is a prerequisite for
+		i->prerequisites.remove(*toBeRemoved);
+	}
+
+	delete *toBeRemoved;
+	vertices.erase(toBeRemoved);
+}
+
 void CourseGraph::printCourses() const {
 	if (vertices.empty()) return;
 	int spacing = 15;
@@ -38,8 +53,27 @@ void CourseGraph::printCourses() const {
 	for (std::vector<vertex*>::const_iterator i = vertices.begin(); i != vertices.end(); ++i) {
 		std::cout << std::setw(spacing) << (*i)->course;
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 
+	for (const auto &i : vertices) {
+		std::cout << i->course << std::endl;
+		
+		if (!i->prerequisites.empty()) {
+			std::cout << "Prerequisites: ";
+			for (const auto &i : i->prerequisites)
+				std::cout << i->course << " ";
+			std::cout << std::endl;
+		}
+
+		if (!i->prerequisiteFor.empty()) {
+			std::cout << "Prerequisite for: ";
+			for (const auto &i : i->prerequisiteFor)
+				std::cout << i->course << " ";
+			std::cout << std::endl;
+		}
+
+		std::cout << std::endl;
+	}
 
 }
 
@@ -52,6 +86,24 @@ void CourseGraph::addEdge(const CourseModule &u, const CourseModule &v) {
 		end = this->insert(v);
 		start = searchVertices(u);
 	}
+	
+	//Return if edge is a duplicate
+	if (std::find((*start)->prerequisiteFor.begin(), (*start)->prerequisiteFor.end(), *end) != (*start)->prerequisiteFor.end()) return;
+	
+	//Add edge
+	(*end)->prerequisites.push_back(*start);
+	(*start)->prerequisiteFor.push_back(*end);
 
-	(*start)->edges.push_back(*end);
+}
+
+void CourseGraph::removeEdge(const CourseModule &u, const CourseModule &v) {
+	std::vector<vertex *>::iterator start = searchVertices(u);
+	std::vector<vertex *>::iterator end = searchVertices(v);
+
+	//If u or v do not exist or if there is no edge between them, do nothing
+	if (start == vertices.end() || end == vertices.end() || std::find((*end)->prerequisites.begin(), (*end)->prerequisites.end(), *start) == (*end)->prerequisites.end()) return;
+
+	//Remove edge
+	(*start)->prerequisiteFor.remove(*end);
+	(*end)->prerequisites.remove(*start);
 }

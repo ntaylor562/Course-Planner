@@ -27,18 +27,17 @@ int main() {
 	test.addEdge(CourseModule("CECS", 228), CourseModule("CECS", 229));
 	test.addEdge(CourseModule("CECS", 101), CourseModule("CECS", 102));
 
+	test.addEdge(CourseModule("CECS", 100), CourseModule("CECS", 101));
+	test.addEdge(CourseModule("CECS", 101), CourseModule("CECS", 102));
+	test.addEdge(CourseModule("CECS", 102), CourseModule("CECS", 103));
+	test.addEdge(CourseModule("CECS", 103), CourseModule("CECS", 104));
+	test.addEdge(CourseModule("CECS", 104), CourseModule("CECS", 105));
+
 	test.printCourses();
 
-	easy::pause();
-	return 0;
+	test.removeEdge(CourseModule("CECS", 101), CourseModule("CECS", 102));
 
-	CourseGraph graph;
-	graph.insert(CourseModule("CECS", 100));
-	graph.insert(CourseModule("CECS", 200));
-	graph.insert(CourseModule("CECS", 101));
-	graph.insert(CourseModule("CECS", 100));
-
-	graph.printCourses();
+	test.printCourses();
 
 	easy::pause();
 	return 0;

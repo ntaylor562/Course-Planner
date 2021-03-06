@@ -33,6 +33,13 @@ public:
 	std::vector<vertex*>::iterator insert(const CourseModule &c);
 
 	/**
+	 * @brief Removes course c from the graph
+	 * @details If course c is not in the graph, do nothing
+	 * @param c Course being removed from the graph
+	*/
+	void remove(const CourseModule &c);
+
+	/**
 	 * @brief Prints all vertices
 	*/
 	void printCourses() const;
@@ -42,7 +49,11 @@ public:
 	*/
 	void addEdge(const CourseModule &u, const CourseModule &v);
 
-
+	/**
+	 * @brief Removes the edge connecting vertices u and v
+	 * @details If there is no edge from u to v, or if u or v does not exist, do nothing
+	*/
+	void removeEdge(const CourseModule &u, const CourseModule &v);
 };
 
 /**
@@ -50,7 +61,8 @@ public:
 */
 struct vertex {
 	CourseModule course;
-	std::list<vertex *> edges;
+	std::list<vertex *> prerequisites;
+	std::list<vertex *> prerequisiteFor;
 
 	bool operator==(const vertex &v) const {
 		return course == v.course;

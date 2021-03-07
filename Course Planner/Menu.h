@@ -56,11 +56,6 @@ public:
 	 * @brief Gives a list of options and asks for user to select one then performs that action when entered
 	*/
 	void mainMenu();
-
-	/**
-	 * @brief Allows the user to edit a course's information (not including course subject and number)
-	*/
-	void subMenuCourseEdit();
 	
 	/**
 	 * @brief Allows user to add a course by entering the course subject and number
@@ -72,13 +67,29 @@ public:
 	 * @brief Asks user which course to remove then removes the course specified
 	*/
 	void subMenuCourseRemove();
+
+	/**
+	 * @brief Allows the user to edit a course's information (not including course subject and number)
+	*/
+	void subMenuCourseEdit();
+
+	/**
+	 * @brief Searches the list of courses for 
+	*/
+	void subMenuCourseSearch();
+
+	/**
+	 * @brief Gives user a menu to edit a course allowing them to change different attributes
+	 * @param c Course being edited
+	*/
+	void editCourse(CourseModule &c);
 	
 	/**
 	 * @brief Enters all courses (format ex: CECS 100) from a string into a course's prerequisites. Does not check validity
 	 * @param course Course we're adding prerequisites to
 	 * @param str String we're reading courses from
 	*/
-	void readPrerequisites(CourseModule *course, std::string str);
+	void readPrerequisites(CourseModule &course, std::string str);
 
 	/**
 	 * @brief Adds multiple courses to the list of prerequisites of a course

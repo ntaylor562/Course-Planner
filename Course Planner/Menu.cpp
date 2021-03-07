@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
 #include <iomanip>
 #include <algorithm>
 #include "Menu.h"
+#include "InputChecker.h"
 #include "CourseInputChecker.h"
 #include "CourseData.h"
 
@@ -19,7 +21,7 @@ Menu::Menu() {
 	}
 }
 
-void Menu::readPrerequisites(CourseModule* course, std::string str) {
+void Menu::readPrerequisites(CourseModule &course, std::string str) {
 	std::string sub;
 	int num = 0;
 
@@ -37,7 +39,7 @@ void Menu::readPrerequisites(CourseModule* course, std::string str) {
 			str = "";
 		}
 
-		Courses.addEdge(CourseModule(sub, num), *course);
+		Courses.addEdge(CourseModule(sub, num), course);
 	} while (str.find(' ') != std::string::npos);
 }
 
@@ -156,16 +158,17 @@ void Menu::mainMenu() {
 			<< "2 - Add a course" << std::endl
 			<< "3 - Remove a course" << std::endl
 			<< "4 - Edit an existing course" << std::endl
-			<< "5 - Save courses" << std::endl
-			<< "6 - Toggle Autosave (" << ((autoSave) ? "ON" : "OFF") << ")" << std::endl;
+			<< "5 - Search courses" << std::endl
+			<< "6 - Save courses" << std::endl
+			<< "7 - Toggle Autosave (" << ((autoSave) ? "ON" : "OFF") << ")" << std::endl;
 
 		std::cout << "Enter a choice: ";
 		int userChoice = InputChecker::getInt();
 		switch (userChoice) {
-		case 0:
+		case 0: //Exit
 			exit = true;
 			break;
-		case 1:
+		case 1: //Print courses
 			system("cls");
 
 			if (Courses.empty()) {
@@ -183,24 +186,28 @@ void Menu::mainMenu() {
 
 			system("pause");
 			break;
-		case 2:
+		case 2: //Add course
 			system("cls");
 			subMenuCourseAdd();
 			break;
-		case 3:
+		case 3: //Remove course
 			system("cls");
 			subMenuCourseRemove();
 			break;
-		case 4:
+		case 4: //Edit course
 			system("cls");
 			subMenuCourseEdit();
 			break;
-		case 5:
+		case 5: //Search courses
+			system("cls");
+			subMenuCourseSearch();
+			break;
+		case 6: //Save courses
 			CourseData::store(Courses, dataFile);
 			std::cout << "Data has been saved to " << dataFile << std::endl << std::endl;
 			system("pause");
 			break;
-		case 6: 
+		case 7: //Toggle autosave
 			autoSave = !autoSave;
 			std::cout << "Autosave is now " << ((autoSave) ? "on" : "off") << "." << std::endl << std::endl;
 			system("pause");
@@ -241,7 +248,7 @@ void Menu::subMenuCourseAdd() {
 	int userChoice;
 	do {
 		int count = 0;
-		std::cout << "Add a Course" << std::endl << std::endl;
+		std::cout << "Add Course" << std::endl << std::endl;
 		std::cout << fullCourseInfo(*course) << std::endl
 			<< count++ << " - Return" << std::endl;
 		if (course->getCourseTitle() == "") {
@@ -325,7 +332,7 @@ void Menu::subMenuCourseRemove() {
 		system("pause");
 		return;
 	}
-	std::cout << "Remove a Course" << std::endl << std::endl;
+	std::cout << "Remove Course" << std::endl << std::endl;
 	printAllCourses();
 	std::cout << std::endl;
 
@@ -371,6 +378,219 @@ void Menu::subMenuCourseRemove() {
 		system("pause");
 	}
 	else return;
+}
+
+//Searches linearly through the course data (subject, number, title, and description)
+void Menu::subMenuCourseSearch() {
+	std::cout << "Search Courses" << std::endl << std::endl
+		<< "Search for something or enter 0 to exit: ";
+	std::string input;
+	std::getline(std::cin, input);
+
+	//Trim the input in case there are leading or trailing spaces
+	input = input.substr(input.find_first_not_of(" "), std::string::npos);
+	input = input.substr(0, input.find_last_not_of(" ") + 1);
+
+	if (input == "0") {
+		system("cls");
+		return;
+	}
+
+	for (auto &c : input) { //Making input lowercase
+		c = std::tolower(c);
+	}
+
+	//TODO Maybe add a fast search if the search input is in the format SUBJECT NUM (Ex. CECS 100)
+	std::list<std::string> searchData;
+	
+	for (auto it : Courses) { //Initializing searchData
+		searchData.push_back("");
+	}
+
+	std::list<std::string>::iterator dataIt = searchData.begin();
+	for (auto it = Courses.begin(); it != Courses.end(); ++it) { //Populating searchData
+		*dataIt += (*it)->course.getCourseSubject() + " ";
+		*dataIt += std::to_string((*it)->course.getCourseNumber());
+		*dataIt += (*it)->course.getCourseTitle();
+		*dataIt += (*it)->course.getDescription();
+
+		for (auto &c : *dataIt) {
+			c = std::tolower(c);
+		}
+
+		++dataIt;
+	}
+
+	bool found = false;
+
+	dataIt = searchData.begin();
+	for (auto it = Courses.begin(); it != Courses.end(); ++it) { //Searching through data
+
+		if (dataIt->find(input) != std::string::npos) { //Found input in the data for a course
+			std::cout << fullCourseInfo((*it)->course) << std::endl
+				<< "Is this the course you're looking for? (y/n) ";
+
+			if (!InputChecker::getBool()) { //Not the course so move on to next search result
+				++dataIt;
+				continue; 
+			}
+
+			//Found course
+			system("cls");
+			editCourse((*it)->course);
+			found = true;
+			break;
+		}
+
+		++dataIt;
+	}
+
+	if (!found) {
+		std::cout << "Your search returned no results. Try entering the course subject or number, or part of the title or description." << std::endl << std::endl;
+		system("pause");
+	}
+
+	system("cls");
+}
+
+void Menu::editCourse(CourseModule &c) {
+	std::string input;
+	int userChoice;
+	do {
+		std::cout << "Edit Course" << std::endl << std::endl;
+		std::cout << fullCourseInfo(c) << std::endl
+			<< "0 - Return" << std::endl
+			<< "1 - Edit course title" << std::endl
+			<< "2 - Edit course units" << std::endl
+			<< "3 - Edit course description" << std::endl
+			<< "4 - Edit course prerequisites" << std::endl << std::endl
+			<< "Enter a choice: ";
+		userChoice = InputChecker::getInt();
+		std::cout << std::endl;
+		switch (userChoice) {
+			int choice;
+		case 0:
+			break;
+		case 1:
+			if (c.getCourseTitle() != "")
+				std::cout << "Current course title: " << c.getCourseTitle() << std::endl << std::endl;
+
+			std::cout << "Enter new course title or enter 0 to cancel: ";
+			std::getline(std::cin, input);
+			if (input == "0") break;
+
+			c.setCourseTitle(input);
+			std::cout << "Course title changed." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+			break;
+		case 2: {
+			if (c.getUnits() != NULL)
+				std::cout << "Current course units: " << c.getUnits() << std::endl << std::endl;
+
+			std::cout << "Enter new course units or enter 0 to cancel: ";
+
+			int num = InputChecker::getInt();
+
+			if (num == 0) break;
+
+			c.setUnits(num);
+			std::cout << "Course units changed." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+			break;
+		}
+		case 3:
+			if (c.getDescription() != "")
+				std::cout << "Current course description: " << c.getDescription() << std::endl << std::endl;
+
+			std::cout << "Enter new course description or enter 0 to cancel: ";
+
+			std::getline(std::cin, input);
+			if (input == "0") break;
+
+			c.setDescription(input);
+			std::cout << "Course description changed." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+			break;
+		case 4: {
+			do {
+				system("cls");
+				std::cout << "Edit Prerequisites" << std::endl << std::endl
+					<< "Current prerequisites: ";
+
+				//Print prerequisites
+				vertex *v = Courses.search(c);
+				std::list<vertex *>::const_iterator it = v->prerequisites.begin();
+				while (it != v->prerequisites.end()) {
+					std::cout << (*it)->course;
+					++it;
+					if (it != v->prerequisites.end()) std::cout << ", ";
+				}
+
+				std::cout << std::endl << std::endl;
+
+				std::cout << "0 - Return" << std::endl
+					<< "1 - Add prerequisite" << std::endl
+					<< "2 - Remove prerequisite" << std::endl << std::endl
+					<< "Enter choice: ";
+
+				choice = InputChecker::getInt();
+				std::cout << std::endl;
+
+				std::string temp;
+				switch (choice) {
+				case 0:
+					break;
+				case 1:
+					printAllCourses();
+					std::cout << std::endl;
+					std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel: ";
+					std::getline(std::cin, temp);
+					if (temp != std::to_string(0)) {
+						readPrerequisites(c, temp);
+						std::cout << "Course prerequisite(s) added." << std::endl;
+						system("pause");
+					}
+					break;
+				case 2: {
+					std::cout << fullCourseInfo(c) << std::endl;
+
+					if (v->prerequisites.empty()) {
+						std::cout << "Prerequisites are empty." << std::endl << std::endl;
+						system("pause");
+						break;
+					}
+
+					std::vector<CourseModule *> prereqCourses = inputValidCourses();
+
+					if (prereqCourses.empty()) break;
+
+					for (std::vector<CourseModule *>::iterator it = prereqCourses.begin(); it != prereqCourses.end(); ++it) {
+						Courses.removeEdge(**it, c);
+					}
+
+					std::cout << "Course(s) has been removed from prerequisites." << std::endl << std::endl;
+					system("pause");
+					break;
+				}
+				default:
+					std::cout << "Invalid choice." << std::endl << std::endl;
+					system("pause");
+					break;
+				}
+				system("cls");
+			} while (choice != 0);
+			break;
+		}
+		default:
+			std::cout << "Invalid choice." << std::endl << std::endl;
+			system("pause");
+			break;
+		}
+		system("cls");
+	} while (userChoice != 0);
 }
 
 CourseModule *Menu::inputValidCourse() {
@@ -444,7 +664,7 @@ void Menu::subMenuCourseEdit() {
 		return;
 	}
 
-	std::cout << "Edit a course" << std::endl << std::endl;
+	std::cout << "Edit course" << std::endl << std::endl;
 	printAllCourses();
 	std::cout << std::endl;
 	CourseModule* course = inputValidCourse();
@@ -457,144 +677,7 @@ void Menu::subMenuCourseEdit() {
 	}
 
 	system("cls");
-
-	std::string input;
-	int userChoice;
-	do {
-		std::cout << "Edit a Course" << std::endl << std::endl;
-		std::cout << fullCourseInfo(*course) << std::endl
-			<< "0 - Return" << std::endl
-			<< "1 - Edit course title" << std::endl
-			<< "2 - Edit course units" << std::endl
-			<< "3 - Edit course description" << std::endl
-			<< "4 - Edit course prerequisites" << std::endl << std::endl
-			<< "Enter a choice: ";
-		userChoice = InputChecker::getInt();
-		std::cout << std::endl;
-		switch (userChoice) {
-			int choice;
-		case 0:
-			break;
-		case 1:
-			if (course->getCourseTitle() != "")
-				std::cout << "Current course title: " << course->getCourseTitle() << std::endl << std::endl;
-
-			std::cout << "Enter new course title or enter 0 to cancel: ";
-			std::getline(std::cin, input);
-			if (input == "0") break;
-
-			course->setCourseTitle(input);
-			std::cout << "Course title changed." << std::endl << std::endl;
-			system("pause");
-			system("cls");
-			break;
-		case 2: {
-			if (course->getUnits() != NULL)
-				std::cout << "Current course units: " << course->getUnits() << std::endl << std::endl;
-
-			std::cout << "Enter new course units or enter 0 to cancel: ";
-
-			int num = InputChecker::getInt();
-
-			if (num == 0) break;
-
-			course->setUnits(num);
-			std::cout << "Course units changed." << std::endl << std::endl;
-			system("pause");
-			system("cls");
-			break;
-		}
-		case 3:
-			if (course->getDescription() != "")
-				std::cout << "Current course description: " << course->getDescription() << std::endl << std::endl;
-
-			std::cout << "Enter new course description or enter 0 to cancel: ";
-
-			std::getline(std::cin, input);
-			if (input == "0") break;
-
-			course->setDescription(input);
-			std::cout << "Course description changed." << std::endl << std::endl;
-			system("pause");
-			system("cls");
-			break;
-		case 4: {
-			do {
-				system("cls");
-				std::cout << "Edit Prerequisites" << std::endl << std::endl 
-					<< "Current prerequisites: ";
-
-				//Print prerequisites
-				vertex *v = Courses.search(*course);
-				std::list<vertex *>::const_iterator it = v->prerequisites.begin();
-				while (it != v->prerequisites.end()) {
-					std::cout << (*it)->course;
-					++it;
-					if (it != v->prerequisites.end()) std::cout << ", ";
-				}
-
-				std::cout << std::endl << std::endl;
-
-				std::cout << "0 - Return" << std::endl
-					<< "1 - Add prerequisite" << std::endl
-					<< "2 - Remove prerequisite" << std::endl << std::endl
-					<< "Enter choice: ";
-
-				choice = InputChecker::getInt();
-				std::cout << std::endl;
-
-				std::string temp;
-				switch (choice) {
-				case 0:
-					break;
-				case 1:
-					printAllCourses();
-					std::cout << std::endl;
-					std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel: ";
-					std::getline(std::cin, temp);
-					if (temp != std::to_string(0)) {
-						readPrerequisites(course, temp);
-						std::cout << "Course prerequisite(s) added." << std::endl;
-						system("pause");
-					}
-					break;
-				case 2: {
-					std::cout << fullCourseInfo(*course) << std::endl;
-					
-					if (v->prerequisites.empty()) {
-						std::cout << "Prerequisites are empty." << std::endl << std::endl;
-						system("pause");
-						break;
-					}
-
-					std::vector<CourseModule*> prereqCourses = inputValidCourses();
-
-					if (prereqCourses.empty()) break;
-
-					for (std::vector<CourseModule*>::iterator it = prereqCourses.begin(); it != prereqCourses.end(); ++it) {
-						Courses.removeEdge(**it, *course);
-					}
-
-					std::cout << "Course(s) has been removed from prerequisites." << std::endl << std::endl;
-					system("pause");
-					break;
-				}
-				default:
-					std::cout << "Invalid choice." << std::endl << std::endl;
-					system("pause");
-					break;
-				}
-				system("cls");
-			} while (choice != 0);
-			break;
-		}
-		default:
-			std::cout << "Invalid choice." << std::endl << std::endl;
-			system("pause");
-			break;
-		}
-		system("cls");
-	} while (userChoice != 0);
+	editCourse(*course);
 }
 
 void Menu::addMultiplePrereqs(CourseModule* course, const std::vector<CourseModule*>& prereqs) {

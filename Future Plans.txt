@@ -1,7 +1,6 @@
 TODO for Course Manager project
 
 -Figure out GUI's and see if I can switch over to that
--Create my own Course container class that uses a graph to hold course objects. This way, we can traverse the graph from a node to see the courses it is required for
 -Add a system to plan individual semesters
 -Add an option to view the entire tree of courses showing their prerequisites and everything
 -Create a UML for this project

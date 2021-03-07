@@ -10,17 +10,6 @@
 */
 class CourseModule {
 private:
-
-	/**
-	 * @brief Vector containing pointers to the prerequisites for this course
-	*/
-	std::vector<CourseModule*> prerequisites;
-
-	/**
-	 * @brief Vector containing pointers to the courses this course is a prerequisite for
-	 * @details This should be temporary because I'm planning on using a graph in the future to represent the courses
-	*/
-	std::vector<CourseModule*> prerequisiteFor;
 	
 	int units, courseNumber;
 
@@ -40,18 +29,6 @@ private:
 	*/
 	std::string courseDescription = "";
 
-	/**
-	 * @brief Adds a course to the list of courses this course is a prerequisite for
-	 * @param course A pointer to the course we're adding to this course's prerequisites
-	*/
-	void addPrerequisiteFor(CourseModule* course);
-
-	/**
-	 * @brief Removes a course from the list of courses this course is a prerequisite for
-	 * @param course The course whose prerequisites we're removing this course from
-	*/
-	void removePrerequisiteFor(CourseModule* course);
-
 public:
 
 	/**
@@ -64,12 +41,16 @@ public:
 	 * @param description Course description (Ex: Review of logic design. Instruction set architecture. Arithmetic logic...)
 	 * @param prereqs Vector containing a list of pointers to courses this course has as prerequisites
 	*/
-	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = 0, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
-	
+	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = NULL, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
+
 	/**
-	 * @brief Destructor that goes through the list of courses this course is a prerequisite for and removes this course from their prerequisites
+	 * @brief Constructor to initialize the course subject and course number
+	 * @details If string entered is not a valid course, we return 
+	 * @param course String containing the course's subject and course number
 	*/
-	~CourseModule();
+	CourseModule(std::string course);
+
+	CourseModule(const CourseModule &c);
 
 	//Self explanatory functions
 
@@ -90,40 +71,6 @@ public:
 	*/
 	std::string getCourseName() const;
 
-
-	/**
-	 * @brief Puts the prerequisite courses for this course into a string including only the course subject and course number
-	 * @return String containing course subjects and numbers of this course's prerequisites separated by spaces. Returns empty string if there are no prerequisites
-	*/
-	std::string getPrereqsAsString() const;
-
-	/**
-	 * @brief Adds a prerequisite to this course
-	 * @param course Pointer to the course we're adding as a prerequisite
-	*/
-	void addPrerequisite(CourseModule* course);
-
-	/**
-	 * @brief Removes a course from this course's prerequisites
-	 * @details Does nothing if the course passed in is not a prerequisite
-	 * @param course Prerequisite course we're removing
-	*/
-	void removePrerequisite(CourseModule* course);
-
-	/**
-	 * @brief Gets the list of prerequisites for this course
-	 * @returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course has as prerequisites
-	*/
-	std::vector<CourseModule*>* getPrerequisites();
-
-	/**
-	 * @brief Gets the list of courses this course is a prerequisite for
-	 * @details returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
-	*/
-	std::vector<CourseModule *> *getPrerequisiteFor();
-
 	/**
 	 * @brief Checks whether all fields have been filled out for this course
 	 * @return True if the course subject, number, units, title, and description all have values, false otherwise
@@ -138,6 +85,29 @@ public:
 	 * @return The ostream variable passed in
 	*/
 	friend std::ostream &operator<<(std::ostream &os, const CourseModule &course);
+
+	/**
+	 * @brief Used to determine if two course names are the same (Ex. CECS 100 == CECS 100 is true)
+	 * @details ONLY checks course subject and course number are the same
+	 * @param c Course we're comparing to
+	 * @return True if course subject and course number are matching, false otherwise
+	*/
+	bool operator==(const CourseModule &c) const;
+
+	/**
+	 * @brief First compares subject then compares course number
+	 * @param c Course being compared
+	 * @return Compares strings of this course and course c, then compares course numbers if subjects are equal
+	*/
+	bool operator<(const CourseModule &c) const;
+
+	/**
+	 * @brief First compares subject then compares course number
+	 * @param c Course being compared
+	 * @return Compares strings of this course and course c, then compares course numbers if subjects are equal
+	*/
+	bool operator>(const CourseModule &c) const;
+
 };
 
 #endif

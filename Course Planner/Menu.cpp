@@ -5,90 +5,18 @@
 #include <algorithm>
 #include "Menu.h"
 #include "CourseInputChecker.h"
+#include "CourseData.h"
 
 Menu::Menu() {
-	readData();
-}
-
-void Menu::readData() {
-	inFile.open(dataFile);
-
-	if (!inFile.is_open()) {
-		std::cout << "The file " << dataFile << " does not exist. Would you like to create one? (y/n)" << std::endl;
-
-		bool createNewFile = InputChecker::getBool("Input invalid. Create file? (y/n) ");
-		std::cout << std::endl;
-
-		if (createNewFile) {
-			std::ofstream file;
-			file.open(dataFile);
-			file.close();
-			std::cout << dataFile << " has been created." << std::endl;
-			system("pause");
-			system("cls");
-		}
-		else {
-			std::cout << "No file to read. Exiting" << std::endl;
-			system("pause");
-			inFile.close();
-			std::exit(0);
-		}
+	try {
+		CourseData::load(Courses, dataFile);
 	}
-
-	std::string subject;
-	int number;
-
-	std::string currentLine;
-	std::string whatIsIt; //Example being "Course Subject" or "Units". This is so that I can read the data correctly
-	std::string data; //This is the actual data in the line that I'll be reading
-
-	CourseModule* course;
-	while (!inFile.eof()) {
-		if (inFile.peek() == EOF) {
-			inFile.close();
-			return;
-		}
-
-		std::getline(inFile, currentLine);
-		subject = currentLine.substr(currentLine.find(':') + 2, currentLine.length() - 1);
-		
-		std::getline(inFile, currentLine);
-		number = std::stoi(currentLine.substr(currentLine.find(':') + 2, currentLine.length() - 1));
-
-		course = addCourse(subject, number);
-
-		std::getline(inFile, currentLine);
-		if (currentLine.length() > 1) {
-			whatIsIt = currentLine.substr(0, currentLine.find(':'));
-			data = currentLine.substr(currentLine.find(':') + 2, currentLine.length() - 1);
-		}
-
-		while (currentLine.length() > 1) {
-			if (whatIsIt == "Course Title") {
-				course->setCourseTitle(data);
-			}
-			else if (whatIsIt == "Units") {
-				course->setUnits(std::stoi(data));
-			}
-			else if (whatIsIt == "Course Description") {
-				course->setDescription(data);
-			}
-			else if (whatIsIt == "Prerequisites") {
-				
-				if (data != "") {
-					readPrerequisites(course, data);
-				}
-				
-			}
-
-			std::getline(inFile, currentLine);
-			if (currentLine.length() > 1) {
-				whatIsIt = currentLine.substr(0, currentLine.find(':'));
-				data = currentLine.substr(currentLine.find(':') + 2, currentLine.length() - 1);
-			}
-		}
+	catch (std::runtime_error x) {
+		std::cout << x.what() << std::endl
+			<< "List of courses is empty" << std::endl;
+		system("pause");
+		system("cls");
 	}
-	inFile.close();
 }
 
 void Menu::readPrerequisites(CourseModule* course, std::string str) {
@@ -109,27 +37,8 @@ void Menu::readPrerequisites(CourseModule* course, std::string str) {
 			str = "";
 		}
 
-		CourseModule *temp = addCourse(sub, num);
-		course->addPrerequisite(temp);
+		Courses.addEdge(CourseModule(sub, num), *course);
 	} while (str.find(' ') != std::string::npos);
-}
-
-void Menu::saveData() {
-	outFile.open(dataFile);
-	for (std::vector<CourseModule*>::iterator it = Courses.begin(); it != Courses.end(); ++it) {
-		outFile << "Course Subject: " << (*it)->getCourseSubject() << std::endl
-			<< "Course Number: " << (*it)->getCourseNumber() << std::endl;
-		if ((*it)->getCourseTitle() != "")
-			outFile << "Course Title: " << (*it)->getCourseTitle() << std::endl;
-		if ((*it)->getUnits() != NULL)
-			outFile << "Units: " << (*it)->getUnits() << std::endl;
-		if ((*it)->getDescription() != "")
-			outFile << "Course Description: " << (*it)->getDescription() << std::endl;
-		if (!(*it)->getPrerequisites()->empty())
-			outFile << "Prerequisites: " << (*it)->getPrereqsAsString() << std::endl;
-		outFile << "-" << std::endl;
-	}
-	outFile.close();
 }
 
 void Menu::runMenu() {
@@ -140,40 +49,23 @@ void Menu::runMenu() {
 	mainMenu();
 }
 
-CourseModule* Menu::courseSearch(std::string sub, int num) {
-	for (std::vector<CourseModule*>::iterator courseIterator = Courses.begin(); courseIterator != Courses.end(); ++courseIterator) {
-		if ((*courseIterator)->getCourseSubject() == sub && (*courseIterator)->getCourseNumber() == num)
-			return *courseIterator;
-	}
-	return nullptr;
-}
-
-std::vector<CourseModule*>::iterator Menu::courseSearchIt(std::string sub, int num) {
-	std::vector<CourseModule*>::iterator courseIterator;
-	for (courseIterator = Courses.begin(); courseIterator != Courses.end(); ++courseIterator) {
-		if ((*courseIterator)->getCourseSubject() == sub && (*courseIterator)->getCourseNumber() == num)
-			return courseIterator;
-	}
-	return courseIterator;
-}
-
 void Menu::printAllCourses() {
 	if (Courses.empty()) return;
 
-	int distance = 15;
+	int spacing = 15;
 	int coursesPerLine = 5;
 	std::cout << std::left << "Current list of courses:\n\n";
 
 	int count = 1;
-	for (std::vector<CourseModule*>::iterator it = Courses.begin(); it != Courses.end(); ++it) {
+	for (std::vector<vertex *>::const_iterator it = Courses.begin(); it != Courses.end(); ++it) {
 		std::string course;
-		if (!(*it)->dataComplete()) course += "~";
-		course += (*it)->getCourseSubject() + " " + std::to_string((*it)->getCourseNumber());
+		if (!(*it)->course.dataComplete()) course += "~";
+		course += (*it)->course.getCourseSubject() + " " + std::to_string((*it)->course.getCourseNumber());
 		if (count <= coursesPerLine) {
-			std::cout << std::setw(distance) << course;
+			std::cout << std::setw(spacing) << course;
 			++count;
 		} else {
-			std::cout << std::endl << std::setw(distance) << course;
+			std::cout << std::endl << std::setw(spacing) << course;
 			count = 2;
 		}
 	}
@@ -183,10 +75,10 @@ void Menu::printAllCourses() {
 void Menu::printAllIncompleteDataCourses() {
 	if (Courses.empty()) return;
 
-	std::vector<CourseModule*>::iterator it;
+	std::vector<vertex *>::const_iterator it;
 	bool empty = true;
 	for (it = Courses.begin(); it != Courses.end(); ++it) {
-		if (!(*it)->dataComplete()) {
+		if (!(*it)->course.dataComplete()) {
 			empty = false;
 			break;
 		}
@@ -201,11 +93,11 @@ void Menu::printAllIncompleteDataCourses() {
 	std::cout << std::left << "Current list of courses with incomplete data:\n\n";
 
 	int count = 1;
-	for (std::vector<CourseModule*>::iterator it = Courses.begin(); it != Courses.end(); ++it) {
+	for (std::vector<vertex *>::const_iterator it = Courses.begin(); it != Courses.end(); ++it) {
 		std::string course;
-		if (!(*it)->dataComplete()) {
+		if (!(*it)->course.dataComplete()) {
 			course += "~";
-			course += (*it)->getCourseSubject() + " " + std::to_string((*it)->getCourseNumber());
+			course += (*it)->course.getCourseSubject() + " " + std::to_string((*it)->course.getCourseNumber());
 			if (count <= coursesPerLine) {
 				std::cout << std::setw(distance) << course;
 				++count;
@@ -222,23 +114,34 @@ void Menu::printAllCourseData() {
 	if (Courses.empty()) return;
 
 	std::cout << "Current list of courses and their data:\n\n";
-	std::vector<CourseModule*>::iterator it;
+	std::vector<vertex *>::const_iterator it;
 	for (it = Courses.begin(); it != Courses.end() - 1; ++it) {
-		std::cout << fullCourseInfo(*it) << std::endl;
+		std::cout << fullCourseInfo((*it)->course) << std::endl;
 		std::cout << "-------------------------------------------------------------------------------" << std::endl << std::endl;
 	}
-	std::cout << fullCourseInfo(*(Courses.end() - 1)) << std::endl;
+	std::cout << fullCourseInfo((*(Courses.end() - 1))->course) << std::endl;
 }
 
-std::string Menu::fullCourseInfo(CourseModule* course) {
+std::string Menu::fullCourseInfo(const CourseModule &course) {
 	std::string result;
-	if (!course->dataComplete()) result += "~";
-	result += course->getCourseSubject() + " " + std::to_string(course->getCourseNumber());
+	if (!course.dataComplete()) result += "~";
+	result += course.getCourseSubject() + " " + std::to_string(course.getCourseNumber());
 
-	if (course->getCourseTitle() != "") result += " - " + course->getCourseTitle();
-	if (course->getUnits() > 0) result += "\nUnits: " + std::to_string(course->getUnits());
-	if (course->getDescription() != "") result += "\nDescription: " + course->getDescription();
-	if (course->getPrereqsAsString() != "") result += "\nPrerequisites: " + course->getPrereqsAsString();
+	if (course.getCourseTitle() != "") result += " - " + course.getCourseTitle();
+	if (course.getUnits() > 0) result += "\nUnits: " + std::to_string(course.getUnits());
+	if (course.getDescription() != "") result += "\nDescription: " + course.getDescription();
+	
+	vertex *v = Courses.search(course);
+	if (v != nullptr) {
+		result += "\nPrerequisites: ";
+		std::list<vertex *>::const_iterator it = v->prerequisites.begin();
+		while (it != v->prerequisites.end()) {
+			result += (*it)->course.getCourseSubject() + " " + std::to_string((*it)->course.getCourseNumber());
+			++it;
+			if (it != v->prerequisites.end()) result += ", ";
+		}
+	}
+
 	result += "\n";
 	return result;
 }
@@ -293,13 +196,13 @@ void Menu::mainMenu() {
 			subMenuCourseEdit();
 			break;
 		case 5:
-			saveData();
+			CourseData::store(Courses, dataFile);
 			std::cout << "Data has been saved to " << dataFile << std::endl << std::endl;
 			system("pause");
 			break;
 		case 6: 
 			autoSave = !autoSave;
-			std::cout << "Autosave is now " << ((autoSave) ? "on" : "OFF") << "." << std::endl << std::endl;
+			std::cout << "Autosave is now " << ((autoSave) ? "on" : "off") << "." << std::endl << std::endl;
 			system("pause");
 			break;
 		default:
@@ -308,7 +211,7 @@ void Menu::mainMenu() {
 			break;
 		}
 		system("cls");
-		if(autoSave) saveData();
+		if(autoSave) CourseData::store(Courses, dataFile);
 	}
 }
 
@@ -339,7 +242,7 @@ void Menu::subMenuCourseAdd() {
 	do {
 		int count = 0;
 		std::cout << "Add a Course" << std::endl << std::endl;
-		std::cout << fullCourseInfo(course) << std::endl
+		std::cout << fullCourseInfo(*course) << std::endl
 			<< count++ << " - Return" << std::endl;
 		if (course->getCourseTitle() == "") {
 			title.assignedNum = count++;
@@ -428,7 +331,9 @@ void Menu::subMenuCourseRemove() {
 
 	CourseModule *course = inputValidCourse();
 	if (course == nullptr) return;
-	if (std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+
+	vertex *v = Courses.search(*course);
+	if (v == nullptr) {
 		std::cout << "The course you entered has not been added and therefore cannot be deleted." << std::endl << std::endl;
 		system("pause");
 		system("cls");
@@ -439,12 +344,16 @@ void Menu::subMenuCourseRemove() {
 
 	std::string input;
 	std::cout << "Remove a Course" << std::endl << std::endl;
-	if (!course->getPrerequisiteFor()->empty()) {
+	if (!v->prerequisiteFor.empty()) {
 		std::cout << *course << " is a prerequisite for ";
-		for (std::vector<CourseModule *>::const_iterator i = course->getPrerequisiteFor()->begin(); i < course->getPrerequisiteFor()->end() - 1; ++i) {
-			std::cout << **i << ", ";
+		std::list<vertex *>::const_iterator it = v->prerequisiteFor.begin();
+		while (it != v->prerequisiteFor.end()) {
+			std::cout << (*it)->course;
+			++it;
+			if (it != v->prerequisiteFor.end()) std::cout << ", ";
 		}
-		std::cout << **(course->getPrerequisiteFor()->end() - 1) << std::endl;
+
+		std::cout << std::endl;
 	}
 
 		std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
@@ -457,7 +366,7 @@ void Menu::subMenuCourseRemove() {
 	}
 
 	if (input == "Y" || input == "y") {
-		removeCourse(course);
+		Courses.remove(*course);
 		std::cout << "The course has been removed." << std::endl;
 		system("pause");
 	}
@@ -479,7 +388,7 @@ CourseModule *Menu::inputValidCourse() {
 	else {
 		num = std::stoi(input.substr(0, input.find_first_of(' ')));
 	}
-	return courseSearch(sub, num);
+	return &Courses.search(CourseModule(sub, num))->course;
 
 }
 
@@ -498,7 +407,7 @@ CourseModule *Menu::inputNewValidCourse() {
 	else {
 		num = std::stoi(input.substr(0, input.find_first_of(' ')));
 	}
-	return addCourse(sub, num);
+	return &(*Courses.insert(CourseModule(sub, num)))->course;
 
 }
 
@@ -522,7 +431,7 @@ std::vector<CourseModule*> Menu::inputValidCourses() {
 			input = input.substr(input.find_first_of(' '), std::string::npos);
 		}
 
-		result.push_back(addCourse(sub, num));
+		result.push_back(&(*Courses.insert(CourseModule(sub, num)))->course);
 	}
 
 	return result;
@@ -540,7 +449,7 @@ void Menu::subMenuCourseEdit() {
 	std::cout << std::endl;
 	CourseModule* course = inputValidCourse();
 	if (course == nullptr) return;
-	if(std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+	if(Courses.search(*course) == nullptr) {
 		std::cout << "The course you entered has not been added and therefore cannot be edited." << std::endl << std::endl;
 		system("pause");
 		system("cls");
@@ -553,7 +462,7 @@ void Menu::subMenuCourseEdit() {
 	int userChoice;
 	do {
 		std::cout << "Edit a Course" << std::endl << std::endl;
-		std::cout << fullCourseInfo(course) << std::endl
+		std::cout << fullCourseInfo(*course) << std::endl
 			<< "0 - Return" << std::endl
 			<< "1 - Edit course title" << std::endl
 			<< "2 - Edit course units" << std::endl
@@ -612,9 +521,21 @@ void Menu::subMenuCourseEdit() {
 		case 4: {
 			do {
 				system("cls");
-				std::cout << "Edit Prerequisites" << std::endl << std::endl
-					<< "Current prerequisites: " << course->getPrereqsAsString() << std::endl << std::endl
-					<< "0 - Return" << std::endl
+				std::cout << "Edit Prerequisites" << std::endl << std::endl 
+					<< "Current prerequisites: ";
+
+				//Print prerequisites
+				vertex *v = Courses.search(*course);
+				std::list<vertex *>::const_iterator it = v->prerequisites.begin();
+				while (it != v->prerequisites.end()) {
+					std::cout << (*it)->course;
+					++it;
+					if (it != v->prerequisites.end()) std::cout << ", ";
+				}
+
+				std::cout << std::endl << std::endl;
+
+				std::cout << "0 - Return" << std::endl
 					<< "1 - Add prerequisite" << std::endl
 					<< "2 - Remove prerequisite" << std::endl << std::endl
 					<< "Enter choice: ";
@@ -638,13 +559,20 @@ void Menu::subMenuCourseEdit() {
 					}
 					break;
 				case 2: {
-					std::cout << fullCourseInfo(course) << std::endl;
+					std::cout << fullCourseInfo(*course) << std::endl;
+					
+					if (v->prerequisites.empty()) {
+						std::cout << "Prerequisites are empty." << std::endl << std::endl;
+						system("pause");
+						break;
+					}
+
 					std::vector<CourseModule*> prereqCourses = inputValidCourses();
 
 					if (prereqCourses.empty()) break;
 
 					for (std::vector<CourseModule*>::iterator it = prereqCourses.begin(); it != prereqCourses.end(); ++it) {
-						course->removePrerequisite(*it);
+						Courses.removeEdge(**it, *course);
 					}
 
 					std::cout << "Course(s) has been removed from prerequisites." << std::endl << std::endl;
@@ -669,33 +597,9 @@ void Menu::subMenuCourseEdit() {
 	} while (userChoice != 0);
 }
 
-CourseModule* Menu::addCourse(std::string sub, int num) {
-	CourseModule* toBeAdded = courseSearch(sub, num);
-	if (toBeAdded == nullptr) {
-		toBeAdded = new CourseModule(sub, num);
-		Courses.push_back(toBeAdded);
-	}
-	return toBeAdded;
-}
-
-CourseModule* Menu::addCourse(CourseModule* course) {
-	CourseModule* toBeAdded = courseSearch(course->getCourseSubject(), course->getCourseNumber());
-	if (toBeAdded == nullptr) {
-		Courses.push_back(course);
-	}
-	return course;
-}
-
 void Menu::addMultiplePrereqs(CourseModule* course, const std::vector<CourseModule*>& prereqs) {
 	if (prereqs.empty()) return;
 	for (std::vector<CourseModule*>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-		course->addPrerequisite(*it);
+		Courses.addEdge(**it, *course);
 	}
-}
-
-void Menu::removeCourse(CourseModule *course) {
-	std::vector<CourseModule*>::iterator courseIt = std::find(Courses.begin(), Courses.end(), course);
-	if (courseIt == Courses.end()) return;
-	delete* courseIt; //Deallocating memory and removing this course from any courses that have it as a prerequisite
-	Courses.erase(courseIt); //Removing the course's pointer from the list of courses
 }

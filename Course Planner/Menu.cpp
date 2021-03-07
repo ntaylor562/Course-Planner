@@ -8,7 +8,15 @@
 #include "CourseData.h"
 
 Menu::Menu() {
-	CourseData::load(Courses, dataFile);
+	try {
+		CourseData::load(Courses, dataFile);
+	}
+	catch (std::runtime_error x) {
+		std::cout << x.what() << std::endl
+			<< "List of courses is empty" << std::endl;
+		system("pause");
+		system("cls");
+	}
 }
 
 void Menu::readPrerequisites(CourseModule* course, std::string str) {
@@ -122,7 +130,18 @@ std::string Menu::fullCourseInfo(const CourseModule &course) {
 	if (course.getCourseTitle() != "") result += " - " + course.getCourseTitle();
 	if (course.getUnits() > 0) result += "\nUnits: " + std::to_string(course.getUnits());
 	if (course.getDescription() != "") result += "\nDescription: " + course.getDescription();
-	if (course.getPrereqsAsString() != "") result += "\nPrerequisites: " + course.getPrereqsAsString();
+	
+	vertex *v = Courses.search(course);
+	if (v != nullptr) {
+		result += "\nPrerequisites: ";
+		std::list<vertex *>::const_iterator it = v->prerequisites.begin();
+		while (it != v->prerequisites.end()) {
+			result += (*it)->course.getCourseSubject() + " " + std::to_string((*it)->course.getCourseNumber());
+			++it;
+			if (it != v->prerequisites.end()) result += ", ";
+		}
+	}
+
 	result += "\n";
 	return result;
 }
@@ -312,7 +331,9 @@ void Menu::subMenuCourseRemove() {
 
 	CourseModule *course = inputValidCourse();
 	if (course == nullptr) return;
-	if (std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+
+	vertex *v = Courses.search(*course);
+	if (v == nullptr) {
 		std::cout << "The course you entered has not been added and therefore cannot be deleted." << std::endl << std::endl;
 		system("pause");
 		system("cls");
@@ -323,12 +344,16 @@ void Menu::subMenuCourseRemove() {
 
 	std::string input;
 	std::cout << "Remove a Course" << std::endl << std::endl;
-	if (!course->getPrerequisiteFor()->empty()) { //TODO Maybe create a method to get the prerequisites of a course
+	if (!v->prerequisiteFor.empty()) {
 		std::cout << *course << " is a prerequisite for ";
-		for (std::vector<CourseModule *>::const_iterator i = course->getPrerequisiteFor()->begin(); i < course->getPrerequisiteFor()->end() - 1; ++i) {
-			std::cout << **i << ", ";
+		std::list<vertex *>::const_iterator it = v->prerequisiteFor.begin();
+		while (it != v->prerequisiteFor.end()) {
+			std::cout << (*it)->course;
+			++it;
+			if (it != v->prerequisiteFor.end()) std::cout << ", ";
 		}
-		std::cout << **(course->getPrerequisiteFor()->end() - 1) << std::endl;
+
+		std::cout << std::endl;
 	}
 
 		std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
@@ -424,7 +449,7 @@ void Menu::subMenuCourseEdit() {
 	std::cout << std::endl;
 	CourseModule* course = inputValidCourse();
 	if (course == nullptr) return;
-	if(std::find(Courses.begin(), Courses.end(), course) == Courses.end()) {
+	if(Courses.search(*course) == nullptr) {
 		std::cout << "The course you entered has not been added and therefore cannot be edited." << std::endl << std::endl;
 		system("pause");
 		system("cls");
@@ -496,9 +521,21 @@ void Menu::subMenuCourseEdit() {
 		case 4: {
 			do {
 				system("cls");
-				std::cout << "Edit Prerequisites" << std::endl << std::endl
-					<< "Current prerequisites: " << course->getPrereqsAsString() << std::endl << std::endl
-					<< "0 - Return" << std::endl
+				std::cout << "Edit Prerequisites" << std::endl << std::endl 
+					<< "Current prerequisites: ";
+
+				//Print prerequisites
+				vertex *v = Courses.search(*course);
+				std::list<vertex *>::const_iterator it = v->prerequisites.begin();
+				while (it != v->prerequisites.end()) {
+					std::cout << (*it)->course;
+					++it;
+					if (it != v->prerequisites.end()) std::cout << ", ";
+				}
+
+				std::cout << std::endl << std::endl;
+
+				std::cout << "0 - Return" << std::endl
 					<< "1 - Add prerequisite" << std::endl
 					<< "2 - Remove prerequisite" << std::endl << std::endl
 					<< "Enter choice: ";
@@ -523,6 +560,13 @@ void Menu::subMenuCourseEdit() {
 					break;
 				case 2: {
 					std::cout << fullCourseInfo(*course) << std::endl;
+					
+					if (v->prerequisites.empty()) {
+						std::cout << "Prerequisites are empty." << std::endl << std::endl;
+						system("pause");
+						break;
+					}
+
 					std::vector<CourseModule*> prereqCourses = inputValidCourses();
 
 					if (prereqCourses.empty()) break;
@@ -553,33 +597,9 @@ void Menu::subMenuCourseEdit() {
 	} while (userChoice != 0);
 }
 
-CourseModule* Menu::addCourse(std::string sub, int num) {
-	CourseModule* toBeAdded = courseSearch(sub, num);
-	if (toBeAdded == nullptr) {
-		toBeAdded = new CourseModule(sub, num);
-		Courses.push_back(toBeAdded);
-	}
-	return toBeAdded;
-}
-
-CourseModule* Menu::addCourse(CourseModule* course) {
-	CourseModule* toBeAdded = courseSearch(course->getCourseSubject(), course->getCourseNumber());
-	if (toBeAdded == nullptr) {
-		Courses.push_back(course);
-	}
-	return course;
-}
-
 void Menu::addMultiplePrereqs(CourseModule* course, const std::vector<CourseModule*>& prereqs) {
 	if (prereqs.empty()) return;
 	for (std::vector<CourseModule*>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-		course->addPrerequisite(*it);
+		Courses.addEdge(**it, *course);
 	}
-}
-
-void Menu::removeCourse(CourseModule *course) {
-	std::vector<CourseModule*>::iterator courseIt = std::find(Courses.begin(), Courses.end(), course);
-	if (courseIt == Courses.end()) return;
-	delete* courseIt; //Deallocating memory and removing this course from any courses that have it as a prerequisite
-	Courses.erase(courseIt); //Removing the course's pointer from the list of courses
 }

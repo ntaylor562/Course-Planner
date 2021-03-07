@@ -11,7 +11,7 @@
 
 /**
  * @brief Temporary class to drive the program giving the option to add, remove, and edit courses in a list
- * @details Meant to be replaced in the future with an actual object oriented design
+ * @details Meant to be replaced in the future with an actual object oriented design and GUI
  * @details I started this project when I didn't know much, that's why it's like this
 */
 class Menu {
@@ -47,15 +47,6 @@ public:
 	*/
 	Menu ();
 
-
-	//TODO Consider if this method is still relevant
-	/**
-	 * @brief Adds multiple courses to the list of prerequisites of a course
-	 * @param course The course receiving the list of prerequisites
-	 * @param prereqs Vector containing courses that are prerequisites for course
-	*/
-	void addMultiplePrereqs(CourseModule *course, const std::vector<CourseModule *> &prereqs);
-
 	/**
 	 * @brief Prints a welcome message then runs the main menu
 	*/
@@ -88,6 +79,13 @@ public:
 	 * @param str String we're reading courses from
 	*/
 	void readPrerequisites(CourseModule *course, std::string str);
+
+	/**
+	 * @brief Adds multiple courses to the list of prerequisites of a course
+	 * @param course The course receiving the list of prerequisites
+	 * @param prereqs Vector containing courses that are prerequisites for course
+	*/
+	void addMultiplePrereqs(CourseModule *course, const std::vector<CourseModule *> &prereqs);
 
 	/**
 	 * @brief Prints all courses' subjects and numbers in the list of courses

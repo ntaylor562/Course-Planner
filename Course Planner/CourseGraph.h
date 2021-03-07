@@ -50,6 +50,12 @@ public:
 	void remove(const CourseModule &c);
 
 	/**
+	 * @brief Checks if the graph has no vertices
+	 * @return Returns true if there are no vertices, false otherwise
+	*/
+	bool empty();
+
+	/**
 	 * @brief Prints all vertices
 	*/
 	void printCourses() const;

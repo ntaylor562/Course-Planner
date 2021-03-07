@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include "CourseModule.h"
+#include "CourseGraph.h"
 
 /**
  * @brief Temporary class to drive the program giving the option to add, remove, and edit courses in a list
@@ -15,13 +16,11 @@
 */
 class Menu {
 private:
-	std::ifstream inFile;
-	std::ofstream outFile;
 
 	/**
 	 * @brief Container holding all the user's courses that have been added.
 	*/
-	std::vector<CourseModule*> Courses;
+	CourseGraph Courses;
 	
 	/**
 	 * @brief Asks to input a course then retries if the course entered is invalid
@@ -48,29 +47,8 @@ public:
 	*/
 	Menu ();
 
-	/**
-	 * @brief Adds the course specified by the course subject and number
-	 * @details If the course is already in the list of courses, we do nothing
-	 * @param sub The course subject
-	 * @param num The course number
-	 * @return Pointer to the course being added
-	*/
-	CourseModule *addCourse(std::string sub, int num);
-	
-	/**
-	 * @brief Adds the course pointed to by course parameter
-	 * @param course Course to be added
-	 * @return pointer to the course added
-	*/
-	CourseModule *addCourse(CourseModule *course);
 
-	/**
-	 * @brief Removes a course from the list of courses
-	 * @details If the course is not in the list, nothing happens
-	 * @param course Course being removed from the list
-	*/
-	void removeCourse(CourseModule *course);
-
+	//TODO Consider if this method is still relevant
 	/**
 	 * @brief Adds multiple courses to the list of prerequisites of a course
 	 * @param course The course receiving the list of prerequisites
@@ -103,11 +81,6 @@ public:
 	 * @brief Asks user which course to remove then removes the course specified
 	*/
 	void subMenuCourseRemove();
-
-	/**
-	 * @brief Reads data from dataFile file and populates the list of courses from that data
-	*/
-	void readData();
 	
 	/**
 	 * @brief Enters all courses (format ex: CECS 100) from a string into a course's prerequisites. Does not check validity
@@ -115,29 +88,6 @@ public:
 	 * @param str String we're reading courses from
 	*/
 	void readPrerequisites(CourseModule *course, std::string str);
-
-	/**
-	 * @brief Prints all the course data into the dataFile file so that it can be read next time program is run
-	*/
-	void saveData();
-
-	/**
-	 * @brief Searches the list of courses for the course specified by the subject and number given
-	 * @details Uses linear search to find the course (will improve in future)
-	 * @param sub Course subject
-	 * @param num Course number
-	 * @return A pointer to the course in the list of courses specified by the subject and number given. Returns nullptr if course is not in list of courses
-	*/
-	CourseModule* courseSearch(std::string sub, int num); //TODO Improve this search function because it's just a linear search right now which is trash
-	
-	/**
-	 * @brief Searches the list of courses for the course specified by the subject and number given
-	 * @details Uses linear search to find the course (will improve in future)
-	 * @param sub Course subject
-	 * @param num Course number
-	 * @return The iterator pointing to the course in the list of courses specified by the subject and number given. Returns nullptr if course is not in list of courses
-	*/
-	std::vector<CourseModule*>::iterator courseSearchIt(std::string sub, int num); //TODO Improve this search function because it's just a linear search right now which is trash
 
 	/**
 	 * @brief Prints all courses' subjects and numbers in the list of courses
@@ -159,7 +109,7 @@ public:
 	 * @param course Course we're getting data from
 	 * @return String containing all data for the specified course
 	*/
-	std::string fullCourseInfo(CourseModule *course);
+	std::string fullCourseInfo(const CourseModule &course);
 
 };
 

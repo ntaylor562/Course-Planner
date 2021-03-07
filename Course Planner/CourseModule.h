@@ -10,17 +10,6 @@
 */
 class CourseModule {
 private:
-
-	/**
-	 * @brief Vector containing pointers to the prerequisites for this course
-	*/
-	std::vector<CourseModule*> prerequisites;
-
-	/**
-	 * @brief Vector containing pointers to the courses this course is a prerequisite for
-	 * @details This should be temporary because I'm planning on using a graph in the future to represent the courses
-	*/
-	std::vector<CourseModule*> prerequisiteFor;
 	
 	int units, courseNumber;
 
@@ -39,18 +28,6 @@ private:
 	 * @brief Course description (Ex: Review of logic design. Instruction set architecture. Arithmetic logic...)
 	*/
 	std::string courseDescription = "";
-
-	/**
-	 * @brief Adds a course to the list of courses this course is a prerequisite for
-	 * @param course A pointer to the course we're adding to this course's prerequisites
-	*/
-	void addPrerequisiteFor(CourseModule* course);
-
-	/**
-	 * @brief Removes a course from the list of courses this course is a prerequisite for
-	 * @param course The course whose prerequisites we're removing this course from
-	*/
-	void removePrerequisiteFor(CourseModule* course);
 
 public:
 
@@ -75,11 +52,6 @@ public:
 
 	CourseModule(const CourseModule &c);
 
-	/**
-	 * @brief Destructor that goes through the list of courses this course is a prerequisite for and removes this course from their prerequisites
-	*/
-	~CourseModule();
-
 	//Self explanatory functions
 
 	void setCourseSubject(std::string str);
@@ -98,40 +70,6 @@ public:
 	 * @return String representing this course's subject, course number, and course title
 	*/
 	std::string getCourseName() const;
-
-
-	/**
-	 * @brief Puts the prerequisite courses for this course into a string including only the course subject and course number
-	 * @return String containing course subjects and numbers of this course's prerequisites separated by spaces. Returns empty string if there are no prerequisites
-	*/
-	std::string getPrereqsAsString() const;
-
-	/**
-	 * @brief Adds a prerequisite to this course
-	 * @param course Pointer to the course we're adding as a prerequisite
-	*/
-	void addPrerequisite(CourseModule* course);
-
-	/**
-	 * @brief Removes a course from this course's prerequisites
-	 * @details Does nothing if the course passed in is not a prerequisite
-	 * @param course Prerequisite course we're removing
-	*/
-	void removePrerequisite(CourseModule* course);
-
-	/**
-	 * @brief Gets the list of prerequisites for this course
-	 * @returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course has as prerequisites
-	*/
-	std::vector<CourseModule*>* getPrerequisites();
-
-	/**
-	 * @brief Gets the list of courses this course is a prerequisite for
-	 * @details returns a pointer to the list of prerequisites to save memory
-	 * @return Pointer to a vector containing a list of pointers to courses this course is a prerequisite for
-	*/
-	std::vector<CourseModule *> *getPrerequisiteFor();
 
 	/**
 	 * @brief Checks whether all fields have been filled out for this course

@@ -52,6 +52,10 @@ void CourseGraph::remove(const CourseModule &c) {
 	vertices.erase(toBeRemoved);
 }
 
+bool CourseGraph::empty() {
+	return vertices.empty();
+}
+
 void CourseGraph::printCourses() const {
 	if (vertices.empty()) return;
 	int spacing = 15;

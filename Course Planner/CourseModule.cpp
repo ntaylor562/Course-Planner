@@ -7,12 +7,19 @@
 
 //Constructor
 CourseModule::CourseModule(std::string subject, int number, std::string title, int numOfUnits, std::string description, std::vector<CourseModule*> prereqs) :
-	courseSubject(subject), courseNumber(number), courseTitle(title), units(numOfUnits), courseDescription(description) {}
+	courseNumber(number), courseTitle(title), units(numOfUnits), courseDescription(description) {
+	for (auto &c : subject)
+		c = std::toupper(c);
+	courseSubject = subject;
+}
 
 //Constructor using string as initializer to make things easier
 CourseModule::CourseModule(std::string course) {
 	if (CourseInputChecker::isValidCourse(course)) {
 		courseSubject = course.substr(0, course.find_first_of("0123456789") - 1);
+		for (auto &c : courseSubject)
+			c = std::toupper(c);
+
 		courseNumber = std::stoi(course.substr(course.find_first_of("0123456789"), std::string::npos));
 		units = NULL;
 		courseTitle = "";

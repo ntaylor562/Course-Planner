@@ -17,15 +17,21 @@ struct vertex;
 */
 class CourseGraph {
 private:
-
 	
-
+	/**
+	 * @brief Performs a binary search for the vertices in the graph for the given course
+	 * @param c Course we're searching for
+	 * @return Iterator pointing to the course searched for. Returns vertices.end() if course is not found
+	*/
 	std::vector<vertex*>::iterator searchVertices(const CourseModule &c);
 
 	std::vector<vertex*> vertices;
 
 public:
 
+	/**
+	 * @brief Default constructor to assign capacity of vertices vector
+	*/
 	CourseGraph();
 
 	/**
@@ -54,6 +60,12 @@ public:
 	 * @return Returns true if there are no vertices, false otherwise
 	*/
 	bool empty();
+
+	/**
+	 * @brief Used to get the number of vertices in the graph
+	 * @return Number of vertices in the graph
+	*/
+	int size();
 
 	/**
 	 * @brief Prints all vertices

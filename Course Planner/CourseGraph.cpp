@@ -56,6 +56,10 @@ bool CourseGraph::empty() {
 	return vertices.empty();
 }
 
+int CourseGraph::size() {
+	return vertices.size();
+}
+
 void CourseGraph::printCourses() const {
 	if (vertices.empty()) return;
 	int spacing = 15;

@@ -18,6 +18,13 @@ public:
 	 * @return String easy to parse into a list of courses
 	*/
 	static std::string getCourses(std::string message = "");
+
+	/**
+	 * @brief Used to check if a string is a valid input for a course, including the course subject and the course number
+	 * @param input String we'll validate is a course
+	 * @return True if input is a valid course (Ex. "CECS 100")
+	*/
+	static bool isValidCourse(std::string input);
 };
 
 #endif

@@ -5,10 +5,13 @@
 #include <list>
 #include "CourseModule.h"
 
+/**
+ * @brief Holds the data for the actual course and a list of pointers to other nodes that this node is adjacent to
+*/
 struct vertex;
 
 /**
- * @brief Directed graph used to represent a set of courses where the edges represent prerequisite requirements
+ * @brief Directed graph container used to represent a set of courses where the edges represent prerequisite requirements
  * @details Implemented using an adjacency list
  * @details Adjacent: Two vertices u and v are adjacent if and only if there is a directed edge from u to v
 */
@@ -24,6 +27,13 @@ private:
 public:
 
 	CourseGraph();
+
+	/**
+	 * @brief Uses binary search to find the course entered
+	 * @param c Course being searched for
+	 * @return Returns a pointer to the vertex representing c in the graph. Returns nullptr if vertex is not in the graph
+	*/
+	vertex *search(const CourseModule &c);
 
 	/**
 	 * @brief If the course is not already a vertex, insert a new vertex with value c
@@ -54,15 +64,28 @@ public:
 	 * @details If there is no edge from u to v, or if u or v does not exist, do nothing
 	*/
 	void removeEdge(const CourseModule &u, const CourseModule &v);
+
+	/**
+	 * @brief Used to iterate through the vertices of the graph
+	 * @return An iterator pointing to the beginning of the vertices vector
+	*/
+	std::vector<vertex *>::const_iterator begin() const;
+
+	/**
+	 * @brief Used to iterate through the vertices of the graph
+	 * @return An iterator pointing to the end of the vertices vector
+	*/
+	std::vector<vertex *>::const_iterator end() const;
 };
 
-/**
- * @brief Holds the data for the actual course and a list of pointers to other nodes that this node is adjacent to
-*/
 struct vertex {
 	CourseModule course;
-	std::list<vertex *> prerequisites;
-	std::list<vertex *> prerequisiteFor;
+	
+	//Prerequisites for this course (vertices pointing to this course)
+	std::list<vertex *> prerequisites; 
+	
+	//Courses this course is a prerequisite for (vertices this course points to)
+	std::list<vertex *> prerequisiteFor; 
 
 	bool operator==(const vertex &v) const {
 		return course == v.course;

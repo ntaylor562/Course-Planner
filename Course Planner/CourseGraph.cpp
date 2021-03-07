@@ -17,6 +17,12 @@ CourseGraph::CourseGraph() {
 	vertices.reserve(20);
 }
 
+vertex *CourseGraph::search(const CourseModule &c) {
+	std::vector<vertex *>::iterator it = searchVertices(c);
+	if (it == vertices.end()) return nullptr;
+	return *it;
+}
+
 std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 	int start = 0, end = vertices.size() - 1;
 	while (start <= end) {
@@ -33,12 +39,13 @@ std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 
 void CourseGraph::remove(const CourseModule &c) {
 	std::vector<vertex *>::iterator toBeRemoved = searchVertices(c);
+	if (toBeRemoved == vertices.end()) return;
 
 	for (auto &i : (*toBeRemoved)->prerequisiteFor) { //Remove this course from other course's prerequisites
 		i->prerequisites.remove(*toBeRemoved);
 	}
 	for (auto &i : (*toBeRemoved)->prerequisites) { //Remove connections to vertices this course is a prerequisite for
-		i->prerequisites.remove(*toBeRemoved);
+		i->prerequisiteFor.remove(*toBeRemoved);
 	}
 
 	delete *toBeRemoved;
@@ -106,4 +113,12 @@ void CourseGraph::removeEdge(const CourseModule &u, const CourseModule &v) {
 	//Remove edge
 	(*start)->prerequisiteFor.remove(*end);
 	(*end)->prerequisites.remove(*start);
+}
+
+std::vector<vertex *>::const_iterator CourseGraph::begin() const {
+	return vertices.begin();
+}
+
+std::vector<vertex *>::const_iterator CourseGraph::end() const {
+	return vertices.end();
 }

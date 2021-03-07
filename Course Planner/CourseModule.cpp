@@ -1,11 +1,31 @@
 #include <string>
 #include <vector>
 #include <iostream>//DEBUGGING
+
+#include "CourseInputChecker.h"
 #include "CourseModule.h"
 
 //Constructor
 CourseModule::CourseModule(std::string subject, int number, std::string title, int numOfUnits, std::string description, std::vector<CourseModule*> prereqs) :
 	courseSubject(subject), courseNumber(number), courseTitle(title), units(numOfUnits), courseDescription(description), prerequisites(prereqs) {}
+
+//Constructor using string as initializer to make things easier
+CourseModule::CourseModule(std::string course) {
+	if (CourseInputChecker::isValidCourse(course)) {
+		courseSubject = course.substr(0, course.find_first_of("0123456789") - 1);
+		courseNumber = std::stoi(course.substr(course.find_first_of("0123456789"), std::string::npos));
+		units = NULL;
+		courseTitle = "";
+		courseDescription = "";
+	}
+	else {
+		courseSubject = "ERROR";
+		courseNumber = 404;
+		units = -1;
+		courseTitle = "ERROR INITIALIZING COURSE";
+		courseDescription = "STRING USED IN CONSTRUCTOR DOES NOT REPRESENT A VALID COURSE. ENTER COURSE LIKE \"CECS 100\"";
+	}
+}
 
 CourseModule::CourseModule(const CourseModule &c) {
 	courseSubject = c.courseSubject;

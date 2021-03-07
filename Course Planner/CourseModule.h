@@ -64,7 +64,14 @@ public:
 	 * @param description Course description (Ex: Review of logic design. Instruction set architecture. Arithmetic logic...)
 	 * @param prereqs Vector containing a list of pointers to courses this course has as prerequisites
 	*/
-	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = 0, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
+	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = NULL, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
+
+	/**
+	 * @brief Constructor to initialize the course subject and course number
+	 * @details If string entered is not a valid course, we return 
+	 * @param course String containing the course's subject and course number
+	*/
+	CourseModule(std::string course);
 
 	CourseModule(const CourseModule &c);
 

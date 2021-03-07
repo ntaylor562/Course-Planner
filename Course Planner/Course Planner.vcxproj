@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CourseData.cpp" />
     <ClCompile Include="CourseGraph.cpp" />
     <ClCompile Include="CourseInputChecker.cpp" />
     <ClCompile Include="CourseModule.cpp" />
@@ -123,6 +124,7 @@
     <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CourseData.h" />
     <ClInclude Include="CourseGraph.h" />
     <ClInclude Include="CourseInputChecker.h" />
     <ClInclude Include="CourseModule.h" />

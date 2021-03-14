@@ -41,7 +41,7 @@ public:
 	 * @param description Course description (Ex: Review of logic design. Instruction set architecture. Arithmetic logic...)
 	 * @param prereqs Vector containing a list of pointers to courses this course has as prerequisites
 	*/
-	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = NULL, std::string description = "", std::vector<CourseModule *> prereqs = std::vector<CourseModule*>());
+	CourseModule(std::string subject, int number, std::string title = "", int numOfUnits = NULL, std::string description = "");
 
 	/**
 	 * @brief Constructor to initialize the course subject and course number
@@ -76,6 +76,11 @@ public:
 	 * @return True if the course subject, number, units, title, and description all have values, false otherwise
 	*/
 	bool dataComplete() const;
+
+	/**
+	 * @return A string showing the course subject and course number
+	*/
+	std::string ToString();
 
 	/**
 	 * @brief Overloaded << operator to more easily print a course

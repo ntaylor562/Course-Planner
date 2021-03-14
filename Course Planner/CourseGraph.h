@@ -35,6 +35,24 @@ public:
 	CourseGraph();
 
 	/**
+	 * @brief Copy constructor to perform deep copy of another graph
+	 * @param g Other graph we're copying
+	*/
+	CourseGraph(const CourseGraph &g);
+
+	/**
+	 * @brief Overloaded assignment operator to perform deep copy of another graph
+	 * @param g Other graph we're copying
+	 * @return Reference to this graph
+	*/
+	CourseGraph &operator=(const CourseGraph &g);
+
+	/*
+	 * @brief Destructor to deallocate all vertices created
+	*/
+	~CourseGraph();
+
+	/**
 	 * @brief Uses binary search to find the course entered
 	 * @param c Course being searched for
 	 * @return Returns a pointer to the vertex representing c in the graph. Returns nullptr if vertex is not in the graph
@@ -59,13 +77,13 @@ public:
 	 * @brief Checks if the graph has no vertices
 	 * @return Returns true if there are no vertices, false otherwise
 	*/
-	bool empty();
+	bool empty() const;
 
 	/**
 	 * @brief Used to get the number of vertices in the graph
 	 * @return Number of vertices in the graph
 	*/
-	int size();
+	const int size() const;
 
 	/**
 	 * @brief Prints all vertices

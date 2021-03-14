@@ -6,7 +6,7 @@
 #include "CourseModule.h"
 
 //Constructor
-CourseModule::CourseModule(std::string subject, int number, std::string title, int numOfUnits, std::string description, std::vector<CourseModule*> prereqs) :
+CourseModule::CourseModule(std::string subject, int number, std::string title, int numOfUnits, std::string description) :
 	courseNumber(number), courseTitle(title), units(numOfUnits), courseDescription(description) {
 	for (auto &c : subject)
 		c = std::toupper(c);
@@ -80,6 +80,10 @@ bool CourseModule::dataComplete() const {
 	if (courseTitle == "") return false;
 	if (courseDescription == "") return false;
 	return true;
+}
+
+std::string CourseModule::ToString() {
+	return this->courseSubject + std::to_string(this->courseNumber);
 }
 
 bool CourseModule::operator==(const CourseModule &c) const {

@@ -17,6 +17,59 @@ CourseGraph::CourseGraph() {
 	vertices.reserve(20);
 }
 
+CourseGraph::CourseGraph(const CourseGraph &g) {
+	for (auto &i : vertices) { //Deallocating this graph
+		delete i;
+	}
+	vertices = std::vector<vertex *>(g.size());
+	for (int i = 0; i < g.size(); ++i) {
+		vertices[i] = new vertex{ g.vertices[i]->course }; //Copy course from each vertex but not the edges
+	}
+
+	//Adding edges using pointers to vertices of this graph
+	std::vector<vertex *>::const_iterator gIt = g.vertices.begin();
+	for (auto &i : vertices) {
+		for (const auto &i : (*gIt)->prerequisiteFor) {
+			i->prerequisiteFor.push_back(*searchVertices(i->course));
+		}
+
+		for (const auto &i : (*gIt)->prerequisites) {
+			i->prerequisites.push_back(*searchVertices(i->course));
+		}
+	}
+}
+
+CourseGraph &CourseGraph::operator=(const CourseGraph &g) {
+	if (this == &g) return *this;
+
+	for (auto &i : vertices) { //Deallocating this graph
+		delete i;
+	}
+	vertices = std::vector<vertex *>(g.size());
+	for (int i = 0; i < g.size(); ++i) {
+		vertices[i] = new vertex{ g.vertices[i]->course }; //Copy course from each vertex but not the edges
+	}
+
+	//Adding edges using pointers to vertices of this graph
+	std::vector<vertex *>::const_iterator gIt = g.vertices.begin();
+	for (auto &i : vertices) {
+		for (const auto &i : (*gIt)->prerequisiteFor) {
+			i->prerequisiteFor.push_back(*searchVertices(i->course));
+		}
+
+		for (const auto &i : (*gIt)->prerequisites) {
+			i->prerequisites.push_back(*searchVertices(i->course));
+		}
+	}
+
+	return *this;
+}
+
+CourseGraph::~CourseGraph() {
+	for (auto &i : vertices)
+		delete i;
+}
+
 vertex *CourseGraph::search(const CourseModule &c) {
 	std::vector<vertex *>::iterator it = searchVertices(c);
 	if (it == vertices.end()) return nullptr;
@@ -52,11 +105,11 @@ void CourseGraph::remove(const CourseModule &c) {
 	vertices.erase(toBeRemoved);
 }
 
-bool CourseGraph::empty() {
+bool CourseGraph::empty() const {
 	return vertices.empty();
 }
 
-int CourseGraph::size() {
+const int CourseGraph::size() const {
 	return vertices.size();
 }
 

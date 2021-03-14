@@ -3,7 +3,5 @@ TODO for Course Manager project
 -Figure out GUI's and see if I can switch over to that
 -Add a system to plan individual semesters
 -Add an option to view the entire tree of courses showing their prerequisites and everything
--Create a UML for this project
--add a search button on main menu (maybe searches descriptions as well for people not remembering the course title or something)
 -Figure out if I can use CSULB API to read courses from the website so user doesn't have to input them manually
 -Create different profiles for different majors or minors

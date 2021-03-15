@@ -151,6 +151,9 @@ public:
 	*/
 	void addRestriction(Semester::Seasons season, int year);
 
+	void setSemesterUnitLimit(Semester s, int lim);
+	void setSemesterUnitLimit(Semester::Seasons season, int year, int lim);
+
 	/**
 	 * @brief Removes a restriction for a given semester
 	 * @param c The restricted course
@@ -167,17 +170,8 @@ public:
 	void removeRestriction(Semester::Seasons season, int year);
 
 	/**
-	 * @brief Sets a unit limit for a given semester
-	 * @details Minimum = 1
-	 * @param lim The maximum units to be taken in the given semester
-	 * @param season Which semester of the year being limited (Ex: Spring, Fall, etc.)
-	 * @param year Year of the semester
-	*/
-	void setUnitLimit(int lim, Semester::Seasons season, int year);
-
-	/**
 	 * @brief Sets an overall unit limit (default = 15)
-	 * @details Minimum = 1
+	 * @details Minimum = 4
 	 * @param lim The maximum units to be taken in any semester
 	*/
 	void setUnitLimit(int lim);

@@ -1,3 +1,8 @@
+Course: BIOL 200
+Course Title: General Biology
+Units: 4
+Course Description: Brief survey of major areas of biology including cell biology, genetics, evolution, phylogeny, plant and animal anatomy and physiology, ecology, and behavior. Specially designed for non-science majors.
+-
 Course: CECS 100
 Course Title: Critical Thinking in the Digital Information Age
 Units: 3
@@ -12,7 +17,7 @@ Course: CECS 174
 Course Title: Introduction to Programming and Problem Solving
 Units: 3
 Course Description: Introduction to basic concepts of computer science and fundamental techniques for solving problems using the Python programming language. Variables, data types, conditional statements, loops and arrays. Programming style. Applications to numerical and non-numerical problems.
-Prerequisites: CECS 100 
+Prerequisites: CECS 100 MATH 122 
 -
 Course: CECS 225
 Course Title: Digital Logic and Assembly Programming
@@ -24,13 +29,13 @@ Course: CECS 228
 Course Title: Discrete Structures with Computing Applications
 Units: 3
 Course Description: An introduction to discrete mathematics with applications towards computing. Topics include sets, functions, logic, relations, graphs, trees, recursion, combinatorics, and mathematical reasoning.
-Prerequisites: CECS 174 
+Prerequisites: CECS 174 MATH 113 
 -
 Course: CECS 229
 Course Title: Discrete Structures with Computing Applications II
 Units: 3
 Course Description: This is the second course in a two-course sequence in computing applications of discrete structures. Topics include applications of computer arithmetic and matrices in computer systems. Programming assignments in Python will be provided.
-Prerequisites: CECS 228 
+Prerequisites: CECS 228 MATH 123 
 -
 Course: CECS 274
 Course Title: Object Oriented Programming and Data Structures
@@ -48,7 +53,13 @@ Course: CECS 277
 Course Title: Object Oriented Application Development
 Units: 3
 Course Description: Advanced introduction to the fundamentals of computer science and software engineering methodology. Advanced programming techniques and design methodology typically used in large programming projects using the Java programming language.
-Prerequisites: CECS 274 
+Prerequisites: CECS 174 
+-
+Course: CECS 282
+Course Title: Advanced C++
+Units: 3
+Course Description: Structured and Object Oriented Programming in C++. Common features and differences between Java and C++. Pointers, references, and memory management, stream I/O, classes, operator overloading, exception handling, STL.
+Prerequisites: CECS 274 CECS 277 
 -
 Course: CECS 323
 Course Title: Database Fundamentals
@@ -122,6 +133,18 @@ Units: 3
 Course Description: Applications of probability and statistics to computing. Topics include random variables and their statistics, probability distributions, Markov chains, Bayesian networks, sampling techniques, hypothesis testing, regression and analytic methods. Programming assignments using Python.
 Prerequisites: CECS 229 
 -
+Course: ENGR 101
+Course Title: Introduction to the Engineering Profession
+Units: 1
+Course Description: Freshman orientation seminar on careers in engineering. Speakers from various fields illustrate opportunities and challenges in the engineering profession.
+Prerequisites: MATH 111 
+-
+Course: ENGR 102
+Course Title: Academic Success Skills
+Units: 1
+Course Description: Development of skills and identification of strengths and weaknesses for success in a COE major.
+Prerequisites: ENGR 101 
+-
 Course: ENGR 350
 Course Title: Computers, Ethics and Society
 Units: 3
@@ -131,4 +154,32 @@ Course: ENGR 361
 Course Title: Scientific Research Communication
 Units: 3
 Course Description: Introduction to technical writing for students pursuing research careers. Accessing and using research literature. Writing technical and research reports for various purposes and audiences. Oral presentation of research and scientific information. Includes intensive writing.
+-
+Course: MATH 111
+Course Title: Precalculus Trigonometry
+Units: 3
+Course Description: Trigonometric functions and applications. Arithmetic and graphical representation of complex numbers, polar form, DeMoivre's Theorem.
+-
+Course: MATH 113
+Course Title: Precalculus Algebra
+Units: 3
+Course Description: Equations, inequalities. Functions, their graphs, inverses, transformations. Polynomial, rational functions, theory of equations. Exponential, logarithmic functions, modeling. Systems of equations, matrices, determinants. Sequences, series.
+-
+Course: MATH 122
+Course Title: Calculus I
+Units: 4
+Course Description: Continuous functions. Derivatives and applications including graphing, related rates, and optimization. Transcendental functions. L'Hospital's Rule. Antiderivatives. Definite integrals. Area under a curve.
+Prerequisites: MATH 111 MATH 113 
+-
+Course: MATH 123
+Course Title: Calculus II
+Units: 4
+Course Description: Applications of the integral. Techniques of integration. Infinite series including convergence tests and Taylor series. Parametric equations. Polar coordinates. Introduces differential equations.
+Prerequisites: MATH 122 
+-
+Course: PHYS 151
+Course Title: Mechanics and Heat
+Units: 4
+Course Description: Kinematics, Newton's Laws, rotational motion, conservation laws, mechanical waves, and laws of thermodynamics.
+Prerequisites: MATH 122 
 -

@@ -67,10 +67,13 @@ void Scheduler::addRestriction(const CourseModule &c, Semester::Seasons season, 
 	sem.year = year;
 
 	std::vector<Semester>::iterator semIt = std::find(semsWithRestrictions.begin(), semsWithRestrictions.end(), sem);
-	if (semIt != semsWithRestrictions.end()) sem = *semIt;
-	else semsWithRestrictions.push_back(sem);
-
-	sem.restricted.push_back(c);
+	if (semIt != semsWithRestrictions.end()) {
+		semIt->restricted.push_back(c);
+	}
+	else {
+		sem.restricted.push_back(c);
+		semsWithRestrictions.push_back(sem);
+	}
 }
 
 void Scheduler::addRestriction(Semester s) {
@@ -83,10 +86,34 @@ void Scheduler::addRestriction(Semester::Seasons season, int year) {
 	sem.year = year;
 
 	std::vector<Semester>::iterator semIt = std::find(semsWithRestrictions.begin(), semsWithRestrictions.end(), sem);
-	if (semIt != semsWithRestrictions.end()) sem = *semIt;
-	else semsWithRestrictions.push_back(sem);
+	if (semIt != semsWithRestrictions.end()) {
+		semIt->semesterRestricted = true;
+	}
+	else {
+		sem.semesterRestricted = true;
+		semsWithRestrictions.push_back(sem);
+	}
+}
 
-	sem.semesterRestricted = true;
+void Scheduler::setSemesterUnitLimit(Semester s, int lim) {
+	std::vector<Semester>::iterator semIt = std::find(semsWithRestrictions.begin(), semsWithRestrictions.end(), s);
+	if (semIt != semsWithRestrictions.end()) {
+		semIt->maxUnits = (lim >= 4 || lim == 0) ? lim : 4;
+	}
+	else if (lim) {
+		s.maxUnits = (lim >= 4 || lim == 0) ? lim : 4;
+		semsWithRestrictions.push_back(s);
+	}
+
+		if (lim == 0 && semIt->restricted.empty() && !semIt->semesterRestricted) //Semester no longer has restrictions
+			semsWithRestrictions.erase(semIt);
+}
+
+void Scheduler::setSemesterUnitLimit(Semester::Seasons season, int year, int lim) {
+	Semester sem;
+	sem.season = season;
+	sem.year = year;
+	setSemesterUnitLimit(sem, lim);
 }
 
 void Scheduler::removeRestriction(const CourseModule &c, Semester::Seasons season, int year) {
@@ -102,7 +129,7 @@ void Scheduler::removeRestriction(const CourseModule &c, Semester::Seasons seaso
 
 	resSem->restricted.erase(courseLocation);
 
-	if (resSem->restricted.empty() && !resSem->semesterRestricted)
+	if (resSem->restricted.empty() && !resSem->semesterRestricted && maxUnits == 0) //Semester no longer has restrictions
 		semsWithRestrictions.erase(resSem);
 }
 
@@ -115,23 +142,13 @@ void Scheduler::removeRestriction(Semester::Seasons season, int year) {
 	if (resSem == semsWithRestrictions.end()) return;
 
 	resSem->semesterRestricted = false;
-	if (resSem->restricted.empty() && !resSem->semesterRestricted)
+	if (resSem->restricted.empty() && !resSem->semesterRestricted && maxUnits == 0) //Semester no longer has restrictions
 		semsWithRestrictions.erase(resSem);
 }
 
-void Scheduler::setUnitLimit(int lim, Semester::Seasons season, int year) {
-	Semester sem;
-	sem.season = season;
-	sem.year = year;
-
-	std::vector<Semester>::iterator semIt = std::find(semsWithRestrictions.begin(), semsWithRestrictions.end(), sem);
-	if (semIt != semsWithRestrictions.end()) sem = *semIt;
-
-	sem.maxUnits = lim;
-}
-
 void Scheduler::setUnitLimit(int lim) {
-	maxUnits = lim;
+	if (lim == 0) maxUnits = 15;
+	else maxUnits = (lim >= 4) ? lim : 4;
 }
 
 Schedule Scheduler::generateSchedule(Semester::Seasons currentSeason, int currentYear) const {
@@ -144,20 +161,36 @@ Schedule Scheduler::generateSchedule(Semester::Seasons currentSeason, int curren
 	}
 	Schedule schedule;
 
-	std::vector<Semester>::const_iterator restrictedSem = semsWithRestrictions.begin();
-
 	//Queue containing leaf courses that were not assigned to the last semester due to restrictions
 	std::queue<CourseModule> queuedCourses;
 
 	while (!remainingCourses.empty()) {
+		Semester currentSem;
+		currentSem.season = currentSeason;
+		currentSem.year = currentYear;
+
+		std::vector<Semester>::const_iterator restrictedSem = semsWithRestrictions.begin();
+		while (restrictedSem != semsWithRestrictions.end()) {
+			if (restrictedSem->season == currentSem.season && restrictedSem->year == currentSem.year)
+				break;
+			++restrictedSem;
+		}
+		if (restrictedSem != semsWithRestrictions.end()) {
+			currentSem = *restrictedSem;
+		}
+		int maxSemUnits = (currentSem.maxUnits > 0) ? currentSem.maxUnits : maxUnits;
+
 		std::vector<vertex *> leaves;
 		for (auto &i : remainingCourses) {
 			if (i->prerequisites.empty()) {
-				leaves.push_back(i);
+				if (std::find(currentSem.restricted.begin(), currentSem.restricted.end(), i->course) == currentSem.restricted.end()) { //Checking if course is not restricted for this semester
+					leaves.push_back(i);
+				}
 			}
 		}
 
 		//Insertion sort to sort the leaf courses by highest outdegree
+		//We do this to get courses that are more important out of the way first so we can take more courses the next semester
 		for (int i = 1; i < leaves.size(); ++i) {
 			vertex *key = leaves[i];
 			int j = i - 1;
@@ -168,42 +201,26 @@ Schedule Scheduler::generateSchedule(Semester::Seasons currentSeason, int curren
 			leaves[j + 1] = key;
 		}
 
+
+		int sum = 0;
 		for (const auto &i : leaves) {
-			queuedCourses.push(i->course);
-		}
-
-		
-		//Removing the courses from the list
-		std::queue<CourseModule> toBeRemoved(queuedCourses);
-		while (!toBeRemoved.empty()) {
-			remainingCourses.remove(toBeRemoved.front());
-			toBeRemoved.pop();
-		}
-
-
-		int unitsSum = 0;
-		Semester currentSem;
-		currentSem.season = currentSeason;
-		currentSem.year = currentYear;
-		if (restrictedSem != semsWithRestrictions.end()) {
-			if (currentSeason == restrictedSem->season && currentYear == restrictedSem->year) {
-				currentSem = *restrictedSem;
-				++restrictedSem;
+			if (sum + i->course.getUnits() <= maxSemUnits) {
+				queuedCourses.push(i->course);
+				sum += i->course.getUnits();
+				remainingCourses.remove(i->course); //Remove course from the graph
 			}
 		}
-		if (!currentSem.semesterRestricted) {
 
-			int maxSemUnits = (currentSem.maxUnits > 0) ? currentSem.maxUnits : maxUnits;
+		if (!currentSem.semesterRestricted) { //If this semester is allowed to have courses
 
-			while (unitsSum <= maxSemUnits && !queuedCourses.empty()) {
+			while (!queuedCourses.empty()) { //Add courses from the queue into the current semester
 				if (std::find(currentSem.restricted.begin(), currentSem.restricted.end(), queuedCourses.front()) == currentSem.restricted.end()) {
 					currentSem.courses.push_back(queuedCourses.front());
-					unitsSum += queuedCourses.front().getUnits();
 					queuedCourses.pop();
 				}
 			}
 
-			schedule.CoursePlan.push_back(currentSem);
+			schedule.CoursePlan.push_back(currentSem); //Push the semester to the schedule
 		}
 		
 		nextSemester(currentSeason, currentYear);

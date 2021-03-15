@@ -484,7 +484,10 @@ void Menu::subMenuCourseScheduler() {
 		case 1:
 			system("cls");
 			s = enterSemester("Enter the semester you want to start the schedule with (Ex: Spring 2020): ");
+			std::cout << std::endl;
 			printSchedule(s);
+			system("pause");
+			system("cls");
 			break;
 		case 2:
 			printAllCourses();
@@ -497,6 +500,8 @@ void Menu::subMenuCourseScheduler() {
 			CourseScheduler.complete(enteredCourses);
 
 			std::cout << "Course(s) marked complete." << std::endl << std::endl;
+			system("pause");
+			system("cls");
 			break;
 		case 3:
 			printAllCourses();
@@ -509,6 +514,8 @@ void Menu::subMenuCourseScheduler() {
 			CourseScheduler.complete(enteredCourses);
 
 			std::cout << "Course(s) marked incomplete." << std::endl << std::endl;
+			system("pause");
+			system("cls");
 			break;
 		case 4:
 			system("cls");
@@ -522,54 +529,55 @@ void Menu::subMenuCourseScheduler() {
 			std::cout << "Invalid choice." << std::endl << std::endl;
 			break;
 		}
-		if (userChoice != 0) {
-			system("pause");
-			system("cls");
-		}
 	} while (userChoice != 0);
 }
 
 void Menu::addRestriction() {
-	int userChoice = 0;;
+	int userChoice = 0;
 
 	do {
 		std::cout << "Add a Restriction" << std::endl << std::endl
 			<< "0 - Return" << std::endl
 			<< "1 - Restrict a course for a specific semester" << std::endl
-			<< "2 - Restrict a specific semester" << std::endl;
+			<< "2 - Restrict a specific semester" << std::endl
+			<< "3 - Set an overall unit limit" << std::endl
+			<< "4 - Set a unit limit for a specific semester" << std::endl;
 
 		std::string seasons[] = { "Winter", "Spring", "Summer", "Fall" };
 		for (int i = 0; i < 4; ++i) {
-			std::cout << i + 3 << " - ";
-			for (const auto &it : CourseScheduler.getRestrictedSeasons()) {
-				if (it == static_cast<Semester::Seasons>(i)) {
-					std::cout << "Allow ";
-					break;
+			std::cout << i + 5 << " - ";
+			if (CourseScheduler.getRestrictedSeasons().empty()) std::cout << "Restrict ";
+			else {
+				bool found = false;
+				for (const auto &it : CourseScheduler.getRestrictedSeasons()) {
+					if (it == static_cast<Semester::Seasons>(i)) {
+						std::cout << "Allow ";
+						found = true;
+						break;
+					}
 				}
-				else {
-					std::cout << "Restrict ";
-					break;
-				}
+				if (!found) std::cout << "Restrict ";
 			}
 			std::cout << seasons[i] << " semester" << std::endl;
 		}
 		std::cout << std::endl << "Enter a choice: ";
 
-		int userChoice = InputChecker::getInt();
+		userChoice = InputChecker::getInt();
 		std::cout << std::endl;
 
+		int lim;
 		Semester s;
 		std::string input;
 		CourseModule *course;
 		switch (userChoice) {
 		case 0:
+			system("cls");
 			break;
 		case 1:
 			printAllCourses();
 			std::cout << std::endl;
 			course = inputValidCourse();
 			if (course == nullptr) {
-				std::cout << "The course you entered does not exist. If you would like to add this course, go to the add menu." << std::endl << std::endl;
 				break;
 			}
 			s = enterSemester();
@@ -583,18 +591,33 @@ void Menu::addRestriction() {
 			std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is now restricted from having courses." << std::endl << std::endl;
 			break;
 		case 3:
+			std::cout << "What would you like the unit limit for all semesters to be (0 for default)? ";
+			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
+			CourseScheduler.setUnitLimit(lim);
+			std::cout << std::endl << "Overall unit limit is now " << CourseScheduler.getMaxUnits() << "." << std::endl << std::endl;
+			break;
+		case 4:
+			s = enterSemester();
+			std::cout << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
+			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
+			CourseScheduler.setSemesterUnitLimit(s, lim);
+			std::cout << std::endl << s.ToString() << " unit limit is now ";
+			if (lim == 0) std::cout << "0." << std::endl << std::endl;
+			else std::cout << ((lim >= 4) ? lim : 4) << "." << std::endl << std::endl;
+			break;
+		case 5:
 			CourseScheduler.setWinterAllowed(!CourseScheduler.getWinterAllowed());
 			std::cout << "Winter is now " << ((CourseScheduler.getWinterAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 4:
+		case 6:
 			CourseScheduler.setSpringAllowed(!CourseScheduler.getSpringAllowed());
 			std::cout << "Spring is now " << ((CourseScheduler.getSpringAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 5:
+		case 7:
 			CourseScheduler.setSummerAllowed(!CourseScheduler.getSummerAllowed());
 			std::cout << "Summer is now " << ((CourseScheduler.getSummerAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 6:
+		case 8:
 			CourseScheduler.setFallAllowed(!CourseScheduler.getFallAllowed());
 			std::cout << "Fall is now " << ((CourseScheduler.getFallAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
@@ -617,20 +640,24 @@ void Menu::removeRestriction() {
 		printScheduleRestrictions();
 		std::cout << "0 - Return" << std::endl
 			<< "1 - Remove a restriction on a course for a specific semester" << std::endl
-			<< "2 - Remove a restriction on a specific semester" << std::endl;
+			<< "2 - Remove a restriction on a specific semester" << std::endl
+			<< "3 - Set an overall unit limit" << std::endl
+			<< "4 - Set a unit limit for a specific semester" << std::endl;
 
 		std::string seasons[] = { "Winter", "Spring", "Summer", "Fall" };
 		for (int i = 0; i < 4; ++i) {
-			std::cout << i + 3 << " - ";
-			for (const auto &it : CourseScheduler.getRestrictedSeasons()) {
-				if (it == static_cast<Semester::Seasons>(i)) {
-					std::cout << "Allow ";
-					break;
+			std::cout << i + 5 << " - ";
+			if (CourseScheduler.getRestrictedSeasons().empty()) std::cout << "Restrict ";
+			else {
+				bool found = false;
+				for (const auto &it : CourseScheduler.getRestrictedSeasons()) {
+					if (it == static_cast<Semester::Seasons>(i)) {
+						std::cout << "Allow ";
+						found = true;
+						break;
+					}
 				}
-				else {
-					std::cout << "Restrict ";
-					break;
-				}
+				if (!found) std::cout << "Restrict ";
 			}
 			std::cout << seasons[i] << " semester" << std::endl;
 		}
@@ -639,18 +666,19 @@ void Menu::removeRestriction() {
 		int userChoice = InputChecker::getInt();
 		std::cout << std::endl;
 
+		int lim;
 		Semester s;
 		std::string input;
 		CourseModule *course;
 		switch (userChoice) {
 		case 0:
+			system("cls");
 			break;
 		case 1:
 			printAllCourses();
 			std::cout << std::endl;
 			course = inputValidCourse();
 			if (course == nullptr) {
-				std::cout << "The course you entered does not exist. If you would like to add this course, go to the add menu." << std::endl << std::endl;
 				break;
 			}
 			s = enterSemester();
@@ -664,18 +692,33 @@ void Menu::removeRestriction() {
 			std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is no longer restricted from having courses." << std::endl << std::endl;
 			break;
 		case 3:
+			std::cout << "What would you like the unit limit for all semesters to be (0 for default)? ";
+			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
+			CourseScheduler.setUnitLimit(lim);
+			std::cout << std::endl << "Overall unit limit is now " << CourseScheduler.getMaxUnits() << "." << std::endl << std::endl;
+			break;
+		case 4:
+			s = enterSemester();
+			std::cout << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
+			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
+			CourseScheduler.setSemesterUnitLimit(s, lim);
+			std::cout << std::endl << s.ToString() << " unit limit is now ";
+			if (lim == 0) std::cout << "0." << std::endl << std::endl;
+			else std::cout << ((lim >= 4) ? lim : 4) << "." << std::endl << std::endl;
+			break;
+		case 5:
 			CourseScheduler.setWinterAllowed(!CourseScheduler.getWinterAllowed());
 			std::cout << "Winter is now " << ((CourseScheduler.getWinterAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 4:
+		case 6:
 			CourseScheduler.setSpringAllowed(!CourseScheduler.getSpringAllowed());
 			std::cout << "Spring is now " << ((CourseScheduler.getSpringAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 5:
+		case 7:
 			CourseScheduler.setSummerAllowed(!CourseScheduler.getSummerAllowed());
 			std::cout << "Summer is now " << ((CourseScheduler.getSummerAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
-		case 6:
+		case 8:
 			CourseScheduler.setFallAllowed(!CourseScheduler.getFallAllowed());
 			std::cout << "Fall is now " << ((CourseScheduler.getFallAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
 			break;
@@ -742,7 +785,7 @@ void Menu::printSchedule(Semester s) const {
 	for (const auto &sem : courseSchedule.CoursePlan) { //For every semester
 		std::cout << sem.ToString() << ":";
 		for (const auto &c : sem.courses) {
-			std::cout << "\n\t" << c;
+			std::cout << "\n\t" << c << " - " << c.getCourseTitle() << " (" << c.getUnits() << ")";
 		}
 		std::cout << std::endl << std::endl;
 	}
@@ -896,6 +939,7 @@ CourseModule *Menu::inputValidCourse() {
 
 	int num;
 	std::string sub = input.substr(0, input.find_first_of("1234567890") - 1);
+	sub = sub.substr(sub.find_first_not_of(" "), std::string::npos);
 	input = input.substr(input.find_first_of("1234567890"), std::string::npos);
 	if (input.find_first_of(' ') == std::string::npos) {
 		num = std::stoi(input);
@@ -915,6 +959,7 @@ CourseModule *Menu::inputNewValidCourse() {
 
 	int num;
 	std::string sub = input.substr(0, input.find_first_of("1234567890") - 1);
+	sub = sub.substr(sub.find_first_not_of(" "), std::string::npos);
 	input = input.substr(input.find_first_of("1234567890"), std::string::npos);
 	if (input.find_first_of(' ') == std::string::npos) {
 		num = std::stoi(input);
@@ -969,6 +1014,7 @@ std::vector<CourseModule*> Menu::inputValidCourses() {
 	int num;
 	while (input != "") {
 		sub = input.substr(0, input.find_first_of("1234567890") - 1);
+		sub = sub.substr(sub.find_first_not_of(" "), std::string::npos);
 		input = input.substr(input.find_first_of("1234567890"), std::string::npos);
 		if (input.find_first_of(' ') == std::string::npos) {
 			num = std::stoi(input);

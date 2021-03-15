@@ -36,6 +36,9 @@
     <ClCompile Include="CourseData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CourseModule.h">
@@ -56,5 +59,14 @@
     <ClInclude Include="CourseData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scheduler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Schedule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

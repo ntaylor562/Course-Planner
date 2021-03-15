@@ -80,7 +80,7 @@ public:
 	/**
 	 * @return A string showing the course subject and course number
 	*/
-	std::string ToString();
+	std::string ToString() const;
 
 	/**
 	 * @brief Overloaded << operator to more easily print a course

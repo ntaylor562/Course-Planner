@@ -132,7 +132,6 @@
     <ClInclude Include="CourseModule.h" />
     <ClInclude Include="InputChecker.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="Schedule.h" />
     <ClInclude Include="Scheduler.h" />
   </ItemGroup>
   <ItemGroup>

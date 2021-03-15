@@ -82,7 +82,7 @@ bool CourseModule::dataComplete() const {
 	return true;
 }
 
-std::string CourseModule::ToString() {
+std::string CourseModule::ToString() const {
 	return this->courseSubject + std::to_string(this->courseNumber);
 }
 

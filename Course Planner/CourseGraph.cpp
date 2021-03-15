@@ -27,14 +27,9 @@ CourseGraph::CourseGraph(const CourseGraph &g) {
 	}
 
 	//Adding edges using pointers to vertices of this graph
-	std::vector<vertex *>::const_iterator gIt = g.vertices.begin();
-	for (auto &i : vertices) {
-		for (const auto &i : (*gIt)->prerequisiteFor) {
-			i->prerequisiteFor.push_back(*searchVertices(i->course));
-		}
-
-		for (const auto &i : (*gIt)->prerequisites) {
-			i->prerequisites.push_back(*searchVertices(i->course));
+	for (const auto &gVertex : g) {
+		for (const auto &c : gVertex->prerequisiteFor) {
+			addEdge(gVertex->course, c->course);
 		}
 	}
 }
@@ -51,14 +46,9 @@ CourseGraph &CourseGraph::operator=(const CourseGraph &g) {
 	}
 
 	//Adding edges using pointers to vertices of this graph
-	std::vector<vertex *>::const_iterator gIt = g.vertices.begin();
-	for (auto &i : vertices) {
-		for (const auto &i : (*gIt)->prerequisiteFor) {
-			i->prerequisiteFor.push_back(*searchVertices(i->course));
-		}
-
-		for (const auto &i : (*gIt)->prerequisites) {
-			i->prerequisites.push_back(*searchVertices(i->course));
+	for (const auto &gVertex : g) {
+		for (const auto &c : gVertex->prerequisiteFor) {
+			addEdge(gVertex->course, c->course);
 		}
 	}
 

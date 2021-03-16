@@ -123,6 +123,7 @@
     <ClCompile Include="InputChecker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="SchedulePreferenceData.cpp" />
     <ClCompile Include="Scheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +133,7 @@
     <ClInclude Include="CourseModule.h" />
     <ClInclude Include="InputChecker.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="SchedulePreferenceData.h" />
     <ClInclude Include="Scheduler.h" />
   </ItemGroup>
   <ItemGroup>

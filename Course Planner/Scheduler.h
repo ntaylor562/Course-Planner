@@ -76,7 +76,7 @@ class Scheduler {
 private:
 
 	CourseGraph Courses;
-	std::set<CourseModule> completedCourses;
+	std::list<CourseModule> completedCourses;
 
 	std::vector<Semester> semsWithRestrictions;
 	
@@ -97,7 +97,7 @@ public:
 	 * @param g Graph containing all courses that need to be taken or have already been taken
 	 * @param completed Vector containing all courses that have already been taken and don't need to be planned
 	*/
-	Scheduler(const CourseGraph &g, const std::set<CourseModule> &completed = std::set<CourseModule>());
+	Scheduler(const CourseGraph &g, const std::list<CourseModule> &completed = std::list<CourseModule>());
 
 	/**
 	 * @brief Updates the list of courses we're generating schedules for
@@ -105,6 +105,12 @@ public:
 	 * @param g The new course graph
 	*/
 	void updateCourses(const CourseGraph &g);
+
+	/**
+	 * @brief Used to check the courses that have been marked complete
+	 * @return constant reference to the list of completed courses
+	*/
+	const std::list<CourseModule> &getCompletedCourses() const;
 
 	/**
 	 * @brief Marks the course given as complete by removing it from the graph and adding it to the list of completed courses
@@ -175,6 +181,14 @@ public:
 	 * @param lim The maximum units to be taken in any semester
 	*/
 	void setUnitLimit(int lim);
+
+	/**
+	 * @brief Removes a vertex and all courses that are prerequisites of v from the graph and removes their prerequisites as well
+	 * @details Used when marking a course as complete.
+	 * @param g Graph we're removing courses from
+	 * @param v Vertex whose self and prerequisites are getting deleted
+	*/
+	void deletePrereqs(CourseGraph &g, vertex &v) const;
 
 	Schedule generateSchedule(Semester::Seasons currentSeason, int currentYear) const;
 

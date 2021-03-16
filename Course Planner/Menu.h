@@ -1,7 +1,8 @@
 #ifndef Menu_H
 #define Menu_H
 
-#define dataFile "course_data.txt"
+#define courseDataFile "course_data.txt"
+#define scheduleDataFile "schedule_preferences.txt"
 
 #include <vector>
 #include <string>

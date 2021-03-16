@@ -1,3 +1,5 @@
+#include <vector>
+#include <fstream>
 #include "CourseData.h"
 
 void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runtime_error) {

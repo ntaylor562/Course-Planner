@@ -1,14 +1,12 @@
 #ifndef COURSE_DATA_H
 #define COURSE_DATA_H
 
-#include <vector>
-#include <fstream>
 #include <exception>
 #include "CourseGraph.h"
 
 /**
  * @brief Used to read and write course data to a file for future use
- * @details When reading we populate a CourseGraph and return it. When writing, we take in a course graph then output the data to the file
+ * @details When reading we populate a provided CourseGraph. When writing, we take in a course graph then output the data to the file
 */
 class CourseData {
 public:

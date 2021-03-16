@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <list>
 #include <iomanip>
@@ -8,18 +7,28 @@
 #include "InputChecker.h"
 #include "CourseInputChecker.h"
 #include "CourseData.h"
+#include "SchedulePreferenceData.h"
 
 Menu::Menu() {
 	try {
-		CourseData::load(Courses, dataFile);
+		CourseData::load(Courses, courseDataFile);
 	}
 	catch (std::runtime_error x) {
 		std::cout << x.what() << std::endl
-			<< "List of courses is empty" << std::endl;
+			<< "Save courses to create a file. List of courses is empty." << std::endl;
 		system("pause");
 		system("cls");
 	}
-	CourseScheduler = Scheduler(Courses);
+	try {
+		SchedulePreferenceData::load(CourseScheduler, Courses, scheduleDataFile);
+	}
+	catch (std::runtime_error x) {
+		std::cout << x.what() << std::endl
+			<< "Save schedule preference data to create a file. Schedule preferences set to default." << std::endl;
+		CourseScheduler = Scheduler(Courses);
+		system("pause");
+		system("cls");
+	}
 }
 
 void Menu::readPrerequisites(CourseModule &course, std::string str) {
@@ -209,8 +218,8 @@ void Menu::mainMenu() {
 			subMenuCourseScheduler();
 			break;
 		case 7: //Save courses
-			CourseData::store(Courses, dataFile);
-			std::cout << "Data has been saved to " << dataFile << std::endl << std::endl;
+			CourseData::store(Courses, courseDataFile);
+			std::cout << "Data has been saved to " << courseDataFile << std::endl << std::endl;
 			system("pause");
 			break;
 		case 8: //Toggle autosave
@@ -224,7 +233,7 @@ void Menu::mainMenu() {
 			break;
 		}
 		system("cls");
-		if(autoSave) CourseData::store(Courses, dataFile);
+		if(autoSave) CourseData::store(Courses, courseDataFile);
 	}
 }
 
@@ -463,13 +472,24 @@ void Menu::subMenuCourseScheduler() {
 	int userChoice = 0;
 	updateScheduler();
 	do {
-		std::cout << "Course Scheduler" << std::endl << std::endl
-			<< "0 - Return" << std::endl
-			<< "1 - Generate a Schedule" << std::endl
+		std::cout << "Course Scheduler" << std::endl << std::endl;
+		
+		if (!CourseScheduler.getCompletedCourses().empty()) {
+			std::cout << "Completed courses:";
+			for (const auto &i : CourseScheduler.getCompletedCourses()) {
+				std::cout << " " << i;
+			}
+			std::cout << std::endl << std::endl;
+		}
+		
+
+		std::cout << "0 - Return" << std::endl
+			<< "1 - Generate a schedule" << std::endl
 			<< "2 - Mark course as complete" << std::endl
 			<< "3 - Mark course as incomplete" << std::endl
-			<< "4 - Add a Restriction" << std::endl
-			<< "5 - Remove a Restriction" << std::endl << std::endl
+			<< "4 - Add a restriction" << std::endl
+			<< "5 - Remove a restriction" << std::endl
+			<< "6 - Save schedule preferences" << std::endl << std::endl
 			<< "Enter a choice: ";
 
 		userChoice = InputChecker::getInt();
@@ -482,16 +502,15 @@ void Menu::subMenuCourseScheduler() {
 		case 0:
 			break;
 		case 1:
-			system("cls");
 			s = enterSemester("Enter the semester you want to start the schedule with (Ex: Spring 2020): ");
-			std::cout << std::endl;
+			system("cls");
 			printSchedule(s);
 			system("pause");
 			system("cls");
 			break;
 		case 2:
 			printAllCourses();
-			std::cout << std::endl;
+			std::cout << std::endl << "Prerequisites of courses you enter will be assumed complete." << std::endl;
 			enteredCoursesPointers = inputValidCourses();
 
 			for (const auto &i : enteredCoursesPointers) {
@@ -499,7 +518,7 @@ void Menu::subMenuCourseScheduler() {
 			}
 			CourseScheduler.complete(enteredCourses);
 
-			std::cout << "Course(s) marked complete." << std::endl << std::endl;
+			if(!enteredCourses.empty()) std::cout << "Course(s) marked complete." << std::endl << std::endl;
 			system("pause");
 			system("cls");
 			break;
@@ -511,9 +530,9 @@ void Menu::subMenuCourseScheduler() {
 			for (const auto &i : enteredCoursesPointers) {
 				enteredCourses.push_back(*i);
 			}
-			CourseScheduler.complete(enteredCourses);
+			CourseScheduler.uncomplete(enteredCourses);
 
-			std::cout << "Course(s) marked incomplete." << std::endl << std::endl;
+			if (!enteredCourses.empty()) std::cout << "Course(s) marked incomplete." << std::endl << std::endl;
 			system("pause");
 			system("cls");
 			break;
@@ -524,6 +543,12 @@ void Menu::subMenuCourseScheduler() {
 		case 5:
 			system("cls");
 			removeRestriction();
+			break;
+		case 6:
+			SchedulePreferenceData::store(CourseScheduler, scheduleDataFile);
+			std::cout << "Schedule preferences have been saved." << std::endl << std::endl;
+			system("pause");
+			system("cls");
 			break;
 		default:
 			std::cout << "Invalid choice." << std::endl << std::endl;

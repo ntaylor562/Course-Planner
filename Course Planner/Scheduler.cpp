@@ -20,9 +20,14 @@ void Scheduler::nextSemester(Semester::Seasons &s, int &y) const {
 
 Scheduler::Scheduler() {
 	Courses = CourseGraph();
+
+	springAllowed = true;
+	fallAllowed = true;
+	winterAllowed = false;
+	summerAllowed = false;
 }
 
-Scheduler::Scheduler(const CourseGraph &g, const std::set<CourseModule> &completed) {
+Scheduler::Scheduler(const CourseGraph &g, const std::list<CourseModule> &completed) {
 	Courses = g;
 	completedCourses = completed;
 	for (auto &i : completedCourses) {
@@ -41,23 +46,39 @@ void Scheduler::updateCourses(const CourseGraph &g) {
 	Courses = g;
 }
 
+const std::list<CourseModule> &Scheduler::getCompletedCourses() const {
+	return completedCourses;
+}
+
 void Scheduler::complete(const CourseModule &c) {
-	completedCourses.insert(c);
+	if (std::find(completedCourses.begin(), completedCourses.end(), c) == completedCourses.end())
+		completedCourses.push_back(c);
 }
 
 void Scheduler::complete(const std::vector<CourseModule> &vect) {
 	for (const auto &i : vect) {
-		completedCourses.insert(i);
+		if (std::find(completedCourses.begin(), completedCourses.end(), i) == completedCourses.end())
+			completedCourses.push_back(i);
 	}
 }
 
 void Scheduler::uncomplete(const CourseModule &c) {
-	if (completedCourses.find(c) != completedCourses.end()) completedCourses.erase(c);
+	std::list<CourseModule>::iterator it = completedCourses.begin();
+	while (it != completedCourses.end()) {
+		if (*it == c) break;
+		++it;
+	}
+	if (it != completedCourses.end()) completedCourses.erase(it);
 }
 
 void Scheduler::uncomplete(const std::vector<CourseModule> &vect) {
 	for (const auto &i : vect) {
-		if (completedCourses.find(i) != completedCourses.end()) completedCourses.erase(i);
+		std::list<CourseModule>::iterator it = completedCourses.begin();
+		while (it != completedCourses.end()) {
+			if (*it == i) break;
+			++it;
+		}
+		if (it != completedCourses.end()) completedCourses.erase(it);
 	}
 }
 
@@ -151,20 +172,34 @@ void Scheduler::setUnitLimit(int lim) {
 	else maxUnits = (lim >= 4) ? lim : 4;
 }
 
+void Scheduler::deletePrereqs(CourseGraph &g, vertex &v) const {
+	while (!v.prerequisites.empty()) {
+		deletePrereqs(g, *v.prerequisites.front());
+	}
+	g.remove(v.course);
+}
+
 Schedule Scheduler::generateSchedule(Semester::Seasons currentSeason, int currentYear) const {
 	//Return an empty schedule if there are no allowed seasons
 	if (!(winterAllowed || springAllowed || summerAllowed || fallAllowed)) return Schedule();
 
+	std::list<CourseModule> toBeRemoved(completedCourses);
+
 	CourseGraph remainingCourses(Courses);
-	for (const auto &i : completedCourses) {
-		remainingCourses.remove(i);
+	while(!toBeRemoved.empty()) {
+		vertex *v = remainingCourses.search(toBeRemoved.front());
+		if (v != nullptr) {
+			deletePrereqs(remainingCourses, *v);
+			toBeRemoved.pop_front();
+		}
 	}
 	Schedule schedule;
 
-	//Queue containing leaf courses that were not assigned to the last semester due to restrictions
-	std::queue<CourseModule> queuedCourses;
 
 	while (!remainingCourses.empty()) {
+		//Queue containing leaf courses that will be added to the semester
+		std::queue<CourseModule> queuedCourses;
+
 		Semester currentSem;
 		currentSem.season = currentSeason;
 		currentSem.year = currentYear;
@@ -180,6 +215,7 @@ Schedule Scheduler::generateSchedule(Semester::Seasons currentSeason, int curren
 		}
 		int maxSemUnits = (currentSem.maxUnits > 0) ? currentSem.maxUnits : maxUnits;
 
+		//Contains all courses that will be added
 		std::vector<vertex *> leaves;
 		for (auto &i : remainingCourses) {
 			if (i->prerequisites.empty()) {

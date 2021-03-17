@@ -72,12 +72,40 @@ std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 		int mid = (start + end) / 2;
 		if (c < vertices.at(mid)->course) end = mid - 1;
 		else if (vertices.at(mid)->course < c) start = mid + 1;
-		else return vertices.begin() + mid; //Vertex is already in graph so we don't insert
+		else { //Vertex is already in graph so we merge the vertices
+			merge(vertices[mid]->course, c);
+			return vertices.begin() + mid;
+		}
 	}
 
 	std::vector<vertex*>::iterator index = vertices.begin() + start;
 	vertices.insert(index, new vertex{ CourseModule(c) });
 	return searchVertices(c);
+}
+
+void CourseGraph::merge(const CourseModule &a, const CourseModule &b) {
+	if (!(a == b)) return;
+	vertex *v = CourseGraph::search(a);
+
+	if (v == nullptr) return;
+
+	CourseModule *result = &v->course;
+	if (result->getUnits() == 0) result->setUnits(b.getUnits());
+	if (result->getCourseTitle() == "") result->setCourseTitle(b.getCourseTitle());
+	if (result->getDescription() == "") result->setDescription(b.getDescription());
+
+}
+
+void CourseGraph::merge(const CourseGraph &g) {
+	for (const auto &i : g) {
+		insert(i->course);
+	}
+
+	for (const auto &i : g) {
+		for (const auto &p : i->prerequisites) {
+			addEdge(p->course, i->course);
+		}
+	}
 }
 
 void CourseGraph::remove(const CourseModule &c) {

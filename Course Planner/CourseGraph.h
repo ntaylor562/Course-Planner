@@ -41,7 +41,7 @@ public:
 	CourseGraph(const CourseGraph &g);
 
 	/**
-	 * @brief Overloaded assignment operator to perform deep copy of another graph
+	 * @brief Overloaded assignment operator to perform deep copy of another graph. OVERWRITES this graph
 	 * @param g Other graph we're copying
 	 * @return Reference to this graph
 	*/
@@ -61,10 +61,28 @@ public:
 
 	/**
 	 * @brief If the course is not already a vertex, insert a new vertex with value c
+	 * @details If the course is already a vertex, we merge the courses
 	 * @param c Course being added to the graph
 	 * @return Iterator pointing to the course we inserteda
 	*/
 	std::vector<vertex*>::iterator insert(const CourseModule &c);
+
+	/**
+	 * @brief Merges the data for the course in the graph with the other course given. If course a is not in the graph, nothing is done
+	 * @details Incomplete data in one course is filled by the other course's data
+	 * @details Conflicts prioritize course a
+	 * @details Does not merge prerequisites because course b should not have any since it's not in the graph
+	 * @param a Course currently in the graph
+	 * @param b The course being merged with the instance in the graph
+	*/
+	void merge(const CourseModule &a, const CourseModule &b);
+
+	/**
+	 * @brief Merges this graph with another one
+	 * @details Conflicts prioritize this graph's data
+	 * @param g Graph being merged with this graph
+	*/
+	void merge(const CourseGraph &g);
 
 	/**
 	 * @brief Removes course c from the graph

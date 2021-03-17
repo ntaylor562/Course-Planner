@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="CourseData.h" />
     <ClInclude Include="CourseGraph.h" />
+    <ClInclude Include="CourseGroup.h" />
     <ClInclude Include="CourseInputChecker.h" />
     <ClInclude Include="CourseModule.h" />
     <ClInclude Include="InputChecker.h" />

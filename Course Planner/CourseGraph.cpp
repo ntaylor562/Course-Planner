@@ -73,7 +73,7 @@ std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 		if (c < vertices.at(mid)->course) end = mid - 1;
 		else if (vertices.at(mid)->course < c) start = mid + 1;
 		else { //Vertex is already in graph so we merge the vertices
-			merge(vertices[mid]->course, c);
+			merge(c);
 			return vertices.begin() + mid;
 		}
 	}
@@ -83,17 +83,53 @@ std::vector<vertex*>::iterator CourseGraph::insert(const CourseModule &c) {
 	return searchVertices(c);
 }
 
-void CourseGraph::merge(const CourseModule &a, const CourseModule &b) {
-	if (!(a == b)) return;
-	vertex *v = CourseGraph::search(a);
+std::vector<vertex *>::iterator CourseGraph::insert(const vertex &v) {
+	vertex *originalVertex= *insert(v.course);
+	//Adding prerequisites
+	for (const auto &i : v.prerequisites) {
+		insert(i->course);
+		addEdge(i->course, originalVertex->course);
+	}
+	//Adding prerequisiteFor
+	for (const auto &i : v.prerequisiteFor) {
+		insert(i->course);
+		addEdge(originalVertex->course, i->course);
+	}
+	return searchVertices(originalVertex->course);
+}
+
+void CourseGraph::merge(const CourseModule &c) {
+	vertex *v = CourseGraph::search(c);
 
 	if (v == nullptr) return;
 
 	CourseModule *result = &v->course;
-	if (result->getUnits() == 0) result->setUnits(b.getUnits());
-	if (result->getCourseTitle() == "") result->setCourseTitle(b.getCourseTitle());
-	if (result->getDescription() == "") result->setDescription(b.getDescription());
+	if (result->getUnits() == 0) result->setUnits(c.getUnits());
+	if (result->getCourseTitle() == "") result->setCourseTitle(c.getCourseTitle());
+	if (result->getDescription() == "") result->setDescription(c.getDescription());
 
+}
+
+void CourseGraph::merge(const vertex *v) {
+	//Vertex in this graph that corresponds to v
+	vertex *originalVertex = CourseGraph::search(v->course);
+
+	//No vertex in the graph to merge with
+	if (originalVertex == nullptr) return;
+
+	//Merge course data
+	merge(v->course);
+
+	//Merging prerequisites
+	for (const auto &i : v->prerequisites) {
+		insert(i->course);
+		addEdge(i->course, originalVertex->course);
+	}
+	//Merging prerequisiteFor
+	for (const auto &i : v->prerequisiteFor) {
+		insert(i->course);
+		addEdge(originalVertex->course, i->course);
+	}
 }
 
 void CourseGraph::merge(const CourseGraph &g) {

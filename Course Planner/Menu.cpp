@@ -10,6 +10,25 @@
 #include "SchedulePreferenceData.h"
 
 Menu::Menu() {
+
+	try {
+		majorList.push_back(Major("CECS", "Computer Science"));
+	}
+	catch (std::runtime_error x) {
+		std::cout << x.what() << std::endl
+			<< "Place the required file in the directory with the executable file.\nIf you don't have the file, find it at https://github.com/ntaylor562/Course-Planner.\nList of courses is empty." << std::endl;
+		system("pause");
+		system("cls");
+	}
+
+	std::ifstream courseData;
+	courseData.open("course_data.txt");
+	if (!courseData) { //Checking if a course data file has been saved. If not, we need to set things up
+		setupMenu();
+	}
+	courseData.close();
+
+
 	try {
 		CourseData::load(Courses, courseDataFile);
 	}
@@ -29,6 +48,75 @@ Menu::Menu() {
 		system("pause");
 		system("cls");
 	}
+
+}
+
+void Menu::setupMenu() {
+	std::cout << "Welcome to Course Planner" << std::endl
+		<< "This application allows you to add a list of courses and their information" << std::endl
+		<< "to help manage all the classes you need to take." << std::endl << std::endl;
+	
+
+	Major *selectedMajor;
+
+	int userChoice = 0;
+
+
+	//Loop until user enters valid choice
+	while (1) {
+		std::cout << "Select your major: " << std::endl;
+
+		int count = 1;
+		for (const auto &i : majorList) {
+			std::cout << count++ << " - " << i.getMajor() << " - " << i.getTitle() << std::endl;
+		}
+
+		std::cout << "Work in progress..." << std::endl << std::endl
+			<< "Enter a choice: ";
+		std::cout << std::endl << std::endl;
+
+		userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+
+		if (1 <= userChoice && userChoice <= majorList.size()) {
+			std::list<Major>::iterator it = majorList.begin();
+			for (int i = 0; i < userChoice; ++i)
+				++it;
+			selectedMajor = &*(--it);
+			break;
+		}
+		else {
+			std::cout << "Invalid choice." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+		}
+	}
+
+	Courses.merge(selectedMajor->getMajorReq());
+	Courses.merge(selectedMajor->getElectives());
+
+	for (const auto &i : selectedMajor->getChoiceCourses()) {
+		std::cout << "You must choose one of these courses" << std::endl;
+		int count = 1;
+		for(const auto &g : i) {
+
+			vertex *v = *g.begin();
+			while (!v->prerequisiteFor.empty()) //Finding the leaf node. There should only be one in this graph
+				v = v->prerequisiteFor.front();
+
+			std::cout << count++ << " - " << v->course << v->course.getCourseTitle() << std::endl;
+		}
+		std::cout << std::endl << "Enter a choice: ";
+		userChoice = InputChecker::getIntRange(1, i.size(), "Input invalid. Enter a choice: ");
+
+		std::list<CourseGraph>::const_iterator it = i.begin();
+		for (int i = 0; i < userChoice; ++i)
+			++it;
+
+		Courses.merge(*it);
+
+		std::cout << std::endl << std::endl;
+	}
+
 }
 
 void Menu::readPrerequisites(CourseModule &course, std::string str) {

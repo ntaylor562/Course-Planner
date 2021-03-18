@@ -63,19 +63,35 @@ public:
 	 * @brief If the course is not already a vertex, insert a new vertex with value c
 	 * @details If the course is already a vertex, we merge the courses
 	 * @param c Course being added to the graph
-	 * @return Iterator pointing to the course we inserteda
+	 * @return Iterator pointing to the course we inserted
 	*/
 	std::vector<vertex*>::iterator insert(const CourseModule &c);
 
 	/**
+	 * @brief If the course is not already a vertex, insert a new vertex with the value v
+	 * @etails If the course is already a vertex, we merge the vertices
+	 * @param v The vertex being added to the graph
+	 * @return Iterator pointing to the course we inserted
+	*/
+	std::vector<vertex *>::iterator insert(const vertex &v);
+
+	/**
 	 * @brief Merges the data for the course in the graph with the other course given. If course a is not in the graph, nothing is done
 	 * @details Incomplete data in one course is filled by the other course's data
-	 * @details Conflicts prioritize course a
-	 * @details Does not merge prerequisites because course b should not have any since it's not in the graph
-	 * @param a Course currently in the graph
-	 * @param b The course being merged with the instance in the graph
+	 * @details Conflicts prioritize this graph's course
+	 * @details Does not merge prerequisites
+	 * @param c Course we're merging into the graph
 	*/
-	void merge(const CourseModule &a, const CourseModule &b);
+	void merge(const CourseModule &c);
+
+	/**
+	 * @brief Merges the data of vertex v and the vertex in this graph with a course that has the same subject and number as the one in vertex v
+	 * @details Incomplete data in one vertex's course is filled by the other course's data
+	 * @details Conflicts prioritize this graph's vertex
+	 * @details Makes a deep copy of vertex v's prerequisites and inserts them into this graph if it does not exist already
+	 * @param v Vertex we're merging with
+	*/
+	void merge(const vertex *v);
 
 	/**
 	 * @brief Merges this graph with another one

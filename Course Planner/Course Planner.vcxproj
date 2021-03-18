@@ -122,6 +122,7 @@
     <ClCompile Include="CourseModule.cpp" />
     <ClCompile Include="InputChecker.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Major.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="SchedulePreferenceData.cpp" />
     <ClCompile Include="Scheduler.cpp" />
@@ -129,10 +130,10 @@
   <ItemGroup>
     <ClInclude Include="CourseData.h" />
     <ClInclude Include="CourseGraph.h" />
-    <ClInclude Include="CourseGroup.h" />
     <ClInclude Include="CourseInputChecker.h" />
     <ClInclude Include="CourseModule.h" />
     <ClInclude Include="InputChecker.h" />
+    <ClInclude Include="Major.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="SchedulePreferenceData.h" />
     <ClInclude Include="Scheduler.h" />

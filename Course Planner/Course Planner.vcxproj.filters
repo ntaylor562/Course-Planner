@@ -42,6 +42,9 @@
     <ClCompile Include="SchedulePreferenceData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Major.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CourseModule.h">
@@ -68,7 +71,7 @@
     <ClInclude Include="SchedulePreferenceData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CourseGroup.h">
+    <ClInclude Include="Major.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

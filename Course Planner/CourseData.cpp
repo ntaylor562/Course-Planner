@@ -3,6 +3,9 @@
 #include "CourseData.h"
 
 void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runtime_error) {
+	if (fileName == ".txt") throw std::runtime_error("Invalid file name.");
+	else if (fileName.find(".txt") == std::string::npos) fileName += ".txt";
+
 	std::ifstream inFile;
 	inFile.open(fileName);
 

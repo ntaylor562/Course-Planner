@@ -10,6 +10,7 @@
 #include "CourseModule.h"
 #include "CourseGraph.h"
 #include "Scheduler.h"
+#include "Major.h"
 
 /**
  * @brief Temporary class to drive the program giving the option to add, remove, and edit courses in a list
@@ -28,6 +29,11 @@ private:
 	 * @brief Handles generating schedules
 	*/
 	Scheduler CourseScheduler;
+
+	/**
+	 * @brief List of majors to choose from
+	*/
+	std::list<Major> majorList;
 	
 	/**
 	 * @brief Asks to input a course then retries if the course entered is invalid
@@ -66,6 +72,11 @@ public:
 	 * @brief Constructor to read data from a file to populate the list of courses
 	*/
 	Menu ();
+
+	/**
+	 * @brief Helps the user set up the courses they need to take by letting them select a major and their electives. 
+	*/
+	void setupMenu();
 
 	/**
 	 * @brief Prints a welcome message then runs the main menu

@@ -1,0 +1,24 @@
+Course: CECS 323
+-
+Course: CECS 328
+-
+Course: CECS 419
+Course Title: Theory of Computation
+Units: 3
+Course Description: Finite Automata and regular expressions. Pushdown automata and context-free languages. Turing machines and computability. Computational complexity.
+Prerequisites: CECS 328 
+-
+Course: CECS 428
+Course Title: Analysis of Algorithms
+Units: 3
+Course Description: Applications of standard combinatorial techniques to applied programming problems. Rigorous analysis of correctness/complexity of algorithms. Advanced graph algorithms are emphasized. Topics include shortest paths on graphs, sorting, string matching, union find problem, divide-and-conquer technique, and weighted-edge problem.
+Prerequisites: CECS 328 
+-
+Course: CECS 429
+Course Title: Search Engine Technology
+Units: 3
+Course Description: Models, algorithms, and evaluation of the retrieval of information from a collection of documents. Document preprocessing. Indexing and searching. Retrieval evaluation. Search engines.
+Prerequisites: CECS 323 E E 381 CECS 328 
+-
+Course: E E 381
+-

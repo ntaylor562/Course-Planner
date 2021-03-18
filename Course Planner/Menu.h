@@ -1,7 +1,7 @@
 #ifndef Menu_H
 #define Menu_H
 
-#define courseDataFile "course_data.txt"
+#define settingsConfig "settings.txt"
 #define scheduleDataFile "schedule_preferences.txt"
 
 #include <vector>
@@ -19,6 +19,12 @@
 */
 class Menu {
 private:
+	/**
+	 * @brief Name of the file that we save data to when using save feature
+	*/
+	std::string courseDataFileName;
+
+	bool autoSave;
 
 	/**
 	 * @brief Container holding all the user's courses that have been added.
@@ -67,6 +73,16 @@ private:
 	*/
 	void updateScheduler();
 
+	/**
+	 * @brief Loads settings from the settings.txt file
+	*/
+	void loadSettings();
+
+	/**
+	 * @brief Saves settings to the settings.txt file
+	*/
+	void saveSettings();
+
 public:
 	/**
 	 * @brief Constructor to read data from a file to populate the list of courses
@@ -114,6 +130,11 @@ public:
 	 * @details Use can disallow semesters, 
 	*/
 	void subMenuCourseScheduler();
+
+	/**
+	 * @brief Allows user to configure program settings like auto save, reset courses, and change the course data file name
+	*/
+	void subMenuSettings();
 
 	/**
 	 * @brief Allows user to add a restriction to the course scheduler

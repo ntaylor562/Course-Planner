@@ -7,13 +7,15 @@ void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runti
 	else if (fileName.find(".txt") == std::string::npos) fileName += ".txt";
 
 	std::ifstream inFile;
-	inFile.open(fileName);
+	inFile.open(dataPath + fileName);
 
 	if (!inFile.is_open()) throw std::runtime_error("File \"" + fileName + "\" not found.");
 
 	std::string currentLine;
 	std::string whatIsIt; //Example being "Course Subject" or "Units". This is so we can read the data correctly
 	std::string data; //This is the actual data in the line that we'll be reading
+
+	if (inFile.peek() == EOF) throw std::runtime_error("File \"" + fileName + "\" is empty.");
 
 	try {
 		while (!inFile.eof()) {
@@ -85,7 +87,7 @@ void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runti
 
 void CourseData::store(const CourseGraph &graph, std::string fileName) {
 	std::ofstream outFile;
-	outFile.open(fileName);
+	outFile.open(dataPath + fileName);
 	for (std::vector<vertex *>::const_iterator it = graph.begin(); it != graph.end(); ++it) {
 		
 		outFile << "Course: " << (*it)->course << std::endl;

@@ -48,7 +48,8 @@ Major::Major(std::string majorAcronym, std::string title) {
 	CourseData::load(electives, majorAcronym + "_electives.txt");
 	
 	std::ifstream indexFile;
-	indexFile.open(major + "_choice_course_index.txt");
+	indexFile.open(dataPath + major + "_choice_course_index.txt");
+	if (!indexFile.is_open()) throw std::runtime_error("\"" + major + "_choice_course_index.txt\" file not found.");
 
 	std::string currentLine; //Line of the text file we're currently reading
 	std::getline(indexFile, currentLine);

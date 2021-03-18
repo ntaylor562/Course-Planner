@@ -1,0 +1,2 @@
+Autosave: F
+Course data file name: CECS_electives.txt

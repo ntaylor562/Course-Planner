@@ -4,6 +4,8 @@
 #include <exception>
 #include "CourseGraph.h"
 
+#define dataPath "data_files/"
+
 /**
  * @brief Used to read and write course data to a file for future use
  * @details When reading we populate a provided CourseGraph. When writing, we take in a course graph then output the data to the file

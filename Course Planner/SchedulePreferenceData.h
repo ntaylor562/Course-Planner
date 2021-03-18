@@ -4,6 +4,8 @@
 #include "Scheduler.h"
 #include "CourseGraph.h"
 
+#define dataPath "data_files/"
+
 /**
  * @brief Used to read and write schedule preference data to a file for future use
  * @details When reading, we give values to a given Scheduler object. When writing, we take in a Scheduler and output the data to a file

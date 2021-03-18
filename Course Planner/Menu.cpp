@@ -10,34 +10,19 @@
 #include "SchedulePreferenceData.h"
 
 Menu::Menu() {
+	loadSettings();
 
 	try {
 		majorList.push_back(Major("CECS", "Computer Science"));
 	}
 	catch (std::runtime_error x) {
 		std::cout << x.what() << std::endl
-			<< "Place the required file in the directory with the executable file.\nIf you don't have the file, find it at https://github.com/ntaylor562/Course-Planner.\nList of courses is empty." << std::endl;
+			<< "Place the required file in the directory with the executable file in the folder \"" << dataPath << "\b\"." << std::endl
+			<< "If you don't have the file, find it at https://github.com/ntaylor562/Course-Planner." << std::endl
+			<< "List of courses is empty." << std::endl;
 		system("pause");
 		system("cls");
-	}
-
-	std::ifstream courseData;
-	courseData.open("course_data.txt");
-	if (!courseData) { //Checking if a course data file has been saved. If not, we need to set things up
-		setupMenu();
-	}
-	courseData.close();
-
-
-	try {
-		CourseData::load(Courses, courseDataFile);
-	}
-	catch (std::runtime_error x) {
-		std::cout << x.what() << std::endl
-			<< "Save courses to create a file. List of courses is empty." << std::endl;
-		system("pause");
-		system("cls");
-	}
+	}	
 	try {
 		SchedulePreferenceData::load(CourseScheduler, Courses, scheduleDataFile);
 	}
@@ -52,20 +37,16 @@ Menu::Menu() {
 }
 
 void Menu::setupMenu() {
-	std::cout << "Welcome to Course Planner" << std::endl
-		<< "This application allows you to add a list of courses and their information" << std::endl
-		<< "to help manage all the classes you need to take." << std::endl << std::endl;
 	
-
 	Major *selectedMajor;
 
 	int userChoice = 0;
-
 
 	//Loop until user enters valid choice
 	while (1) {
 		std::cout << "Select your major: " << std::endl;
 
+		std::cout << "0 - None" << std::endl;
 		int count = 1;
 		for (const auto &i : majorList) {
 			std::cout << count++ << " - " << i.getMajor() << " - " << i.getTitle() << std::endl;
@@ -73,11 +54,15 @@ void Menu::setupMenu() {
 
 		std::cout << "Work in progress..." << std::endl << std::endl
 			<< "Enter a choice: ";
-		std::cout << std::endl << std::endl;
 
 		userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
 
-		if (1 <= userChoice && userChoice <= majorList.size()) {
+		std::cout << std::endl << std::endl;
+
+		if (userChoice == 0) {
+			return;
+		}
+		else if (1 <= userChoice && userChoice <= majorList.size()) {
 			std::list<Major>::iterator it = majorList.begin();
 			for (int i = 0; i < userChoice; ++i)
 				++it;
@@ -145,6 +130,28 @@ void Menu::runMenu() {
 	std::cout << "Welcome to Course Planner" << std::endl
 		<< "This application allows you to add a list of courses and their information" << std::endl
 		<< "to help manage all the classes you need to take." << std::endl << std::endl;
+
+	std::ifstream courseData;
+	courseData.open(dataPath + courseDataFileName);
+	if (!courseData.is_open()) { //Checking if a course data file has been saved. If not, we need to set things up
+		setupMenu();
+	}
+	else if (courseData.peek() == EOF) { //File is empty so we go to setup
+		setupMenu(); //This is in a different if statement because we can't peek a file that can't open
+	}
+	else { //If the user's course data exists, load it into the user's course graph
+		try {
+			CourseData::load(Courses, courseDataFileName);
+		}
+		catch (std::runtime_error x) {
+			std::cout << x.what() << std::endl
+				<< "Save courses to create a working file. List of courses is empty." << std::endl;
+			system("pause");
+			system("cls");
+		}
+	}
+	courseData.close();
+
 
 	mainMenu();
 }
@@ -248,7 +255,6 @@ std::string Menu::fullCourseInfo(const CourseModule &course) {
 
 void Menu::mainMenu() {
 	bool exit = false;
-	bool autoSave = false;
 	while (!exit) {
 		std::cout << "Main Menu" << std::endl
 			<< "0 - Exit" << std::endl
@@ -259,7 +265,7 @@ void Menu::mainMenu() {
 			<< "5 - Search courses" << std::endl
 			<< "6 - Generate schedule" << std::endl
 			<< "7 - Save courses" << std::endl
-			<< "8 - Toggle Autosave (" << ((autoSave) ? "ON" : "OFF") << ")" << std::endl;
+			<< "8 - Settings" << std::endl << std::endl;
 
 		std::cout << "Enter a choice: ";
 		int userChoice = InputChecker::getInt();
@@ -306,14 +312,13 @@ void Menu::mainMenu() {
 			subMenuCourseScheduler();
 			break;
 		case 7: //Save courses
-			CourseData::store(Courses, courseDataFile);
-			std::cout << "Data has been saved to " << courseDataFile << std::endl << std::endl;
+			CourseData::store(Courses, courseDataFileName);
+			std::cout << "Data has been saved to " << courseDataFileName << std::endl << std::endl;
 			system("pause");
 			break;
-		case 8: //Toggle autosave
-			autoSave = !autoSave;
-			std::cout << "Autosave is now " << ((autoSave) ? "on" : "off") << "." << std::endl << std::endl;
-			system("pause");
+		case 8:
+			system("cls");
+			subMenuSettings();
 			break;
 		default:
 			std::cout << "Invalid choice." << std::endl << std::endl;
@@ -321,7 +326,7 @@ void Menu::mainMenu() {
 			break;
 		}
 		system("cls");
-		if(autoSave) CourseData::store(Courses, courseDataFile);
+		if(autoSave) CourseData::store(Courses, courseDataFileName);
 	}
 }
 
@@ -642,6 +647,68 @@ void Menu::subMenuCourseScheduler() {
 			std::cout << "Invalid choice." << std::endl << std::endl;
 			break;
 		}
+	} while (userChoice != 0);
+}
+
+void Menu::subMenuSettings() {
+	int userChoice = 0;
+	do {
+		std::cout << "Settings" << std::endl << std::endl
+			<< "0 - Return" << std::endl
+			<< "1 - Toggle Autosave (" << ((autoSave) ? "ON" : "OFF") << ")" << std::endl
+			<< "2 - Change user course data file name" << std::endl
+			<< "3 - Choose another major" << std::endl
+			<< "4 - Reset all user course data" << std::endl << std::endl
+			<< "Enter a choice: ";
+
+		userChoice = InputChecker::getIntRange(0, 4, "Input invalid. Enter a choice: ");
+		std::cout << std::endl;
+
+		switch (userChoice) {
+		case 1: //Toggle autosave
+			autoSave = !autoSave;
+			std::cout << "Autosave is now " << ((autoSave) ? "on" : "off") << "." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+			break;
+		case 2:
+
+			std::cout << "If you have saved a file with the previous name, it will not be deleted." << std::endl
+				<< "Enter the file name you would like to save your courses to: ";
+			courseDataFileName = InputChecker::getString();
+			std::cout << "Course Planner will now save your courses to \"" << courseDataFileName << "\"." << std::endl << std::endl;
+			system("pause");
+			system("cls");
+			break;
+		case 3:
+			std::cout << "If you're not double majoring, you should reset your course data. Continue? (y/n) ";
+			if (!InputChecker::getBool("Input invalid. Enter y or n: ")) {
+				system("cls");
+				break;
+			}
+
+			std::cout << std::endl << "Reset course data? (y/n) ";
+			if (InputChecker::getBool("Input invalid. Enter y or n: ")) {
+				std::cout << "All courses have been wiped. If this was a mistake, DO NOT SAVE" << std::endl << std::endl;
+			}
+			setupMenu();
+			break;
+		case 4:
+			std::cout << "Are you sure you want to remove all course data?" << std::endl
+				<< "This will not delete your data unless you save or if autosave is enabled." << std::endl
+				<< "(y/n) ";
+			if (InputChecker::getBool("Input Invalid. Enter y or n: ")) {
+				Courses = CourseGraph();
+				std::cout << "All courses have been wiped. If this was a mistake, DO NOT SAVE" << std::endl << std::endl;
+			}
+			else std::cout << "Cancelled." << std::endl << std::endl;
+
+			system("pause");
+			system("cls");
+			break;
+		}
+		saveSettings();
+
 	} while (userChoice != 0);
 }
 
@@ -1115,6 +1182,50 @@ Semester Menu::enterSemester(std::string message) const {
 
 void Menu::updateScheduler() {
 	CourseScheduler.updateCourses(Courses);
+}
+
+void Menu::loadSettings() {
+	std::ifstream inFile;
+	inFile.open(settingsConfig);
+	if (!inFile.is_open()) {
+		std::cout << "Settings file not found. Settings set to default." << std::endl << std::endl;
+		autoSave = false;
+		courseDataFileName = "course_data.txt";
+		saveSettings();
+		system("pause");
+		return;
+	}
+
+	std::string currentLine;
+
+	while (!inFile.eof()) {
+		std::getline(inFile, currentLine);
+		if (currentLine == "") 
+			return;
+		if (currentLine.substr(0, currentLine.find_first_of(":")) == "Autosave") {
+			autoSave = (currentLine[currentLine.size() - 1] == 'T');
+		}
+		else if (currentLine.substr(0, currentLine.find_first_of(":")) == "Course data file name") {
+			courseDataFileName = currentLine.substr(currentLine.find_first_of(":") + 2);
+		}
+	}
+
+	inFile.close();
+}
+
+void Menu::saveSettings() {
+	std::ofstream outFile;
+	outFile.open(settingsConfig);
+	if (!outFile.is_open()) {
+		std::cout << "Save failed. File cannot open." << std::endl << std::endl;
+		system("pause");
+		return;
+	}
+
+	outFile << "Autosave: " << ((autoSave) ? "T" : "F") << std::endl;
+	outFile << "Course data file name: " << courseDataFileName;
+
+	outFile.close();
 }
 
 std::vector<CourseModule*> Menu::inputValidCourses() {

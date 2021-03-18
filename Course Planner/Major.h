@@ -38,7 +38,7 @@ public:
 	 * @details Reads majorName_choice_courses.txt for courses the student has a choice in (not electives)
 	 * @param majorName Name of the major (Ex: CECS, MATH, ENGR, etc.)
 	*/
-	Major(std::string majorAcronym, std::string title);
+	Major(std::string majorAcronym, std::string title) throw (std::runtime_error);
 
 	std::string getMajor() const;
 	std::string getTitle() const;

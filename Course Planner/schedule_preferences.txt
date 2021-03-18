@@ -1,7 +1,0 @@
-Completed Courses: 
-unitLimit = 15
-winter = F
-spring = T
-summer = F
-fall = T
-Restricted Semesters:

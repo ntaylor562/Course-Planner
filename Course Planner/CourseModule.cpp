@@ -19,8 +19,16 @@ CourseModule::CourseModule(std::string course) {
 		courseSubject = course.substr(0, course.find_first_of("0123456789") - 1);
 		for (auto &c : courseSubject)
 			c = std::toupper(c);
-
-		courseNumber = std::stoi(course.substr(course.find_first_of("0123456789"), std::string::npos));
+		try {
+			courseNumber = std::stoi(course.substr(course.find_first_of("0123456789"), std::string::npos));
+		}
+		catch (...) {
+			courseSubject = "ERROR";
+			courseNumber = 404;
+			units = -1;
+			courseTitle = "ERROR INITIALIZING COURSE";
+			courseDescription = "STRING USED IN CONSTRUCTOR DOES NOT REPRESENT A VALID COURSE. ENTER COURSE LIKE \"CECS 100\"";
+		}
 		units = NULL;
 		courseTitle = "";
 		courseDescription = "";

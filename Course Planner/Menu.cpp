@@ -17,7 +17,7 @@ Menu::Menu() {
 	}
 	catch (std::runtime_error x) {
 		std::cout << x.what() << std::endl
-			<< "Place the required file in the directory with the executable file in the folder \"" << dataPath << "\b\"." << std::endl
+			<< "Place the required file in the folder \"" << dataPath << "\b\" which should be in the same directory as the Course Planner executable file." << std::endl
 			<< "If you don't have the file, find it at https://github.com/ntaylor562/Course-Planner." << std::endl
 			<< "List of courses is empty." << std::endl;
 		system("pause");
@@ -77,31 +77,50 @@ void Menu::setupMenu() {
 	}
 
 	Courses.merge(selectedMajor->getMajorReq());
-	Courses.merge(selectedMajor->getElectives());
 
-	for (const auto &i : selectedMajor->getChoiceCourses()) {
-		std::cout << "You must choose one of these courses" << std::endl;
+	for (const auto &e : selectedMajor->getElectives()) {
+		std::cout << "You must choose " << e.unitMinimum << " units out of these courses" << std::endl << std::endl;
 		int count = 1;
-		for(const auto &g : i) {
-
-			vertex *v = *g.begin();
-			while (!v->prerequisiteFor.empty()) //Finding the leaf node. There should only be one in this graph
-				v = v->prerequisiteFor.front();
-
-			std::cout << count++ << " - " << v->course << v->course.getCourseTitle() << std::endl;
+		for (const auto &v : e.electives) {
+			std::cout << count++ << " - " << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
 		}
+
 		std::cout << std::endl << "Enter a choice: ";
-		userChoice = InputChecker::getIntRange(1, i.size(), "Input invalid. Enter a choice: ");
+		userChoice = InputChecker::getIntRange(1, e.electives.size(), "Input invalid. Enter a choice: ");
+		std::cout << std::endl;
 
-		std::list<CourseGraph>::const_iterator it = i.begin();
-		for (int i = 0; i < userChoice; ++i)
+		std::list<vertex *>::const_iterator it = e.electives.begin();
+		for (int i = 0; i < userChoice; ++i) //Finding the course the user selected
 			++it;
-
-		Courses.merge(*it);
+		//Inserting the vertex into the graph
+		Courses.insert(**(--it));
 
 		std::cout << std::endl << std::endl;
 	}
 
+
+	for (const auto &choiceList : selectedMajor->getChoiceCourses()) {
+		std::cout << "You must choose one of these courses" << std::endl;
+		int count = 1;
+		for(const auto &v : choiceList) {
+			std::cout << count++ << " - " << v->course << v->course.getCourseTitle() << std::endl;
+		}
+
+		std::cout << std::endl << "Enter a choice: ";
+		userChoice = InputChecker::getIntRange(1, choiceList.size(), "Input invalid. Enter a choice: ");
+
+		std::list<vertex *>::const_iterator it = choiceList.begin();
+		for (int i = 0; i < userChoice; ++i)
+			++it;
+
+		Courses.insert(**--it);
+
+		std::cout << std::endl << std::endl;
+	}
+	std::cout << "A list of courses has been generated for you. Check to make sure these courses are the ones " << std::endl
+		<< "you need. MAKE SURE to save your courses or you will need to set them up again." << std::endl << std::endl;
+
+	system("pause");
 }
 
 void Menu::readPrerequisites(CourseModule &course, std::string str) {
@@ -152,6 +171,7 @@ void Menu::runMenu() {
 	}
 	courseData.close();
 
+	system("cls");
 
 	mainMenu();
 }

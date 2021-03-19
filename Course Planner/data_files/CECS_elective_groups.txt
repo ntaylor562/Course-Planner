@@ -1,0 +1,2 @@
+Unit minimum = 6
+;CECS 419;CECS 428;CECS 429;

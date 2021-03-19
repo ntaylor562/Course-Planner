@@ -1,2 +1,2 @@
 Autosave: F
-Course data file name: CECS_electives.txt
+Course data file name: CECS_electives_data.txt

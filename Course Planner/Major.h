@@ -5,18 +5,35 @@
 #include <list>
 #include "CourseGraph.h"
 
+
+struct ElectiveGroup {
+	//List of electives the user has to choose from in a group of courses
+	std::list<vertex *> electives;
+
+	//Minimum units the student must fill in this group
+	int unitMinimum;
+
+};
+
 class Major {
 private:
 
 	std::string major;
 	std::string majorTitle;
 	CourseGraph majorRequirements;
-	CourseGraph electives;
 
-	//List of lists containing graphs where there is an option (Ex: CECS majors can choose PHYS 151 or CHEM 1111)
-	//Each graph should have only 1 vertex with an outdegree of 0
-	//The choice courses are represented as graphs so we could track the prerequisites it may have
-	std::list<std::list<CourseGraph>> choiceCourses;
+	//Represents a list of elective groups user has to pick from
+	std::list<ElectiveGroup> electiveGroups;
+
+	//Graph containing all the vertices of the elective courses
+	CourseGraph electivesGraph;
+
+	//List of lists containing courses where there is an option (Ex: CECS majors can choose PHYS 151 or CHEM 1111)
+	//The choice courses are represented as pointers to vertices so we can easily insert them into another graph
+	std::list<std::list<vertex *>> choiceCourses;
+
+	//Graph containing all the vertices of the choice courses and their prerequisites
+	CourseGraph choiceCoursesGraph;
 
 	//Saves all data into their respective files
 	void save();
@@ -25,8 +42,8 @@ private:
 	void saveElectives();
 	void saveChoiceCourses();
 
-	//Used to get a vertex in graph g with an outdegree of 0. There should only be one of these in a choice course graph
-	vertex *getLeaf(const CourseGraph &g);
+	void loadElectives();
+	void loadChoiceCourses();
 
 
 public:
@@ -43,33 +60,17 @@ public:
 	std::string getMajor() const;
 	std::string getTitle() const;
 
-	CourseGraph getMajorReq() const;
-	CourseGraph getElectives() const;
-	std::list<std::list<CourseGraph>> getChoiceCourses();
-
-	//Adds a course to the major requirements graph
 	void addMajorReq(const CourseModule &c);
-
-	//Adds a vertex to the major requirements graph
 	void addMajorReq(const vertex &v);
-
-	//Merges the major requirements graph with g
 	void addMajorReq(const CourseGraph &g);
 
-	//Adds a course to the elective graph
-	void addElective(const CourseModule &c);
-	
-	//Adds a vertex to the elective graph
-	void addElective(const vertex &v);
+	void addElectiveGroup(const ElectiveGroup &e);
 
-	//Merges the elective graph with g
-	void addElective(const CourseGraph &g);
+	void addCourseChoice(const std::list<vertex *> &choices);
 
-	/**
-	 * @brief Adds the list to the list of choice lists
-	 * @param choices List of courses that the student has an option to take (Ex: CECS majors have to choose between PHYS 151 or CHEM 1111)
-	*/
-	void addChoice(const std::list<CourseGraph> &choices);
+	CourseGraph getMajorReq() const;
+	std::list<ElectiveGroup> getElectives() const;
+	std::list<std::list<vertex *>> getChoiceCourses() const;
 };
 
 #endif

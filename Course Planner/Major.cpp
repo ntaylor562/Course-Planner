@@ -13,29 +13,100 @@ void Major::saveMajorReqs() {
 }
 
 void Major::saveElectives() {
-	CourseData::store(electives, major + "_electives.txt");
+	CourseData::store(electivesGraph, major + "_electives_data.txt");
+
+	std::ofstream outFile;
+	outFile.open(major + "_elective_groups.txt");
+
+	for (const auto &e : electiveGroups) {
+		outFile << "Unit minimum = " << e.unitMinimum << std::endl << ";";
+		for (const auto &v : e.electives) {
+			outFile << v->course << ";";
+		}
+
+		outFile << std::endl;
+	}
 }
 
 void Major::saveChoiceCourses() {
+	CourseData::store(choiceCoursesGraph, major + "_choice_course_data.txt"); //Save choice course graph
+
 	std::ofstream outFile;
-	outFile.open(major + "_choice_course_index.txt");
+	outFile.open(major + "_choice_course_list.txt");
+
 	for (const auto &lst : choiceCourses) {
 		outFile << ";";
-		for (const auto &g : lst) {
-			vertex *v = getLeaf(g);
-			std::string fileName = v->course.getCourseSubject() + "_" + std::to_string(v->course.getCourseNumber()) + "_choice_course_data.txt";
-			CourseData::store(g, fileName);
-			outFile << fileName << ";";
+		for (const auto &v : lst) {
+			outFile << v->course << ";";
 		}
 		outFile << std::endl;
 	}
 }
 
-vertex *Major::getLeaf(const CourseGraph &g) {
-	vertex *v = *g.begin();
-	while (!v->prerequisiteFor.empty())
-		v = v->prerequisiteFor.front();
-	return v;
+void Major::loadElectives() {
+	//Load the graph containing the choice courses
+	CourseData::load(choiceCoursesGraph, major + "_electives_data.txt");
+
+	std::ifstream inFile;
+	inFile.open(dataPath + major + "_elective_groups.txt");
+	if (!inFile.is_open()) throw std::runtime_error("\"" + major + "_elective_groups.txt\" file not found.");
+
+	std::string currentLine; //Line of the text file we're currently reading
+	std::getline(inFile, currentLine);
+	while (!inFile.eof()) {
+
+		if (currentLine == "") return; //In case the loop gets stuck on a blank line at the end of the file
+
+		int unitMin = std::stoi(currentLine.substr(currentLine.find_first_of("0123456789")));
+
+		std::getline(inFile, currentLine);
+
+		std::list<vertex *> currentList; //The vertices the user must choose from
+		while (currentLine.size() > 1) {
+			//Name of the course we're reading
+			currentLine = currentLine.substr(1);
+			std::string courseName = currentLine.substr(0, currentLine.find_first_of(";"));
+			//Add the course to the current list of choice courses
+			currentList.push_back(electivesGraph.search(CourseModule(courseName)));
+			//Iterate
+			currentLine = currentLine.substr(currentLine.find_first_of(";"));
+		}
+		electiveGroups.push_back(ElectiveGroup{ currentList, unitMin});
+		//Read next list of choice courses
+		std::getline(inFile, currentLine);
+	}
+	inFile.close();
+}
+
+void Major::loadChoiceCourses() {
+	//Load the graph containing the choice courses
+	CourseData::load(choiceCoursesGraph, major + "_choice_courses_data.txt");
+
+	std::ifstream inFile;
+	inFile.open(dataPath + major + "_choice_course_list.txt");
+	if (!inFile.is_open()) throw std::runtime_error("\"" + major + "_choice_course_list.txt\" file not found.");
+
+	std::string currentLine; //Line of the text file we're currently reading
+	std::getline(inFile, currentLine);
+	while (!inFile.eof()) {
+
+		if (currentLine == "") return; //In case the loop gets stuck on a blank line at the end of the file
+
+		std::list<vertex *> currentList; //The vertices the user must choose from
+		while (currentLine.size() > 1) {
+			//Name of the course we're reading
+			currentLine = currentLine.substr(1);
+			std::string courseName = currentLine.substr(0, currentLine.find_first_of(";"));
+			//Add the course to the current list of choice courses
+			currentList.push_back(choiceCoursesGraph.search(CourseModule(courseName)));
+			//Iterate
+			currentLine = currentLine.substr(currentLine.find_first_of(";"));
+		}
+		choiceCourses.push_back(currentList);
+		//Read next list of choice courses
+		std::getline(inFile, currentLine);
+	}
+	inFile.close();
 }
 
 Major::Major(std::string majorAcronym, std::string title) {
@@ -44,28 +115,9 @@ Major::Major(std::string majorAcronym, std::string title) {
 		i = std::toupper(i);
 	major = majorAcronym;
 
-	CourseData::load(majorRequirements, majorAcronym + "_major_requirements.txt");
-	CourseData::load(electives, majorAcronym + "_electives.txt");
-	
-	std::ifstream indexFile;
-	indexFile.open(dataPath + major + "_choice_course_index.txt");
-	if (!indexFile.is_open()) throw std::runtime_error("\"" + major + "_choice_course_index.txt\" file not found.");
-
-	std::string currentLine; //Line of the text file we're currently reading
-	std::getline(indexFile, currentLine);
-	while (!indexFile.eof()) {
-		if (currentLine == "") return; //In case the loop gets stuck on a blank line at the end of the file
-		std::list<CourseGraph> currentList; //The graphs the user much choose from
-		while (currentLine.size() > 1) {
-			CourseGraph g;
-			CourseData::load(g, currentLine.substr(1, currentLine.find_first_of(";"))); //Load every graph with the associated file
-			currentList.push_back(g);
-			currentLine = currentLine.substr(currentLine.find_first_of(";"));
-		}
-		std::getline(indexFile, currentLine);
-		choiceCourses.push_back(currentList);
-	}
-	indexFile.close();
+	CourseData::load(majorRequirements, major + "_major_requirements.txt");
+	loadElectives();
+	loadChoiceCourses();
 }
 
 std::string Major::getMajor() const {
@@ -74,18 +126,6 @@ std::string Major::getMajor() const {
 
 std::string Major::getTitle() const {
 	return majorTitle;
-}
-
-CourseGraph Major::getMajorReq() const {
-	return majorRequirements;
-}
-
-CourseGraph Major::getElectives() const {
-	return electives;
-}
-
-std::list<std::list<CourseGraph>> Major::getChoiceCourses() {
-	return choiceCourses;
 }
 
 void Major::addMajorReq(const CourseModule &c) {
@@ -103,22 +143,28 @@ void Major::addMajorReq(const CourseGraph &g) {
 	saveMajorReqs();
 }
 
-void Major::addElective(const CourseModule &c) {
-	electives.insert(c);
+void Major::addElectiveGroup(const ElectiveGroup &e) {
+	electiveGroups.push_back(e);
 	saveElectives();
 }
 
-void Major::addElective(const vertex &v) {
-	electives.insert(v);
-	saveElectives();
-}
-
-void Major::addElective(const CourseGraph &g) {
-	electives.merge(g);
-	saveElectives();
-}
-
-void Major::addChoice(const std::list<CourseGraph> &choices) {
-	choiceCourses.push_back(choices);
+void Major::addCourseChoice(const std::list<vertex *> &choices) {
+	std::list<vertex *> newChoices;
+	for (const auto &v : choices) {
+		newChoices.push_back(*choiceCoursesGraph.insert(*v));
+	}
+	choiceCourses.push_back(newChoices);
 	saveChoiceCourses();
+}
+
+CourseGraph Major::getMajorReq() const {
+	return majorRequirements;
+}
+
+std::list<ElectiveGroup> Major::getElectives() const {
+	return electiveGroups;
+}
+
+std::list<std::list<vertex *>> Major::getChoiceCourses() const {
+	return choiceCourses;
 }

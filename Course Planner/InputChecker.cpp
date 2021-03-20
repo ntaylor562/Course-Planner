@@ -76,6 +76,12 @@ std::string InputChecker::getString() {
 	return input;
 }
 
+std::string InputChecker::getLine() {
+	std::string output;
+	std::getline(std::cin, output);
+	return output;
+}
+
 //Returns a boolean value that user enters into the console
 bool InputChecker::getBool(std::string message) {
 	std::set<std::string> yesList;

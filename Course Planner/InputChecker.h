@@ -50,6 +50,12 @@ public:
 	*/
 	static std::string getString();
 
+	/**
+	 * @brief Gets a line of input from the user. Equivalent to using std::getline(std::cin, returnValue)
+	 * @return Line of input entered by user
+	*/
+	static std::string getLine();
+
 	//Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc.
 	//Allows for a custom error message
 

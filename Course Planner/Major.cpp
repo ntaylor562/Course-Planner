@@ -144,7 +144,12 @@ void Major::addMajorReq(const CourseGraph &g) {
 }
 
 void Major::addElectiveGroup(const ElectiveGroup &e) {
-	electiveGroups.push_back(e);
+	ElectiveGroup newGroup;
+	for (const auto &v : e.electives) {
+		newGroup.electives.push_back(*electivesGraph.insert(v->course));
+	}
+
+	electiveGroups.push_back(newGroup);
 	saveElectives();
 }
 
@@ -153,6 +158,7 @@ void Major::addCourseChoice(const std::list<vertex *> &choices) {
 	for (const auto &v : choices) {
 		newChoices.push_back(*choiceCoursesGraph.insert(*v));
 	}
+
 	choiceCourses.push_back(newChoices);
 	saveChoiceCourses();
 }

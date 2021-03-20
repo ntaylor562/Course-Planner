@@ -15,7 +15,7 @@ void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runti
 	std::string whatIsIt; //Example being "Course Subject" or "Units". This is so we can read the data correctly
 	std::string data; //This is the actual data in the line that we'll be reading
 
-	if (inFile.peek() == EOF) throw std::runtime_error("File \"" + fileName + "\" is empty.");
+	//if (inFile.peek() == EOF) throw std::runtime_error("File \"" + fileName + "\" is empty.");
 
 	try {
 		while (!inFile.eof()) {

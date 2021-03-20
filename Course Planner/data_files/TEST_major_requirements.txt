@@ -1,0 +1,11 @@
+Course: TEST 123
+Course Title: first test course
+Units: 2
+Course Description: this is the first test course
+-
+Course: TEST 124
+Course Title: blah blah
+Units: 3
+Course Description: ahhhhhhh
+Prerequisites: TEST 123 
+-

@@ -56,6 +56,13 @@ public:
 	*/
 	static std::string getLine();
 
+	/**
+	 * @brief Trims the leading and trailing spaces off a string
+	 * @param str String being trimmed
+	 * @return str with leading and trailing spaces removed
+	*/
+	static std::string trim(std::string str);
+
 	//Gets a boolean value. User can enter a variety of inputs such as T, false, no, Yes, etc.
 	//Allows for a custom error message
 

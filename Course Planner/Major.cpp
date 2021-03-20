@@ -5,7 +5,6 @@
 void Major::save() {
 	saveMajorReqs();
 	saveElectives();
-	saveChoiceCourses();
 }
 
 void Major::saveMajorReqs() {
@@ -28,24 +27,10 @@ void Major::saveElectives() {
 	}
 }
 
-void Major::saveChoiceCourses() {
-	CourseData::store(choiceCoursesGraph, major + "_choice_course_data.txt"); //Save choice course graph
-
-	std::ofstream outFile;
-	outFile.open(major + "_choice_course_list.txt");
-
-	for (const auto &lst : choiceCourses) {
-		outFile << ";";
-		for (const auto &v : lst) {
-			outFile << v->course << ";";
-		}
-		outFile << std::endl;
-	}
-}
 
 void Major::loadElectives() {
 	//Load the graph containing the choice courses
-	CourseData::load(choiceCoursesGraph, major + "_electives_data.txt");
+	CourseData::load(electivesGraph, major + "_electives_data.txt");
 
 	std::ifstream inFile;
 	inFile.open(dataPath + major + "_elective_groups.txt");
@@ -78,46 +63,52 @@ void Major::loadElectives() {
 	inFile.close();
 }
 
-void Major::loadChoiceCourses() {
-	//Load the graph containing the choice courses
-	CourseData::load(choiceCoursesGraph, major + "_choice_courses_data.txt");
-
-	std::ifstream inFile;
-	inFile.open(dataPath + major + "_choice_course_list.txt");
-	if (!inFile.is_open()) throw std::runtime_error("\"" + major + "_choice_course_list.txt\" file not found.");
-
-	std::string currentLine; //Line of the text file we're currently reading
-	std::getline(inFile, currentLine);
-	while (!inFile.eof()) {
-
-		if (currentLine == "") return; //In case the loop gets stuck on a blank line at the end of the file
-
-		std::list<vertex *> currentList; //The vertices the user must choose from
-		while (currentLine.size() > 1) {
-			//Name of the course we're reading
-			currentLine = currentLine.substr(1);
-			std::string courseName = currentLine.substr(0, currentLine.find_first_of(";"));
-			//Add the course to the current list of choice courses
-			currentList.push_back(choiceCoursesGraph.search(CourseModule(courseName)));
-			//Iterate
-			currentLine = currentLine.substr(currentLine.find_first_of(";"));
-		}
-		choiceCourses.push_back(currentList);
-		//Read next list of choice courses
-		std::getline(inFile, currentLine);
-	}
-	inFile.close();
-}
-
 Major::Major(std::string majorAcronym, std::string title) {
+	//Trimming leading and trailing spaces of title
+	title = title.substr(title.find_first_not_of(" "));
+	title = title.substr(0, title.find_last_not_of(" ") + 1);
 	majorTitle = title;
+
+	//Trimming leading and trailing spaces of majorAcronym
+	majorAcronym = majorAcronym.substr(majorAcronym.find_first_not_of(" "));
+	majorAcronym = majorAcronym.substr(0, majorAcronym.find_last_not_of(" ") + 1);
+
+	//Capitalizing majorAcronym
 	for (auto &i : majorAcronym)
 		i = std::toupper(i);
+
 	major = majorAcronym;
 
+	std::ifstream fileExistsChecker;
+	std::ofstream outFile;
+
+	fileExistsChecker.open(dataPath + major + "_major_requirements.txt");
+	if (!fileExistsChecker.is_open()) {
+		outFile.open(dataPath + major + "_major_requirements.txt");
+		outFile.close();
+	}
+	fileExistsChecker.close();
+
+	fileExistsChecker.open(dataPath + major + "_electives_data.txt");
+	if (!fileExistsChecker.is_open()) {
+		outFile.open(dataPath + major + "_electives_data.txt");
+		outFile.close();
+	}
+	fileExistsChecker.close();
+
+	fileExistsChecker.open(dataPath + major + "_elective_groups.txt");
+	if (!fileExistsChecker.is_open()) {
+		outFile.open(dataPath + major + "_elective_groups.txt");
+		outFile.close();
+	}
+	fileExistsChecker.close();
+
+	loadMajor();
+}
+
+void Major::loadMajor() {
 	CourseData::load(majorRequirements, major + "_major_requirements.txt");
 	loadElectives();
-	loadChoiceCourses();
 }
 
 std::string Major::getMajor() const {
@@ -153,24 +144,10 @@ void Major::addElectiveGroup(const ElectiveGroup &e) {
 	saveElectives();
 }
 
-void Major::addCourseChoice(const std::list<vertex *> &choices) {
-	std::list<vertex *> newChoices;
-	for (const auto &v : choices) {
-		newChoices.push_back(*choiceCoursesGraph.insert(*v));
-	}
-
-	choiceCourses.push_back(newChoices);
-	saveChoiceCourses();
-}
-
 CourseGraph Major::getMajorReq() const {
 	return majorRequirements;
 }
 
 std::list<ElectiveGroup> Major::getElectives() const {
 	return electiveGroups;
-}
-
-std::list<std::list<vertex *>> Major::getChoiceCourses() const {
-	return choiceCourses;
 }

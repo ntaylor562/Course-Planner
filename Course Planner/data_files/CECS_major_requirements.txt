@@ -1,8 +1,3 @@
-Course: BIOL 200
-Course Title: General Biology
-Units: 4
-Course Description: Brief survey of major areas of biology including cell biology, genetics, evolution, phylogeny, plant and animal anatomy and physiology, ecology, and behavior. Specially designed for non-science majors.
--
 Course: CECS 100
 Course Title: Critical Thinking in the Digital Information Age
 Units: 3
@@ -43,12 +38,6 @@ Units: 3
 Course Description: Disciplined methods of design, coding and testing using the Java programming language. Data abstraction, object-oriented design. Introduction to data structures (linked lists, stacks, queues and trees.) Recursion. Sorting and searching.
 Prerequisites: CECS 174 
 -
-Course: CECS 275
-Course Title: Programming and Data Structures in C++
-Units: 3
-Course Description: Disciplined methods of design, coding and testing using the C++ programming language. Data abstraction and class design. Introduction to data structures (linked lists, stacks, queues and trees.) Recursion. Sorting and searching.
-Prerequisites: CECS 174 
--
 Course: CECS 277
 Course Title: Object Oriented Application Development
 Units: 3
@@ -71,7 +60,7 @@ Course: CECS 326
 Course Title: Operating Systems
 Units: 3
 Course Description: The structure and functions of operating systems. Interrupt handling, processes and interprocess communication, memory management, resource scheduling, information sharing and protection. Project implementation in C/C++.
-Prerequisites: CECS 275 CECS 341 
+Prerequisites: CECS 341 CECS 282 
 -
 Course: CECS 327
 Course Title: Introduction to Networks and Distributed Computing
@@ -83,7 +72,7 @@ Course: CECS 328
 Course Title: Algorithms
 Units: 3
 Course Description: Greedy algorithms, dynamic programming, divide and conquer, network flow, approximation algorithms, NP-complete problems. Programming projects to exemplify these concepts.
-Prerequisites: CECS 228 CECS 275 
+Prerequisites: CECS 228 
 -
 Course: CECS 329
 Course Title: Concepts of Computer Science Theory
@@ -107,19 +96,19 @@ Course: CECS 343
 Course Title: Introduction to Software Engineering
 Units: 3
 Course Description: Principles of software engineering, UML, modeling large software systems, requirements elicitation, object oriented analysis and design using UML, introduction to design patterns, implementation of large systems, software testing, project management, the software lifecycle. Semester long programming project.
-Prerequisites: CECS 275 
+Prerequisites: CECS 277 
 -
 Course: CECS 378
 Course Title: Introduction to Computer Security Principles
 Units: 3
 Course Description: An introduction to the fundamentals of cryptography and information and computer security. Basic concepts, theories and protocols in computer security. Basic cryptography, software security, operating system security, database security, network security, human factors, social engineering, digital forensics, privacy and anonymity.
-Prerequisites: CECS 229 CECS 275 
+Prerequisites: CECS 229 CECS 274 
 -
 Course: CECS 4911
 Course Title: Computer Science Senior Project I
 Units: 3
 Course Description: First course in a two-course capstone design sequence that fulfills integrative learning. Design of a commercial grade software application including requirements analysis, functional, architectural and detailed design, emphasizing written communication, teamwork and the Object-Oriented Methodology.
-Prerequisites: CECS 343 ENGR 350 CECS 323 CECS 328 
+Prerequisites: CECS 323 CECS 328 CECS 343 ENGR 350 
 -
 Course: CECS 4912
 Course Title: Computer Science Senior Project II
@@ -150,11 +139,6 @@ Course Title: Computers, Ethics and Society
 Units: 3
 Course Description: Examination of the social impact of information technologies. Topics include a survey of the technology (software, hardware and key applications), ethical obligations of specialists, the computer in the workplace, shifts of power, privacy, and legal issues related to computing.
 -
-Course: ENGR 361
-Course Title: Scientific Research Communication
-Units: 3
-Course Description: Introduction to technical writing for students pursuing research careers. Accessing and using research literature. Writing technical and research reports for various purposes and audiences. Oral presentation of research and scientific information. Includes intensive writing.
--
 Course: MATH 111
 Course Title: Precalculus Trigonometry
 Units: 3
@@ -175,11 +159,5 @@ Course: MATH 123
 Course Title: Calculus II
 Units: 4
 Course Description: Applications of the integral. Techniques of integration. Infinite series including convergence tests and Taylor series. Parametric equations. Polar coordinates. Introduces differential equations.
-Prerequisites: MATH 122 
--
-Course: PHYS 151
-Course Title: Mechanics and Heat
-Units: 4
-Course Description: Kinematics, Newton's Laws, rotational motion, conservation laws, mechanical waves, and laws of thermodynamics.
 Prerequisites: MATH 122 
 -

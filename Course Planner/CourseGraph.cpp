@@ -200,6 +200,9 @@ void CourseGraph::printCourses() const {
 }
 
 void CourseGraph::addEdge(const CourseModule &u, const CourseModule &v) {
+	//Return if u and v are the same course because no loops are allowed
+	if (u == v) return;
+
 	std::vector<vertex*>::iterator start = searchVertices(u);
 	if (start == vertices.end()) start = this->insert(u);
 
@@ -208,6 +211,7 @@ void CourseGraph::addEdge(const CourseModule &u, const CourseModule &v) {
 		end = this->insert(v);
 		start = searchVertices(u);
 	}
+
 	
 	//Return if edge is a duplicate
 	if (std::find((*start)->prerequisiteFor.begin(), (*start)->prerequisiteFor.end(), *end) != (*start)->prerequisiteFor.end()) return;

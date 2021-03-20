@@ -82,6 +82,12 @@ std::string InputChecker::getLine() {
 	return output;
 }
 
+std::string InputChecker::trim(std::string str) {
+	str = str.substr(str.find_first_not_of(" "));
+	str = str.substr(0, str.find_last_not_of(" ") + 1);
+	return str;
+}
+
 //Returns a boolean value that user enters into the console
 bool InputChecker::getBool(std::string message) {
 	std::set<std::string> yesList;

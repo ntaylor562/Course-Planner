@@ -28,22 +28,13 @@ private:
 	//Graph containing all the vertices of the elective courses
 	CourseGraph electivesGraph;
 
-	//List of lists containing courses where there is an option (Ex: CECS majors can choose PHYS 151 or CHEM 1111)
-	//The choice courses are represented as pointers to vertices so we can easily insert them into another graph
-	std::list<std::list<vertex *>> choiceCourses;
-
-	//Graph containing all the vertices of the choice courses and their prerequisites
-	CourseGraph choiceCoursesGraph;
-
 	//Saves all data into their respective files
 	void save();
 
 	void saveMajorReqs();
 	void saveElectives();
-	void saveChoiceCourses();
 
 	void loadElectives();
-	void loadChoiceCourses();
 
 
 public:
@@ -57,6 +48,12 @@ public:
 	*/
 	Major(std::string majorAcronym, std::string title) throw (std::runtime_error);
 
+	/**
+	 * @brief Loading the values for this major from the appropriate files
+	 * @param majorAcronym The acronym representing the major (Ex: CECS)
+	*/
+	void loadMajor();
+
 	std::string getMajor() const;
 	std::string getTitle() const;
 
@@ -66,11 +63,8 @@ public:
 
 	void addElectiveGroup(const ElectiveGroup &e);
 
-	void addCourseChoice(const std::list<vertex *> &choices);
-
 	CourseGraph getMajorReq() const;
 	std::list<ElectiveGroup> getElectives() const;
-	std::list<std::list<vertex *>> getChoiceCourses() const;
 };
 
 #endif

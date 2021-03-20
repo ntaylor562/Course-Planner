@@ -149,6 +149,12 @@ public:
 	void editCourse(CourseModule &c);
 
 	/**
+	 * @brief Gives user a menu to edit a major allowing them to change different attributes
+	 * @param m Major being edited
+	*/
+	void editMajor(Major &m);
+
+	/**
 	 * @brief Whenever we update the course graph, we should update the scheduler because the scheduler would have an old data set to work with
 	*/
 	void updateScheduler();

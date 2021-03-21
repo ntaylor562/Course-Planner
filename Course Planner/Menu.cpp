@@ -10,7 +10,7 @@
 #include "SchedulePreferenceData.h"
 
 Menu::Menu() {
-
+	autoSave = false;
 }
 
 void Menu::setupMenu() {
@@ -26,7 +26,7 @@ void Menu::setupMenu() {
 		std::cout << "0 - None" << std::endl;
 		int count = 1;
 		for (const auto &i : majorList) {
-			std::cout << count++ << " - " << i.getMajor() << " - " << i.getTitle() << std::endl;
+			std::cout << count++ << " - " << i->getMajor() << " - " << i->getTitle() << std::endl;
 		}
 
 		std::cout << std::endl << "Enter a choice: ";
@@ -39,10 +39,10 @@ void Menu::setupMenu() {
 			return;
 		}
 		else if (1 <= userChoice && userChoice <= majorList.size()) {
-			std::list<Major>::iterator it = majorList.begin();
+			std::list<Major*>::iterator it = majorList.begin();
 			for (int i = 0; i < userChoice; ++i)
 				++it;
-			selectedMajor = &*(--it);
+			selectedMajor = *(--it);
 			break;
 		}
 		else {
@@ -55,23 +55,31 @@ void Menu::setupMenu() {
 	Courses.merge(selectedMajor->getMajorReq());
 
 	for (const auto &e : selectedMajor->getElectives()) {
-		std::cout << "You must choose " << e.unitMinimum << " units out of these courses" << std::endl << std::endl;
-		int count = 1;
-		for (const auto &v : e.electives) {
-			std::cout << count++ << " - " << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
+		int totalUnits = 0;
+		while (totalUnits < e.unitMinimum) {
+			std::cout << "You must choose " << e.unitMinimum << " units out of these courses." << std::endl << std::endl;
+			int count = 1;
+			for (const auto &v : e.electives) {
+				std::cout << count++ << " - " << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
+			}
+			std::cout << std::endl << "Total units = " << totalUnits << std::endl << "Enter a choice: ";
+			userChoice = InputChecker::getIntRange(1, e.electives.size(), "Input invalid. Enter a choice: ");
+			std::cout << std::endl;
+
+			std::list<vertex *>::const_iterator it = e.electives.begin();
+			for (int i = 0; i < userChoice - 1; ++i) //Finding the course the user selected
+				++it;
+
+			if (Courses.search((*it)->course) != nullptr) {
+				std::cout << "Input invalid. Pick a course you have not selected already." << std::endl << std::endl;
+				system("pause");
+				system("cls");
+				continue;
+			}
+			//Inserting the vertex into the graph
+			totalUnits += (*Courses.insert(**(it)))->course.getUnits();
+			system("cls");
 		}
-
-		std::cout << std::endl << "Enter a choice: ";
-		userChoice = InputChecker::getIntRange(1, e.electives.size(), "Input invalid. Enter a choice: ");
-		std::cout << std::endl;
-
-		std::list<vertex *>::const_iterator it = e.electives.begin();
-		for (int i = 0; i < userChoice; ++i) //Finding the course the user selected
-			++it;
-		//Inserting the vertex into the graph
-		Courses.insert(**(--it));
-
-		std::cout << std::endl << std::endl;
 	}
 
 	std::cout << "A list of courses has been generated for you. Check to make sure these courses are the ones " << std::endl
@@ -139,15 +147,22 @@ void Menu::runMenu() {
 	mainMenu();
 }
 
-void Menu::printAllCourses() {
-	if (Courses.empty()) return;
+void Menu::deletePrereqs(CourseGraph &g, vertex &v) const {
+	while (!v.prerequisites.empty()) {
+		deletePrereqs(g, *v.prerequisites.front());
+	}
+	g.remove(v.course);
+}
+
+void Menu::printAllCourses(const CourseGraph &g) const {
+	if (g.empty()) return;
 
 	int spacing = 15;
 	int coursesPerLine = 5;
 	std::cout << std::left << "Current list of courses:\n\n";
 
 	int count = 1;
-	for (std::vector<vertex *>::const_iterator it = Courses.begin(); it != Courses.end(); ++it) {
+	for (std::vector<vertex *>::const_iterator it = g.begin(); it != g.end(); ++it) {
 		std::string course;
 		if (!(*it)->course.dataComplete()) course += "~";
 		course += (*it)->course.getCourseSubject() + " " + std::to_string((*it)->course.getCourseNumber());
@@ -162,12 +177,12 @@ void Menu::printAllCourses() {
 	std::cout << std::endl;
 }
 
-void Menu::printAllIncompleteDataCourses() {
-	if (Courses.empty()) return;
+void Menu::printAllIncompleteDataCourses(const CourseGraph &g) const {
+	if (g.empty()) return;
 
 	std::vector<vertex *>::const_iterator it;
 	bool empty = true;
-	for (it = Courses.begin(); it != Courses.end(); ++it) {
+	for (it = g.begin(); it != g.end(); ++it) {
 		if (!(*it)->course.dataComplete()) {
 			empty = false;
 			break;
@@ -183,7 +198,7 @@ void Menu::printAllIncompleteDataCourses() {
 	std::cout << std::left << "Current list of courses with incomplete data:\n\n";
 
 	int count = 1;
-	for (std::vector<vertex *>::const_iterator it = Courses.begin(); it != Courses.end(); ++it) {
+	for (std::vector<vertex *>::const_iterator it = g.begin(); it != g.end(); ++it) {
 		std::string course;
 		if (!(*it)->course.dataComplete()) {
 			course += "~";
@@ -200,16 +215,16 @@ void Menu::printAllIncompleteDataCourses() {
 	std::cout << std::endl;
 }
 
-void Menu::printAllCourseData() {
-	if (Courses.empty()) return;
+void Menu::printAllCourseData(const CourseGraph &g) {
+	if (g.empty()) return;
 
 	std::cout << "Current list of courses and their data:\n\n";
 	std::vector<vertex *>::const_iterator it;
-	for (it = Courses.begin(); it != Courses.end() - 1; ++it) {
+	for (it = g.begin(); it != g.end() - 1; ++it) {
 		std::cout << fullCourseInfo((*it)->course) << std::endl;
 		std::cout << "-------------------------------------------------------------------------------" << std::endl << std::endl;
 	}
-	std::cout << fullCourseInfo((*(Courses.end() - 1))->course) << std::endl;
+	std::cout << fullCourseInfo((*(g.end() - 1))->course) << std::endl;
 }
 
 std::string Menu::fullCourseInfo(const CourseModule &course) {
@@ -265,11 +280,11 @@ void Menu::mainMenu() {
 				break;
 			}
 
-			printAllCourseData();
+			printAllCourseData(Courses);
 			std::cout << std::endl;
-			printAllIncompleteDataCourses();
+			printAllIncompleteDataCourses(Courses);
 			std::cout << std::endl;
-			printAllCourses();
+			printAllCourses(Courses);
 			std::cout << std::endl;
 
 			system("pause");
@@ -313,12 +328,12 @@ void Menu::mainMenu() {
 	}
 }
 
-void Menu::subMenuCourseAdd() {
+vertex *Menu::subMenuCourseAdd() {
 	std::cout << "Add a Course" << std::endl << std::endl;
-	printAllCourses();
+	printAllCourses(Courses);
 	std::cout << std::endl;
 	CourseModule *course = inputNewValidCourse();
-	if (course == nullptr) return; //Cancel
+	if (course == nullptr) return nullptr; //Cancel
 
 	std::cout << "The course " << *course << " has been added." << std::endl << std::endl;
 	system("pause");
@@ -398,7 +413,7 @@ void Menu::subMenuCourseAdd() {
 			}
 		}
 		else if (userChoice == prereq.assignedNum) {
-			printAllCourses();
+			printAllCourses(Courses);
 			std::cout << std::endl;
 
 			std::vector<CourseModule*> prerecVect = inputValidCourses();
@@ -415,6 +430,8 @@ void Menu::subMenuCourseAdd() {
 		}
 		system("cls");
 	} while (userChoice != 0);
+
+	return Courses.search(*course);
 }
 
 void Menu::subMenuCourseRemove() {
@@ -424,7 +441,7 @@ void Menu::subMenuCourseRemove() {
 		return;
 	}
 	std::cout << "Remove Course" << std::endl << std::endl;
-	printAllCourses();
+	printAllCourses(Courses);
 	std::cout << std::endl;
 
 	CourseModule *course = inputValidCourse();
@@ -454,21 +471,14 @@ void Menu::subMenuCourseRemove() {
 		std::cout << std::endl;
 	}
 
-		std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
-		<< "? (y/n) ";
-	std::getline(std::cin, input);
-	while (input != "Y" && input != "y" && input != "N" && input != "n") {
-		std::cout << "Input invalid. Remove course? (y/n) ";
-		std::getline(std::cin, input);
-		std::cout << std::endl;
-	}
+	std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
+	<< "? (y/n) ";
 
-	if (input == "Y" || input == "y") {
+	if (InputChecker::getBool("Input invalid. Remove course? (y/n) ")) {
 		Courses.remove(*course);
 		std::cout << "The course has been removed." << std::endl;
 		system("pause");
 	}
-	else return;
 }
 
 //Searches linearly through the course data (subject, number, title, and description)
@@ -521,7 +531,7 @@ void Menu::subMenuCourseSearch() {
 			std::cout << fullCourseInfo((*it)->course) << std::endl
 				<< "Is this the course you're looking for? (y/n) ";
 
-			if (!InputChecker::getBool()) { //Not the course so move on to next search result
+			if (!InputChecker::getBool("Input invalid. (y/n) ")) { //Not the course so move on to next search result
 				++dataIt;
 				continue; 
 			}
@@ -549,14 +559,13 @@ void Menu::subMenuCourseScheduler() {
 	updateScheduler();
 	do {
 		std::cout << "Course Scheduler" << std::endl << std::endl;
-		
+
+		CourseGraph remainingCourses(Courses);
+		std::list<CourseModule> toBeRemoved(CourseScheduler.getCompletedCourses());
 		if (!CourseScheduler.getCompletedCourses().empty()) {
-			std::cout << "Completed courses:";
-			for (const auto &i : CourseScheduler.getCompletedCourses()) {
-				std::cout << " " << i;
-			}
-			std::cout << std::endl << std::endl;
+			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
 		}
+		std::cout << std::endl;
 		
 
 		std::cout << "0 - Return" << std::endl
@@ -585,7 +594,9 @@ void Menu::subMenuCourseScheduler() {
 			system("cls");
 			break;
 		case 2:
-			printAllCourses();
+			system("cls");
+			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+
 			std::cout << std::endl << "Prerequisites of courses you enter will be assumed complete." << std::endl;
 			enteredCoursesPointers = inputValidCourses();
 
@@ -599,7 +610,7 @@ void Menu::subMenuCourseScheduler() {
 			system("cls");
 			break;
 		case 3:
-			printAllCourses();
+			printAllCourses(Courses);
 			std::cout << std::endl;
 			enteredCoursesPointers = inputValidCourses();
 
@@ -647,7 +658,8 @@ void Menu::subMenuSettings() {
 
 		userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
 		std::cout << std::endl;
-
+		std::string tempFileName;
+		bool invalidFileName;
 		switch (userChoice) {
 		case 0:
 			system("cls");
@@ -659,10 +671,32 @@ void Menu::subMenuSettings() {
 			system("cls");
 			break;
 		case 2:
-
+			std::cout << "Current save file name is \"" << courseDataFileName << "\"" << std::endl << std::endl;
 			std::cout << "If you have saved a file with the previous name, it will not be deleted." << std::endl
-				<< "Enter the file name you would like to save your courses to: ";
-			courseDataFileName = InputChecker::getLine();
+				<< "Enter the file name you would like to save your courses to or enter 0 to return: ";
+			tempFileName = InputChecker::getLine();
+			if (tempFileName == "0") {
+				system("cls");
+				break;
+			}
+
+			invalidFileName = false;
+			if (tempFileName.find("_electives_data") == std::string::npos) invalidFileName = true;
+			else if (tempFileName.find("_electives_data") == std::string::npos) invalidFileName = true;
+			else if (tempFileName.find("_elective_groups") == std::string::npos) invalidFileName = true;
+			else if (tempFileName.find("settings") == std::string::npos) invalidFileName = true;
+			else if (tempFileName.find("major_list") == std::string::npos) invalidFileName = true;
+			else if (tempFileName.find("schedule_preferences") == std::string::npos) invalidFileName = true;
+
+			if (invalidFileName) {
+				std::cout << "The file name you entered is invalid because it conflicts with the name of a required file." << std::endl << std::endl;
+				system("pause");
+				system("cls");
+				break;
+			}
+
+			courseDataFileName = tempFileName;
+
 			std::cout << "Course Planner will now save your courses to \"" << courseDataFileName << "\"." << std::endl << std::endl;
 			system("pause");
 			system("cls");
@@ -676,19 +710,22 @@ void Menu::subMenuSettings() {
 
 			std::cout << std::endl << "Reset course data? (y/n) ";
 			if (InputChecker::getBool("Input invalid. Enter y or n: ")) {
+				Courses = CourseGraph();
 				std::cout << "All courses have been wiped. If this was a mistake, DO NOT SAVE" << std::endl << std::endl;
 			}
 			setupMenu();
+			system("cls");
 			break;
 		case 4:
 			system("cls");
 			subMenuMajorCreator();
+			system("cls");
 			break;
 		case 5:
 			std::cout << "Are you sure you want to remove all course data?" << std::endl
 				<< "This will not delete your data unless you save or if autosave is enabled." << std::endl
 				<< "(y/n) ";
-			if (InputChecker::getBool("Input Invalid. Enter y or n: ")) {
+			if (InputChecker::getBool("Input Invalid. (y/n) ")) {
 				Courses = CourseGraph();
 				std::cout << "All courses have been wiped. If this was a mistake, DO NOT SAVE" << std::endl << std::endl;
 			}
@@ -725,7 +762,7 @@ void Menu::subMenuMajorCreator() {
 		//Acronym for the course we want to edit
 		std::string acr;
 		//Iterator to look for the major entered by user that they want to edit
-		std::list<Major>::iterator it;
+		std::list<Major*>::iterator it;
 		switch (userChoice) {
 		case 0:
 			system("cls");
@@ -737,7 +774,7 @@ void Menu::subMenuMajorCreator() {
 			if (!majorList.empty()) {
 
 				for (const auto &m : majorList) {
-					std::cout << m.getMajor() << " - " << m.getTitle() << std::endl;
+					std::cout << m->getMajor() << " - " << m->getTitle() << std::endl;
 				}
 				std::cout << std::endl;
 			}
@@ -762,7 +799,7 @@ void Menu::subMenuMajorCreator() {
 			if (!majorList.empty()) {
 
 				for (const auto &m : majorList) {
-					std::cout << m.getMajor() << " - " << m.getTitle() << std::endl;
+					std::cout << m->getMajor() << " - " << m->getTitle() << std::endl;
 				}
 				std::cout << std::endl;
 			}
@@ -775,9 +812,10 @@ void Menu::subMenuMajorCreator() {
 
 			std::cout << "Enter the acronym for the major you'd like to edit (Ex: CECS): ";
 			acr = InputChecker::trim(InputChecker::getLine());
+			for (auto &c : acr) c = std::toupper(c);
 
 			for (it = majorList.begin(); it != majorList.end(); ++it) {
-				if (it->getMajor() == acr) break;
+				if ((*it)->getMajor() == acr) break;
 			}
 
 			if (it == majorList.end()) {
@@ -787,7 +825,7 @@ void Menu::subMenuMajorCreator() {
 				break;
 			}
 
-			editMajor(*it);
+			editMajor(**it);
 			system("cls");
 			break;
 		case 4:
@@ -797,7 +835,7 @@ void Menu::subMenuMajorCreator() {
 			if (!majorList.empty()) {
 
 				for (const auto &m : majorList) {
-					std::cout << m.getMajor() << " - " << m.getTitle() << std::endl;
+					std::cout << m->getMajor() << " - " << m->getTitle() << std::endl;
 				}
 				std::cout << std::endl;
 			}
@@ -810,9 +848,10 @@ void Menu::subMenuMajorCreator() {
 
 			std::cout << "Enter the acronym for the major you'd like to edit (Ex: CECS): ";
 			acr = InputChecker::trim(InputChecker::getLine());
+			for (auto &c : acr) c = std::toupper(c);
 
 			for (it = majorList.begin(); it != majorList.end(); ++it) {
-				if (it->getMajor() == acr) break;
+				if ((*it)->getMajor() == acr) break;
 			}
 
 			if (it == majorList.end()) {
@@ -822,8 +861,9 @@ void Menu::subMenuMajorCreator() {
 				break;
 			}
 
-			std::cout << "Are you sure you want to delete the " << it->getTitle() << " major? (y/n) ";
-			if (InputChecker::getBool()) {
+			std::cout << "Are you sure you want to delete the " << (*it)->getTitle() << " major? (y/n) ";
+			if (InputChecker::getBool("Input invalid. (y/n) ")) {
+				delete *it;
 				majorList.erase(it);
 				std::cout << "The major has been removed." << std::endl << std::endl;
 				system("pause");
@@ -857,9 +897,9 @@ void Menu::subMenuAddMajor() {
 	majorAcronym = majorAcronym.substr(majorAcronym.find_first_not_of(" "));
 	majorAcronym = majorAcronym.substr(0, majorAcronym.find_last_not_of(" ") + 1);
 
-	Major newMajor(majorAcronym, majorName);
+	Major *newMajor = new Major(majorAcronym, majorName);
 	majorList.push_back(newMajor);
-	editMajor(newMajor);
+	editMajor(*newMajor);
 }
 
 void Menu::addRestriction() {
@@ -868,7 +908,7 @@ void Menu::addRestriction() {
 	do {
 		std::cout << "Add a Restriction" << std::endl << std::endl
 			<< "0 - Return" << std::endl
-			<< "1 - Restrict a course for a specific semester" << std::endl
+			<< "1 - Restrict course(s) for a specific semester" << std::endl
 			<< "2 - Restrict a specific semester" << std::endl
 			<< "3 - Set an overall unit limit" << std::endl
 			<< "4 - Set a unit limit for a specific semester" << std::endl;
@@ -898,22 +938,27 @@ void Menu::addRestriction() {
 		int lim;
 		Semester s;
 		std::string input;
-		CourseModule *course;
+		std::vector<CourseModule *> courses;
 		switch (userChoice) {
 		case 0:
 			system("cls");
 			break;
 		case 1:
-			printAllCourses();
+			s = enterSemester();
+			printSchedule(s);
 			std::cout << std::endl;
-			course = inputValidCourse();
-			if (course == nullptr) {
+			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+			std::cout << std::endl;
+			courses = inputValidCourses();
+			if (courses.empty()) {
 				break;
 			}
-			s = enterSemester();
-			CourseScheduler.addRestriction(*course, s.season, s.year);
+			
+			for (const auto &c : courses) {
+				CourseScheduler.addRestriction(*c, s.season, s.year);
+			}
 
-			std::cout << *course << " will no longer be allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
+			std::cout << "The course(s) you entered will no longer be allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
 			break;
 		case 2:
 			s = enterSemester();
@@ -928,7 +973,8 @@ void Menu::addRestriction() {
 			break;
 		case 4:
 			s = enterSemester();
-			std::cout << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
+			printSchedule(s);
+			std::cout << std::endl << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
 			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
 			CourseScheduler.setSemesterUnitLimit(s, lim);
 			std::cout << std::endl << s.ToString() << " unit limit is now ";
@@ -1005,7 +1051,7 @@ void Menu::removeRestriction() {
 			system("cls");
 			break;
 		case 1:
-			printAllCourses();
+			printAllCourses(Courses);
 			std::cout << std::endl;
 			course = inputValidCourse();
 			if (course == nullptr) {
@@ -1122,6 +1168,20 @@ void Menu::printSchedule(Semester s) const {
 
 }
 
+void Menu::printRemainingCourses(const CourseGraph &g, std::list<CourseModule> taken) {
+	CourseGraph remainingCourses(Courses);
+	std::list<CourseModule> toBeRemoved(CourseScheduler.getCompletedCourses());
+	while (!toBeRemoved.empty()) {
+		vertex *v = remainingCourses.search(toBeRemoved.front());
+		if (v != nullptr) {
+			deletePrereqs(remainingCourses, *v);
+			toBeRemoved.pop_front();
+		}
+	}
+
+	printAllCourses(remainingCourses);
+}
+
 void Menu::editCourse(CourseModule &c) {
 	std::string input;
 	int userChoice = 0;
@@ -1213,7 +1273,7 @@ void Menu::editCourse(CourseModule &c) {
 				case 0:
 					break;
 				case 1:
-					printAllCourses();
+					printAllCourses(Courses);
 					std::cout << std::endl;
 					std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel: ";
 					std::getline(std::cin, temp);
@@ -1345,6 +1405,7 @@ void Menu::editMajor(Major &m) {
 	int userChoice = 0;
 
 	do {
+		system("cls");
 		std::cout << "Edit a Major" << std::endl << std::endl
 			<< "0 - Return" << std::endl
 			<< "1 - Edit major requirements" << std::endl
@@ -1353,12 +1414,12 @@ void Menu::editMajor(Major &m) {
 
 		userChoice = InputChecker::getInt("Invalid input. Enter a choice: ");
 
+		int secondUserChoice = 0;
 		switch (userChoice) {
 		case 0:
 			break;
 		case 1: 										//Major requirements menu
 			system("cls");
-			int secondUserChoice;
 			do {
 				std::cout << "Major Requirements" << std::endl << std::endl
 					<< "0 - Return" << std::endl
@@ -1385,11 +1446,11 @@ void Menu::editMajor(Major &m) {
 						break;
 					}
 
-					majorMenu.printAllCourseData();
+					majorMenu.printAllCourseData(Courses);
 					std::cout << std::endl;
-					majorMenu.printAllIncompleteDataCourses();
+					majorMenu.printAllIncompleteDataCourses(Courses);
 					std::cout << std::endl;
-					majorMenu.printAllCourses();
+					majorMenu.printAllCourses(Courses);
 					std::cout << std::endl;
 
 					system("pause");
@@ -1437,15 +1498,18 @@ void Menu::editMajor(Major &m) {
 
 				std::list<ElectiveGroup> groups = m.getElectives();
 				ElectiveGroup newGroup;
+				Menu electivesMenu; //Used to add courses to an elective group
+				int thirdUserChoice = 0;
+				int groupCount;
 				switch (secondUserChoice) {
 				case 0:
 					system("cls");
 					break;
 				case 1: //Show elective groups
 					system("cls");
+					groupCount = 1;
 					for (const auto &e : groups) {
-						int count = 1;
-						std::cout << "Group " << count++ << std::endl
+						std::cout << "Group " << groupCount++ << std::endl
 							<< "Minimum units a student must take in this group is " << e.unitMinimum << " units." << std::endl;
 						for (const auto &v : e.electives) {
 							std::cout << "\t" << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
@@ -1462,12 +1526,113 @@ void Menu::editMajor(Major &m) {
 					newGroup.unitMinimum = InputChecker::getInt("Input invalid. Enter a number: ");
 					if (newGroup.unitMinimum <= 0) break;
 
-					for (const auto &c : electiveMenu.inputValidCourses()) {
-						vertex *v = *electiveMenu.Courses.insert(*c);
-						system("cls");
-						electiveMenu.editCourse(v->course);
-						newGroup.electives.push_back(v);
-					}
+					electiveMenu.courseDataFileName = dataPath + m.getMajor() + "_electives_data.txt";
+
+					do {
+						std::cout << "Elective Group" << std::endl << std::endl
+							<< "0 - Return" << std::endl
+							<< "1 - Show courses" << std::endl
+							<< "2 - Add course" << std::endl
+							<< "3 - Edit course" << std::endl
+							<< "4 - Remove course" << std::endl << std::endl
+							<< "Enter a choice: ";
+
+						thirdUserChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+						CourseModule *course;
+						vertex *v;
+						switch (thirdUserChoice) {
+						case 0:
+							std::cout << "This is the last time you can edit this elective group. Are you sure you want to exit? (y/n) ";
+							if (!InputChecker::getBool("Input invalid. (y/n) ")) thirdUserChoice = 1;
+							system("cls");
+							break;
+						case 1:
+							system("cls");
+							std::cout << "Electives in this group" << std::endl << std::endl;
+
+							if (newGroup.electives.empty()) {
+								std::cout << "Electives list is empty." << std::endl << std::endl;
+								system("pause");
+								system("cls");
+								break;
+							}
+
+							for (const auto &v : newGroup.electives) {
+								std::cout << v->course << " - " << v->course.getCourseTitle() << " - (" << v->course.getUnits() << ")" << std::endl;
+							}
+							std::cout << std::endl;
+
+							system("pause");
+							system("cls");
+							break;
+						case 2:
+							system("cls");
+							newGroup.electives.push_back(electivesMenu.subMenuCourseAdd());
+							system("cls");
+							break;
+						case 3:
+							system("cls");
+							electivesMenu.subMenuCourseEdit();
+							system("cls");
+							break;
+						case 4:
+							system("cls");
+							std::cout << "Remove a course" << std::endl << std::endl;
+							if (electivesMenu.Courses.empty()) {
+								std::cout << "There are currently no courses entered. Returning to main menu" << std::endl << std::endl;
+								system("pause");
+								break;
+							}
+							std::cout << "Remove Course" << std::endl << std::endl;
+							electivesMenu.printAllCourses(Courses);
+							std::cout << std::endl;
+
+							course = electivesMenu.inputValidCourse();
+							if (course == nullptr) break;
+
+							v = electivesMenu.Courses.search(*course);
+							if (v == nullptr) {
+								std::cout << "The course you entered has not been added and therefore cannot be deleted." << std::endl << std::endl;
+								system("pause");
+								system("cls");
+								break;
+							}
+
+							system("cls");
+							std::cout << "Remove a Course" << std::endl << std::endl;
+							if (!v->prerequisiteFor.empty()) {
+								std::cout << *course << " is a prerequisite for ";
+								std::list<vertex *>::const_iterator it = v->prerequisiteFor.begin();
+								while (it != v->prerequisiteFor.end()) {
+									std::cout << (*it)->course;
+									++it;
+									if (it != v->prerequisiteFor.end()) std::cout << ", ";
+								}
+
+								std::cout << std::endl;
+							}
+
+							std::cout << "Are you sure you want to delete " << course->getCourseSubject() << " " << course->getCourseNumber()
+								<< "? (y/n) ";
+
+							if (InputChecker::getBool("Input invalid. Remove course? (y/n) ")) {
+								newGroup.electives.remove(electivesMenu.Courses.search(*course));
+								electivesMenu.Courses.remove(*course);
+
+								std::cout << "The course has been removed." << std::endl;
+								system("pause");
+							}
+							system("cls");
+							break;
+						default:
+							std::cout << "Invalid choice." << std::endl << std::endl;
+							system("pause");
+							system("cls");
+							break;
+						}
+
+					} while (thirdUserChoice != 0);
+
 					m.addElectiveGroup(newGroup);
 					break;
 				default:
@@ -1559,9 +1724,12 @@ void Menu::loadMajors() {
 			std::string acr = currentLine.substr(0, currentLine.find_first_of("-") - 1);
 			std::string title = currentLine.substr(currentLine.find_first_of("-") + 2);
 
+			//If the major is already in the list, do nothing
+			for (const auto &m : majorList) {
+				if (m->getMajor() == acr) return;
+			}
 
-			majorList.push_back(Major(acr, title));
-			majorList.back().loadMajor();
+			majorList.push_back(new Major(acr, title));
 			std::getline(majorListFile, currentLine);
 		}
 	}
@@ -1579,7 +1747,7 @@ void Menu::saveMajors() {
 	std::ofstream outFile;
 	outFile.open(dataPath + std::string("major_list.txt"));
 	for (const auto &m : majorList) {
-		outFile << m.getMajor() << " - " << m.getTitle() << std::endl;
+		outFile << m->getMajor() << " - " << m->getTitle() << std::endl;
 	}
 	outFile.close();
 }
@@ -1587,7 +1755,7 @@ void Menu::saveMajors() {
 std::vector<CourseModule*> Menu::inputValidCourses() {
 	std::vector<CourseModule*> result;
 
-	std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel : ";
+	std::cout << "Enter course(s) (separated by spaces; ex: CECS 100 CECS 101) or enter 0 to cancel: ";
 	std::string input = CourseInputChecker::getCourses();
 
 	std::string sub;
@@ -1619,7 +1787,7 @@ void Menu::subMenuCourseEdit() {
 	}
 
 	std::cout << "Edit course" << std::endl << std::endl;
-	printAllCourses();
+	printAllCourses(Courses);
 	std::cout << std::endl;
 	CourseModule* course = inputValidCourse();
 	if (course == nullptr) return;

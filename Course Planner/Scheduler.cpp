@@ -121,13 +121,15 @@ void Scheduler::setSemesterUnitLimit(Semester s, int lim) {
 	if (semIt != semsWithRestrictions.end()) {
 		semIt->maxUnits = (lim >= 4 || lim == 0) ? lim : 4;
 	}
-	else if (lim) {
+	else {
 		s.maxUnits = (lim >= 4 || lim == 0) ? lim : 4;
 		semsWithRestrictions.push_back(s);
+		semIt = semsWithRestrictions.end();
+		--semIt;
 	}
 
-		if (lim == 0 && semIt->restricted.empty() && !semIt->semesterRestricted) //Semester no longer has restrictions
-			semsWithRestrictions.erase(semIt);
+	if (lim == 0 && semIt->restricted.empty() && !semIt->semesterRestricted) //Semester no longer has restrictions
+		semsWithRestrictions.erase(semIt);
 }
 
 void Scheduler::setSemesterUnitLimit(Semester::Seasons season, int year, int lim) {

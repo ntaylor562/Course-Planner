@@ -91,7 +91,7 @@ bool CourseModule::dataComplete() const {
 }
 
 std::string CourseModule::ToString() const {
-	return this->courseSubject + std::to_string(this->courseNumber);
+	return this->courseSubject + " " + std::to_string(this->courseNumber);
 }
 
 bool CourseModule::operator==(const CourseModule &c) const {

@@ -1,6 +1,31 @@
+Course: BIOL 200
+Course Title: General Biology
+Units: 4
+Course Description: Brief survey of major areas of biology including cell biology, genetics, evolution, phylogeny, plant and animal anatomy and physiology, ecology, and behavior. Specially designed for non-science majors.
+-
+Course: BIOL 205
+Course Title: Human Biology
+Units: 4
+Course Description: Brief survey of human biology focusing on anatomy, physiology, and development of cells, tissues, organs, and organ systems; including molecular biology, genetics, ecology, evolution, and diversity. Specially designed for non-science majors.
+-
+Course: BIOL 207
+Course Title: Human Physiology
+Units: 4
+Course Description: General introduction to the functional integration of human body systems. Designed for majors in biomedical engineering, physical education, and the allied health fields.
+-
+Course: CECS 303
+Course Title: Networks and Network Security
+Units: 3
+Course Description: An examination of common computer security threats; fundamental techniques for implementing secure software systems and networks; practical experience in attacking and defending networked systems.
+-
 Course: CECS 323
 -
 Course: CECS 328
+-
+Course: CECS 361
+Course Title: Hardware/Software Co-design
+Units: 3
+Course Description: Introduction to top-down methods for hardware/software system-on-chip co-design. Design flow - system specification, software implementation, hardware synthesis, system design, and verification. Process optimization with various design decisions emphasized. Projects/case studies using system-level design methods and tools.
 -
 Course: CECS 419
 Course Title: Theory of Computation
@@ -20,5 +45,100 @@ Units: 3
 Course Description: Models, algorithms, and evaluation of the retrieval of information from a collection of documents. Document preprocessing. Indexing and searching. Retrieval evaluation. Search engines.
 Prerequisites: CECS 323 E E 381 CECS 328 
 -
+Course: CECS 444
+Course Title: Compiler Construction
+Units: 3
+Course Description: Syntax directed compiler study. Organization of a compiler and overall design: parsing, semantic analysis, optimization and code generation.
+-
+Course: CECS 445
+Course Title: Software Design and Architecture
+Units: 3
+Course Description: In-depth look at software design, design patterns, frameworks, architectures and middleware architectures. Component based design including COM, Corba, and .Net. Fundamentals of software metrics, measuring software qualities. Basics of software evolution, reengineering, and reverse engineering. A semester long team project.
+-
+Course: CECS 448
+Course Title: User Interface Design
+Units: 3
+Course Description: Evaluation, design and programming of user interface systems. Fundamentals of human cognition, system characteristics, and the interaction between humans and systems. Usability methods and user/task-centered design. Tools for designing and building user interfaces, with emphasis on rapid applications development.
+-
+Course: CECS 449
+Course Title: Computer Graphics
+Units: 3
+Course Description: Introduction to the theory and practice of computer graphics, Graphics systems, 2-D and 3-D modeling, transformations, viewing transformations, projections, rendering techniques.
+-
+Course: CECS 450
+Course Title: Data Visualization
+Units: 3
+Course Description: Introduction to various techniques in data visualization supporting the analytical process of turning data into wisdom. Introduction to general concepts, principles, and practices with specific visualization designs. Overview of analytical techniques, analytical interaction, and navigation design. Programming assignments.
+-
+Course: CECS 451
+Course Title: Artificial Intelligence
+Units: 3
+Course Description: Introduction to the history and implementation of artificial intelligence agents. Topics include search, constraint satisfaction, game-playing, logical agents, belief networks, optimal sequential decision systems. Project implementation.
+-
+Course: CECS 453
+Course Title: Mobile Application Development
+Units: 3
+Course Description: Languages and application programming interfaces for mobile device platforms. Development of thick and thin client applications for mobile devices.
+-
+Course: CECS 455
+Course Title: Introduction to Game Programming
+Units: 3
+Course Description: Introduction to game programming and graphics. "Slow" games. Realtime games with no adversary. Adversarial real-time games in 2-D.
+-
+Course: CECS 456
+Course Title: Machine Learning
+Units: 3
+Course Description: An introduction to machine learning and its applications, including supervised, unsupervised learning and deep learning. Main topics include regression, classification and neural networks. Programming assignments.
+-
+Course: CECS 470
+Course Title: Web Programming and Accessibility
+Units: 3
+Course Description: Introduction to World-Wide Web development. Accessibility issues. Web architecture, standards, and programming, emphasizing XML technologies and cascading style sheets. Visual design principles and information architecture. Client-side and server-side programming and protocols. Development for adaptive technologies and mobile devices.
+-
+Course: CECS 474
+Course Title: Computer Network Interoperability
+Units: 3
+Course Description: Overview of computer network theory and practice from a systems perspective. Topics include network infrastructure, local area network (LAN) protocols, wide area network (WAN) protocols, switching technologies, Internet Protocol (IP), Transmission Control Protocol (TCP), network security, and network configuration, design, and performance.
+-
+Course: CECS 475
+Course Title: Software Development with Frameworks
+Units: 3
+Course Description: Introduction to enterprise application development utilizing a modern software framework. Topics include large-scale software design, framework components, data management, events, extensibility, user interfaces, web services, and web applications. Includes programming projects.
+-
+Course: CECS 476
+Course Title: System and Network Administration
+Units: 3
+Course Description: Introduction to the management and administration of Unix systems and TCP/IP networks. Managing users, local and network file systems, electronic mail, print queues. Establishing and managing a network.
+-
+Course: CECS 478
+Course Title: Introduction to Computer Security
+Units: 3
+Course Description: Controlling the risk of computer security. Security threats and vulnerabilities in the development and use of computer systems. Tools and controls that can reduce or block these threats. Law, privacy and ethics.
+-
+Course: CECS 495
+Course Title: Computational Physiology
+Units: 3
+Course Description: This course will introduce students to cardiovascular (heart) and cerebrovascular (brain) systems and signals, and the computational methods to analyze related signals, and detect/predict a physiological event of interest.
+-
+Course: CECS 497
+Course Title: Directed Studies
+Units: 1
+Course Description: Assigned study in topics in current computer literature or computer-related projects with a final report.
+-
 Course: E E 381
+-
+Course: ENGR 361
+Course Title: Scientific Research Communication
+Units: 3
+Course Description: Introduction to technical writing for students pursuing research careers. Accessing and using research literature. Writing technical and research reports for various purposes and audiences. Oral presentation of research and scientific information. Includes intensive writing.
+-
+Course: ENGR 390
+Course Title: Information and Communication Technology for Sustainability
+Units: 3
+Course Description: Information and communication technology and Sustainability. Concepts for understanding and analyzing the sustainability of a given engineering context. Application domains relevant for sustainability engineering such as climate change, smart systems, and gamification. Systems thinking approaches and development of feasible future scenarios.
+-
+Course: MATH 323
+Course Title: Introduction to Numerical Analysis
+Units: 4
+Course Description: Numerical solution of nonlinear equations, systems of linear equations, and ordinary differential equations. Interpolating polynomials, numerical differentiation, and numerical integration. Computer implementation of these methods.
 -

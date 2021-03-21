@@ -15,7 +15,7 @@ void Major::saveElectives() {
 	CourseData::store(electivesGraph, major + "_electives_data.txt");
 
 	std::ofstream outFile;
-	outFile.open(major + "_elective_groups.txt");
+	outFile.open(dataPath + major + "_elective_groups.txt");
 
 	for (const auto &e : electiveGroups) {
 		outFile << "Unit minimum = " << e.unitMinimum << std::endl << ";";
@@ -25,6 +25,7 @@ void Major::saveElectives() {
 
 		outFile << std::endl;
 	}
+	outFile.close();
 }
 
 
@@ -56,7 +57,16 @@ void Major::loadElectives() {
 			//Iterate
 			currentLine = currentLine.substr(currentLine.find_first_of(";"));
 		}
-		electiveGroups.push_back(ElectiveGroup{ currentList, unitMin});
+
+		bool isRepeat = false;
+		for (const auto &e : electiveGroups) {
+			if (e.electives == currentList && e.unitMinimum == unitMin) {
+				isRepeat = true;
+				break;
+			}
+		}
+
+		if(!isRepeat) electiveGroups.push_back(ElectiveGroup{ currentList, unitMin});
 		//Read next list of choice courses
 		std::getline(inFile, currentLine);
 	}
@@ -139,7 +149,7 @@ void Major::addElectiveGroup(const ElectiveGroup &e) {
 	for (const auto &v : e.electives) {
 		newGroup.electives.push_back(*electivesGraph.insert(v->course));
 	}
-
+	newGroup.unitMinimum = e.unitMinimum;
 	electiveGroups.push_back(newGroup);
 	saveElectives();
 }

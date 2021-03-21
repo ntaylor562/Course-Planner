@@ -60,7 +60,7 @@ Course: CECS 326
 Course Title: Operating Systems
 Units: 3
 Course Description: The structure and functions of operating systems. Interrupt handling, processes and interprocess communication, memory management, resource scheduling, information sharing and protection. Project implementation in C/C++.
-Prerequisites: CECS 341 CECS 282 
+Prerequisites: CECS 282 CECS 341 
 -
 Course: CECS 327
 Course Title: Introduction to Networks and Distributed Computing
@@ -159,5 +159,11 @@ Course: MATH 123
 Course Title: Calculus II
 Units: 4
 Course Description: Applications of the integral. Techniques of integration. Infinite series including convergence tests and Taylor series. Parametric equations. Polar coordinates. Introduces differential equations.
+Prerequisites: MATH 122 
+-
+Course: PHYS 151
+Course Title: Mechanics and Heat
+Units: 4
+Course Description: Kinematics, Newton's Laws, rotational motion, conservation laws, mechanical waves, and laws of thermodynamics.
 Prerequisites: MATH 122 
 -

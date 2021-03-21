@@ -70,7 +70,7 @@ void SchedulePreferenceData::load(Scheduler &scheduler, const CourseGraph &g, st
 
 		//Read restricted courses
 		std::getline(inFile, currentLine);
-		data = currentLine.substr(currentLine.find_first_of(":") + 2, std::string::npos);
+		data = currentLine.substr(currentLine.find_first_of(":") + 1, std::string::npos);
 		std::list<CourseModule> resCourses;
 		while (data.size() > 1) {
 			data = data.substr(1, std::string::npos);
@@ -80,8 +80,7 @@ void SchedulePreferenceData::load(Scheduler &scheduler, const CourseGraph &g, st
 		for (const auto &i : resCourses) scheduler.addRestriction(i, sem.season, sem.year);
 
 		std::getline(inFile, currentLine);
-		sem.semesterRestricted = (currentLine[currentLine.size() - 1] == 'T');
-		scheduler.addRestriction(sem);
+		if (currentLine[currentLine.size() - 1] == 'T') scheduler.addRestriction(sem);
 	}
 	inFile.close();
 }
@@ -106,10 +105,9 @@ void SchedulePreferenceData::store(const Scheduler &scheduler, std::string fileN
 
 	outFile << "Restricted Semesters:" << std::endl;
 	for (Semester i : scheduler.getRestrictedSemesters()) {
-		outFile << i.ToString() << ":" << std::endl;
-		outFile << "maxUnits = " << i.maxUnits << std::endl;
-
-		outFile << std::endl << "restricted: ";
+		outFile << i.ToString() << ":" << std::endl
+			<< "maxUnits = " << i.maxUnits << std::endl
+			<< "restricted: ";
 		for (const auto &c : i.restricted) {
 			outFile << c << ",";
 		}

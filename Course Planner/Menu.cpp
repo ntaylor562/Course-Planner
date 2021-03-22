@@ -134,7 +134,7 @@ void Menu::runMenu() {
 	}
 
 	std::ifstream courseData;
-	courseData.open(dataPath + courseDataFileName);
+	courseData.open(courseDataFileName);
 	if (!courseData.is_open()) { //Checking if a course data file has been saved. If not, we need to set things up
 		std::cout << "A course data file was not found so we will begin setup." << std::endl << std::endl;
 		setupMenu();
@@ -564,11 +564,7 @@ void Menu::subMenuCourseScheduler() {
 	do {
 		std::cout << "Course Scheduler" << std::endl << std::endl;
 
-		CourseGraph remainingCourses(Courses);
-		std::list<CourseModule> toBeRemoved(CourseScheduler.getCompletedCourses());
-		if (!CourseScheduler.getCompletedCourses().empty()) {
-			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
-		}
+		printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
 		std::cout << std::endl;
 		
 
@@ -601,7 +597,7 @@ void Menu::subMenuCourseScheduler() {
 			system("cls");
 			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
 
-			std::cout << std::endl << "Prerequisites of courses you enter will be assumed complete." << std::endl;
+			std::cout << std::endl << "Prerequisites of courses you enter will be assumed complete so be sure to enter the highest level courses you completed." << std::endl;
 			enteredCoursesPointers = inputValidCourses();
 
 			for (const auto &i : enteredCoursesPointers) {
@@ -902,7 +898,7 @@ void Menu::subMenuAddMajor() {
 	majorAcronym = majorAcronym.substr(majorAcronym.find_first_not_of(" "));
 	majorAcronym = majorAcronym.substr(0, majorAcronym.find_last_not_of(" ") + 1);
 
-	std::cout << "BEFORE ANYHING ELSE be sure to create a folder in " << dataPath << "\b named \"" << majorAcronym << "\", then continue." << std::endl << std::endl;
+	std::cout << "BEFORE ANYHING ELSE be sure to create a folder in " << majorDataPath << "\b named \"" << majorAcronym << "\", then continue." << std::endl << std::endl;
 	system("pause");
 
 	try {
@@ -1720,10 +1716,10 @@ void Menu::saveSettings() {
 
 void Menu::loadMajors() {
 	std::ifstream majorListFile;
-	majorListFile.open(dataPath + std::string("major_list.txt"));
+	majorListFile.open(majorDataPath + std::string("major_list.txt"));
 	if (!majorListFile.is_open()) {
 		std::cout << "Major list file could not be found so you will have to enter all courses manually." << std::endl
-			<< "To fix, be sure you have the folder \"data_files\" in the directory containing Course Planner.exe" << std::endl
+			<< "To fix, be sure you have the folder \"" << majorDataPath << "\b\" in the directory containing Course Planner.exe or in the project folder." << std::endl
 			<< "You can download it at https://github.com/ntaylor562/Course-Planner" << std::endl << std::endl;
 		majorListFile.close();
 	}
@@ -1754,7 +1750,7 @@ void Menu::loadMajors() {
 	}
 	catch (std::runtime_error x) {
 		std::cout << x.what() << std::endl
-			<< "Place the required file in the folder \"" << dataPath << "\b\" which should be in the same directory as the Course Planner executable file." << std::endl
+			<< "Place the required file in the folder \"" << majorDataPath << "\b\" which should be in the same directory as the Course Planner executable file." << std::endl
 			<< "If you don't have the file, find it at https://github.com/ntaylor562/Course-Planner." << std::endl;
 		system("pause");
 		system("cls");
@@ -1764,7 +1760,7 @@ void Menu::loadMajors() {
 
 void Menu::saveMajors() {
 	std::ofstream outFile;
-	outFile.open(dataPath + std::string("major_list.txt"));
+	outFile.open(majorDataPath + std::string("major_list.txt"));
 	for (const auto &m : majorList) {
 		outFile << m->getMajor() << " - " << m->getTitle() << std::endl;
 	}

@@ -8,11 +8,11 @@ void Major::save() {
 }
 
 void Major::saveMajorReqs() {
-	CourseData::store(majorRequirements, major + "/" + major + "_major_requirements.txt");
+	CourseData::store(majorRequirements, path + major + "_major_requirements.txt");
 }
 
 void Major::saveElectives() {
-	CourseData::store(electivesGraph, major + "/" + major + "_electives_data.txt");
+	CourseData::store(electivesGraph, path + major + "_electives_data.txt");
 
 	std::ofstream outFile;
 	outFile.open(path + major + "_elective_groups.txt");
@@ -31,7 +31,7 @@ void Major::saveElectives() {
 
 void Major::loadElectives() {
 	//Load the graph containing the choice courses
-	CourseData::load(electivesGraph, major + "/" + major + "_electives_data.txt");
+	CourseData::load(electivesGraph, path + major + "_electives_data.txt");
 
 	std::ifstream inFile;
 	inFile.open(path + major + "_elective_groups.txt");
@@ -90,7 +90,7 @@ Major::Major(std::string majorAcronym, std::string title) {
 
 	major = majorAcronym;
 
-	path = dataPath + major + "/";
+	path = majorDataPath + major + "/";
 
 	std::ifstream fileExistsChecker;
 	std::ofstream outFile;

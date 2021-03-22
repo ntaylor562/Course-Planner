@@ -5,6 +5,7 @@
 #include <list>
 #include "CourseGraph.h"
 
+#define majorDataPath "majors/"
 
 struct ElectiveGroup {
 

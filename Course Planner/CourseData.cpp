@@ -6,10 +6,8 @@ void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runti
 	if (fileName == ".txt") throw std::runtime_error("Invalid file name.");
 	else if (fileName.find(".txt") == std::string::npos) fileName += ".txt";
 
-	if (fileName.find(dataPath) != std::string::npos) fileName = fileName.substr((sizeof(dataPath) / sizeof(char)) - 1);
-
 	std::ifstream inFile;
-	inFile.open(dataPath + fileName);
+	inFile.open(fileName);
 
 	if (!inFile.is_open()) throw std::runtime_error("File \"" + fileName + "\" not found.");
 
@@ -90,8 +88,7 @@ void CourseData::load(CourseGraph &graph, std::string fileName) throw(std::runti
 void CourseData::store(const CourseGraph &graph, std::string fileName) {
 	std::ofstream outFile;
 
-	if (fileName.find(dataPath) != std::string::npos) outFile.open(fileName);
-	else outFile.open(dataPath + fileName);
+	outFile.open(fileName);
 
 	for (std::vector<vertex *>::const_iterator it = graph.begin(); it != graph.end(); ++it) {
 		

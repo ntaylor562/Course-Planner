@@ -8,14 +8,14 @@ void Major::save() {
 }
 
 void Major::saveMajorReqs() {
-	CourseData::store(majorRequirements, major + "_major_requirements.txt");
+	CourseData::store(majorRequirements, major + "/" + major + "_major_requirements.txt");
 }
 
 void Major::saveElectives() {
-	CourseData::store(electivesGraph, major + "_electives_data.txt");
+	CourseData::store(electivesGraph, major + "/" + major + "_electives_data.txt");
 
 	std::ofstream outFile;
-	outFile.open(dataPath + major + "_elective_groups.txt");
+	outFile.open(path + major + "_elective_groups.txt");
 
 	for (const auto &e : electiveGroups) {
 		outFile << "Unit minimum = " << e.unitMinimum << std::endl << ";";
@@ -31,11 +31,11 @@ void Major::saveElectives() {
 
 void Major::loadElectives() {
 	//Load the graph containing the choice courses
-	CourseData::load(electivesGraph, major + "_electives_data.txt");
+	CourseData::load(electivesGraph, major + "/" + major + "_electives_data.txt");
 
 	std::ifstream inFile;
-	inFile.open(dataPath + major + "_elective_groups.txt");
-	if (!inFile.is_open()) throw std::runtime_error("\"" + major + "_elective_groups.txt\" file not found.");
+	inFile.open(path + major + "_elective_groups.txt");
+	if (!inFile.is_open()) throw std::runtime_error("\"" + path + major + "_elective_groups.txt\" file not found.");
 
 	std::string currentLine; //Line of the text file we're currently reading
 	std::getline(inFile, currentLine);
@@ -74,6 +74,7 @@ void Major::loadElectives() {
 }
 
 Major::Major(std::string majorAcronym, std::string title) {
+
 	//Trimming leading and trailing spaces of title
 	title = title.substr(title.find_first_not_of(" "));
 	title = title.substr(0, title.find_last_not_of(" ") + 1);
@@ -89,26 +90,28 @@ Major::Major(std::string majorAcronym, std::string title) {
 
 	major = majorAcronym;
 
+	path = dataPath + major + "/";
+
 	std::ifstream fileExistsChecker;
 	std::ofstream outFile;
 
-	fileExistsChecker.open(dataPath + major + "_major_requirements.txt");
+	fileExistsChecker.open(path + major + "_major_requirements.txt");
 	if (!fileExistsChecker.is_open()) {
-		outFile.open(dataPath + major + "_major_requirements.txt");
+		outFile.open(path + major + "_major_requirements.txt");
 		outFile.close();
 	}
 	fileExistsChecker.close();
 
-	fileExistsChecker.open(dataPath + major + "_electives_data.txt");
+	fileExistsChecker.open(path + major + "_electives_data.txt");
 	if (!fileExistsChecker.is_open()) {
-		outFile.open(dataPath + major + "_electives_data.txt");
+		outFile.open(path + major + "_electives_data.txt");
 		outFile.close();
 	}
 	fileExistsChecker.close();
 
-	fileExistsChecker.open(dataPath + major + "_elective_groups.txt");
+	fileExistsChecker.open(path + major + "_elective_groups.txt");
 	if (!fileExistsChecker.is_open()) {
-		outFile.open(dataPath + major + "_elective_groups.txt");
+		outFile.open(path + major + "_elective_groups.txt");
 		outFile.close();
 	}
 	fileExistsChecker.close();
@@ -117,7 +120,7 @@ Major::Major(std::string majorAcronym, std::string title) {
 }
 
 void Major::loadMajor() {
-	CourseData::load(majorRequirements, major + "_major_requirements.txt");
+	CourseData::load(majorRequirements, path + major + "_major_requirements.txt");
 	loadElectives();
 }
 
@@ -127,6 +130,10 @@ std::string Major::getMajor() const {
 
 std::string Major::getTitle() const {
 	return majorTitle;
+}
+
+std::string Major::getPath() const {
+	return path;
 }
 
 void Major::addMajorReq(const CourseModule &c) {

@@ -58,13 +58,17 @@ void Menu::setupMenu() {
 		int totalUnits = 0;
 		while (totalUnits < e.unitMinimum) {
 			std::cout << "You must choose " << e.unitMinimum << " units out of these courses." << std::endl << std::endl;
+			std::cout << "0 - Skip" << std::endl;
 			int count = 1;
 			for (const auto &v : e.electives) {
 				std::cout << count++ << " - " << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
 			}
 			std::cout << std::endl << "Total units = " << totalUnits << std::endl << "Enter a choice: ";
-			userChoice = InputChecker::getIntRange(1, e.electives.size(), "Input invalid. Enter a choice: ");
+			userChoice = InputChecker::getIntRange(0, e.electives.size(), "Input invalid. Enter a choice: ");
 			std::cout << std::endl;
+
+			//User skips selecting an elective
+			if (userChoice == 0) break;
 
 			std::list<vertex *>::const_iterator it = e.electives.begin();
 			for (int i = 0; i < userChoice - 1; ++i) //Finding the course the user selected
@@ -122,9 +126,9 @@ void Menu::runMenu() {
 		SchedulePreferenceData::load(CourseScheduler, Courses, scheduleDataFile);
 	}
 	catch (std::runtime_error x) {
-		std::cout << x.what() << std::endl
-			<< "Save schedule preference data to create a file. Schedule preferences set to default." << std::endl;
+		std::cout << x.what() << " Schedule preferences set to default." << std::endl;
 		CourseScheduler = Scheduler(Courses);
+		SchedulePreferenceData::store(CourseScheduler, scheduleDataFile);
 		system("pause");
 		system("cls");
 	}
@@ -136,14 +140,14 @@ void Menu::runMenu() {
 		setupMenu();
 	}
 	else if (courseData.peek() == EOF) { //File is empty so we go to setup
-		std::cout << "A course data file was not found so we will begin setup." << std::endl << std::endl;
-		setupMenu(); //This is in a different if statement because we can't peek a file that can't open
+		std::cout << "Your course data file was empty so we will begin setup." << std::endl << std::endl;
+		setupMenu();
 	}
 	else { //If the user's course data exists, load it into the user's course graph
 		CourseData::load(Courses, courseDataFileName);
 	}
 	courseData.close();
-
+	system("cls");
 	mainMenu();
 }
 
@@ -698,6 +702,7 @@ void Menu::subMenuSettings() {
 			courseDataFileName = tempFileName;
 
 			std::cout << "Course Planner will now save your courses to \"" << courseDataFileName << "\"." << std::endl << std::endl;
+			CourseData::store(Courses, courseDataFileName);
 			system("pause");
 			system("cls");
 			break;
@@ -897,9 +902,18 @@ void Menu::subMenuAddMajor() {
 	majorAcronym = majorAcronym.substr(majorAcronym.find_first_not_of(" "));
 	majorAcronym = majorAcronym.substr(0, majorAcronym.find_last_not_of(" ") + 1);
 
-	Major *newMajor = new Major(majorAcronym, majorName);
-	majorList.push_back(newMajor);
-	editMajor(*newMajor);
+	std::cout << "BEFORE ANYHING ELSE be sure to create a folder in " << dataPath << "\b named \"" << majorAcronym << "\", then continue." << std::endl << std::endl;
+	system("pause");
+
+	try {
+		Major *newMajor = new Major(majorAcronym, majorName);
+		majorList.push_back(newMajor);
+		editMajor(*newMajor);
+	}
+	catch (std::runtime_error x) {
+		std::cout << x.what() << " You did not create the folder." << std::endl << std::endl;
+		system("pause");
+	}
 }
 
 void Menu::addRestriction() {
@@ -1393,14 +1407,14 @@ Semester Menu::enterSemester(std::string message) const {
 void Menu::editMajor(Major &m) {
 	Menu majorMenu;
 
-	majorMenu.courseDataFileName = m.getMajor() + "_major_requirements.txt";
+	majorMenu.courseDataFileName = m.getPath() + m.getMajor() + "_major_requirements.txt";
 	majorMenu.autoSave = false;
 	majorMenu.Courses = m.getMajorReq();
 
 	Menu electiveMenu;
-	electiveMenu.courseDataFileName = m.getMajor() + "_electives_data.txt";
+	electiveMenu.courseDataFileName = m.getPath() + m.getMajor() + "_electives_data.txt";
 	electiveMenu.autoSave = false;
-	CourseData::load(electiveMenu.Courses, m.getMajor() + "_electives_data.txt");
+	CourseData::load(electiveMenu.Courses, m.getPath() + m.getMajor() + "_electives_data.txt");
 
 	int userChoice = 0;
 
@@ -1526,7 +1540,7 @@ void Menu::editMajor(Major &m) {
 					newGroup.unitMinimum = InputChecker::getInt("Input invalid. Enter a number: ");
 					if (newGroup.unitMinimum <= 0) break;
 
-					electiveMenu.courseDataFileName = dataPath + m.getMajor() + "_electives_data.txt";
+					electiveMenu.courseDataFileName = m.getPath() + m.getMajor() + "_electives_data.txt";
 
 					do {
 						std::cout << "Elective Group" << std::endl << std::endl
@@ -1668,6 +1682,7 @@ void Menu::loadSettings() {
 		courseDataFileName = "course_data.txt";
 		saveSettings();
 		system("pause");
+		std::cout << std::endl;
 		return;
 	}
 
@@ -1707,12 +1722,10 @@ void Menu::loadMajors() {
 	std::ifstream majorListFile;
 	majorListFile.open(dataPath + std::string("major_list.txt"));
 	if (!majorListFile.is_open()) {
-		std::cout << "Major list file could not be found. One will be created for you." << std::endl << std::endl;
+		std::cout << "Major list file could not be found so you will have to enter all courses manually." << std::endl
+			<< "To fix, be sure you have the folder \"data_files\" in the directory containing Course Planner.exe" << std::endl
+			<< "You can download it at https://github.com/ntaylor562/Course-Planner" << std::endl << std::endl;
 		majorListFile.close();
-		std::ofstream temp;
-		temp.open(dataPath + std::string("major_list.txt"));
-		temp.close();
-		majorListFile.open(dataPath + std::string("major_list.txt"));
 	}
 
 	try {
@@ -1725,11 +1738,17 @@ void Menu::loadMajors() {
 			std::string title = currentLine.substr(currentLine.find_first_of("-") + 2);
 
 			//If the major is already in the list, do nothing
+			bool majorInList = false;
 			for (const auto &m : majorList) {
-				if (m->getMajor() == acr) return;
+				if (m->getMajor() == acr) {
+					majorInList = true;
+					break;
+				}
+			}
+			if (!majorInList) {
+				majorList.push_back(new Major(acr, title));
 			}
 
-			majorList.push_back(new Major(acr, title));
 			std::getline(majorListFile, currentLine);
 		}
 	}

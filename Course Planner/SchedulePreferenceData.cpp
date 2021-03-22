@@ -7,7 +7,7 @@
 void SchedulePreferenceData::load(Scheduler &scheduler, const CourseGraph &g, std::string fileName) throw(std::runtime_error) {
 	
 	std::ifstream inFile;
-	inFile.open(dataPath + fileName);
+	inFile.open(fileName);
 	
 	if (!inFile.is_open()) throw std::runtime_error("File \"" + fileName + "\" not found.");
 	if (inFile.peek() == EOF) throw std::runtime_error("File \"" + fileName + "\" not found.");
@@ -87,7 +87,7 @@ void SchedulePreferenceData::load(Scheduler &scheduler, const CourseGraph &g, st
 
 void SchedulePreferenceData::store(const Scheduler &scheduler, std::string fileName) {
 	std::ofstream outFile;
-	outFile.open(dataPath + fileName);
+	outFile.open(fileName);
 
 	outFile << "Completed Courses: ";
 

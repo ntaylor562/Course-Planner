@@ -7,6 +7,7 @@
 
 
 struct ElectiveGroup {
+
 	//List of electives the user has to choose from in a group of courses
 	std::list<vertex *> electives;
 
@@ -17,6 +18,9 @@ struct ElectiveGroup {
 
 class Major {
 private:
+
+	//Path of the major files
+	std::string path;
 
 	std::string major;
 	std::string majorTitle;
@@ -54,6 +58,7 @@ public:
 	*/
 	void loadMajor();
 
+	std::string getPath() const;
 	std::string getMajor() const;
 	std::string getTitle() const;
 

@@ -19,6 +19,8 @@ std::string CourseInputChecker::getCourses(std::string message) {
 
 			std::string sub = input.substr(0, input.find_first_of(' '));
 			input = input.substr(input.find_first_of(' '), std::string::npos);
+
+			if (input.find_first_not_of(' ') == std::string::npos) throw std::invalid_argument("No course number entered");
 			input = input.substr(input.find_first_not_of(' '), std::string::npos);
 
 			if ('0' > input[0] || input[0] > '9') { //The subject has a space in it (Ex: E E 381)

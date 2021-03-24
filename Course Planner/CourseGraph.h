@@ -120,9 +120,11 @@ public:
 	const int size() const;
 
 	/**
-	 * @brief Prints all vertices
+	 * @brief Used to find A - B where A is the set containing all this graph's courses and B is the set containing all of g's courses
+	 * @param g Graph whose courses we're subtracting
+	 * @return A graph containing all courses in this graph that are not in graph g
 	*/
-	void printCourses() const;
+	CourseGraph operator-(const CourseGraph &g) const;
 
 	/**
 	 * @brief Adds a directed edge from u to v

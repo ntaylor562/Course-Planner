@@ -158,12 +158,12 @@ void Menu::deletePrereqs(CourseGraph &g, vertex &v) const {
 	g.remove(v.course);
 }
 
-void Menu::printAllCourses(const CourseGraph &g) const {
+void Menu::printAllCourses(const CourseGraph &g, std::string title) const {
 	if (g.empty()) return;
 
 	int spacing = 15;
 	int coursesPerLine = 5;
-	std::cout << std::left << "Current list of courses:\n\n";
+	std::cout << std::left << title << std::endl << std::endl;
 
 	int count = 1;
 	for (std::vector<vertex *>::const_iterator it = g.begin(); it != g.end(); ++it) {
@@ -562,19 +562,23 @@ void Menu::subMenuCourseScheduler() {
 	int userChoice = 0;
 	updateScheduler();
 	do {
+		if (autoSave) SchedulePreferenceData::store(CourseScheduler, scheduleDataFile);
 		std::cout << "Course Scheduler" << std::endl << std::endl;
 
-		printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
-		std::cout << std::endl;
+		if (!CourseScheduler.getCompletedCourses().empty()) {
+			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+			std::cout << std::endl;
+			printCompletedCourses(Courses, CourseScheduler.getCompletedCourses());
+			std::cout << std::endl;
+		}
 		
 
 		std::cout << "0 - Return" << std::endl
 			<< "1 - Generate a schedule" << std::endl
 			<< "2 - Mark course as complete" << std::endl
 			<< "3 - Mark course as incomplete" << std::endl
-			<< "4 - Add a restriction" << std::endl
-			<< "5 - Remove a restriction" << std::endl
-			<< "6 - Save schedule preferences" << std::endl << std::endl
+			<< "4 - Manage schedule restrictions" << std::endl
+			<< "5 - Save schedule preferences" << std::endl << std::endl
 			<< "Enter a choice: ";
 
 		userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
@@ -596,6 +600,8 @@ void Menu::subMenuCourseScheduler() {
 		case 2:
 			system("cls");
 			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+			std::cout << std::endl;
+			printCompletedCourses(Courses, CourseScheduler.getCompletedCourses());
 
 			std::cout << std::endl << "Prerequisites of courses you enter will be assumed complete so be sure to enter the highest level courses you completed." << std::endl;
 			enteredCoursesPointers = inputValidCourses();
@@ -625,13 +631,9 @@ void Menu::subMenuCourseScheduler() {
 			break;
 		case 4:
 			system("cls");
-			addRestriction();
+			manageRestrictions();
 			break;
 		case 5:
-			system("cls");
-			removeRestriction();
-			break;
-		case 6:
 			SchedulePreferenceData::store(CourseScheduler, scheduleDataFile);
 			std::cout << "Schedule preferences have been saved." << std::endl << std::endl;
 			system("pause");
@@ -912,14 +914,17 @@ void Menu::subMenuAddMajor() {
 	}
 }
 
-void Menu::addRestriction() {
+void Menu::manageRestrictions() {
 	int userChoice = 0;
 
 	do {
-		std::cout << "Add a Restriction" << std::endl << std::endl
-			<< "0 - Return" << std::endl
-			<< "1 - Restrict course(s) for a specific semester" << std::endl
-			<< "2 - Restrict a specific semester" << std::endl
+		std::cout << "Manage Restrictions" << std::endl << std::endl;
+		
+		printScheduleRestrictions();
+
+		std::cout << std::endl << "0 - Return" << std::endl
+			<< "1 - Restrict/unrestrict course(s) for a specific semester" << std::endl
+			<< "2 - Restrict/unrestrict a specific semester" << std::endl
 			<< "3 - Set an overall unit limit" << std::endl
 			<< "4 - Set a unit limit for a specific semester" << std::endl;
 
@@ -945,35 +950,121 @@ void Menu::addRestriction() {
 		userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
 		std::cout << std::endl;
 
-		int lim;
-		Semester s;
-		std::string input;
-		std::vector<CourseModule *> courses;
+		int lim; //Unit limit
+		Semester s; //Semester entered by user
+		std::vector<CourseModule *> courses; //Used to enter courses we'll be adding/removing restrictions on
+		int secondUserChoice = 0; //Used for submenus
+		bool exitSubMenu = true;
 		switch (userChoice) {
 		case 0:
 			system("cls");
 			break;
 		case 1:
-			s = enterSemester();
-			printSchedule(s);
-			std::cout << std::endl;
-			printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
-			std::cout << std::endl;
-			courses = inputValidCourses();
-			if (courses.empty()) {
-				break;
-			}
-			
-			for (const auto &c : courses) {
-				CourseScheduler.addRestriction(*c, s.season, s.year);
-			}
+			do {
+				system("cls");
+				exitSubMenu = true;
+				std::cout << "Add a restriction or remove a restriction?" << std::endl << std::endl
+					<< "0 - Return" << std::endl
+					<< "1 - Add restriction" << std::endl
+					<< "2 - Remove restriction" << std::endl << std::endl
+					<< "Enter a choice: ";
+				secondUserChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+				std::cout << std::endl;
 
-			std::cout << "The course(s) you entered will no longer be allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
+				if (secondUserChoice != 0) {
+					s = enterSemester();
+					printSchedule(s);
+					std::cout << std::endl;
+					printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+					std::cout << std::endl;
+					printCompletedCourses(Courses, CourseScheduler.getCompletedCourses());
+					std::cout << std::endl;
+					printScheduleRestrictions();
+					std::cout << std::endl;
+					courses = inputValidCourses();
+					if (courses.empty()) {
+						break;
+					}
+
+				}
+
+				switch (secondUserChoice) {
+				case 0:
+					break;
+				case 1:
+					for (const auto &c : courses) {
+						CourseScheduler.addRestriction(*c, s.season, s.year);
+					}
+
+					std::cout << "The course(s) you entered will no longer be allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
+					break;
+				case 2:
+					for (const auto &c : courses) {
+						CourseScheduler.removeRestriction(*c, s.season, s.year);
+					}
+
+					std::cout << "The course(s) you entered will now be allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
+					break;
+				default:
+					std::cout << "Invalid choice." << std::endl << std::endl;
+					exitSubMenu = false;
+					system("pause");
+					system("cls");
+					break;
+				}
+			} while (!exitSubMenu);
+
 			break;
 		case 2:
-			s = enterSemester();
-			CourseScheduler.addRestriction(s);
-			std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is now restricted from having courses." << std::endl << std::endl;
+			do {
+				system("cls");
+				exitSubMenu = true;
+				std::cout << "Add a restriction or remove a restriction?" << std::endl << std::endl
+					<< "0 - Return" << std::endl
+					<< "1 - Add restriction" << std::endl
+					<< "2 - Remove restriction" << std::endl << std::endl
+					<< "Enter a choice: ";
+				secondUserChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+				std::cout << std::endl;
+
+				if (secondUserChoice != 0) {
+					s = enterSemester();
+					printSchedule(s);
+					std::cout << std::endl;
+					printRemainingCourses(Courses, CourseScheduler.getCompletedCourses());
+					std::cout << std::endl;
+					printCompletedCourses(Courses, CourseScheduler.getCompletedCourses());
+					std::cout << std::endl;
+					printScheduleRestrictions();
+					std::cout << std::endl;
+				}
+
+				switch (secondUserChoice) {
+				case 0:
+					break;
+				case 1:
+					std::cout << "Are your sure you want to restrict " << seasons[static_cast<int>(s.season)] << " " << s.year << " from having any courses? (y/n) ";
+					if (InputChecker::getBool("Input invalid. (y/n) ")) {
+						CourseScheduler.addRestriction(s);
+						std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is now restricted from having courses." << std::endl << std::endl;
+					}
+					break;
+				case 2:
+					std::cout << "Are you sure you want to unrestrict " << seasons[static_cast<int>(s.season)] << " " << s.year << " from having any courses? (y/n) ";
+					if (InputChecker::getBool("Input invalid. (y/n) ")) {
+						CourseScheduler.removeRestriction(s.season, s.year);
+						std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is no longer restricted from having courses." << std::endl << std::endl;
+					}
+					break;
+				default:
+					exitSubMenu = false;
+					std::cout << "Invalid choice." << std::endl << std::endl;
+					system("pause");
+					system("cls");
+					break;
+				}
+			} while (!exitSubMenu);
+
 			break;
 		case 3:
 			std::cout << "What would you like the unit limit for all semesters to be (0 for default)? ";
@@ -985,107 +1076,6 @@ void Menu::addRestriction() {
 			s = enterSemester();
 			printSchedule(s);
 			std::cout << std::endl << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
-			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
-			CourseScheduler.setSemesterUnitLimit(s, lim);
-			std::cout << std::endl << s.ToString() << " unit limit is now ";
-			if (lim == 0) std::cout << "0." << std::endl << std::endl;
-			else std::cout << ((lim >= 4) ? lim : 4) << "." << std::endl << std::endl;
-			break;
-		case 5:
-			CourseScheduler.setWinterAllowed(!CourseScheduler.getWinterAllowed());
-			std::cout << "Winter is now " << ((CourseScheduler.getWinterAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
-			break;
-		case 6:
-			CourseScheduler.setSpringAllowed(!CourseScheduler.getSpringAllowed());
-			std::cout << "Spring is now " << ((CourseScheduler.getSpringAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
-			break;
-		case 7:
-			CourseScheduler.setSummerAllowed(!CourseScheduler.getSummerAllowed());
-			std::cout << "Summer is now " << ((CourseScheduler.getSummerAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
-			break;
-		case 8:
-			CourseScheduler.setFallAllowed(!CourseScheduler.getFallAllowed());
-			std::cout << "Fall is now " << ((CourseScheduler.getFallAllowed()) ? "allowed." : "restricted.") << std::endl << std::endl;
-			break;
-		default:
-			std::cout << "Invalid choice." << std::endl << std::endl;
-			break;
-		}
-		if (userChoice != 0) {
-			system("pause");
-			system("cls");
-		}
-	} while (userChoice != 0);
-}
-
-void Menu::removeRestriction() {
-	int userChoice = 0;;
-
-	do {
-		std::cout << "Remove a Restriction" << std::endl << std::endl;
-		printScheduleRestrictions();
-		std::cout << "0 - Return" << std::endl
-			<< "1 - Remove a restriction on a course for a specific semester" << std::endl
-			<< "2 - Remove a restriction on a specific semester" << std::endl
-			<< "3 - Set an overall unit limit" << std::endl
-			<< "4 - Set a unit limit for a specific semester" << std::endl;
-
-		std::string seasons[] = { "Winter", "Spring", "Summer", "Fall" };
-		for (int i = 0; i < 4; ++i) {
-			std::cout << i + 5 << " - ";
-			if (CourseScheduler.getRestrictedSeasons().empty()) std::cout << "Restrict ";
-			else {
-				bool found = false;
-				for (const auto &it : CourseScheduler.getRestrictedSeasons()) {
-					if (it == static_cast<Semester::Seasons>(i)) {
-						std::cout << "Allow ";
-						found = true;
-						break;
-					}
-				}
-				if (!found) std::cout << "Restrict ";
-			}
-			std::cout << seasons[i] << " semester" << std::endl;
-		}
-		std::cout << std::endl << "Enter a choice: ";
-
-		int userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
-		std::cout << std::endl;
-
-		int lim;
-		Semester s;
-		std::string input;
-		CourseModule *course;
-		switch (userChoice) {
-		case 0:
-			system("cls");
-			break;
-		case 1:
-			printAllCourses(Courses);
-			std::cout << std::endl;
-			course = inputValidCourse();
-			if (course == nullptr) {
-				break;
-			}
-			s = enterSemester();
-			CourseScheduler.removeRestriction(*course, s.season, s.year);
-
-			std::cout << *course << " is now allowed in " << seasons[static_cast<int>(s.season)] << " " << s.year << "." << std::endl << std::endl;
-			break;
-		case 2:
-			s = enterSemester();
-			CourseScheduler.removeRestriction(s.season, s.year);
-			std::cout << seasons[static_cast<int>(s.season)] << " " << s.year << " is no longer restricted from having courses." << std::endl << std::endl;
-			break;
-		case 3:
-			std::cout << "What would you like the unit limit for all semesters to be (0 for default)? ";
-			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
-			CourseScheduler.setUnitLimit(lim);
-			std::cout << std::endl << "Overall unit limit is now " << CourseScheduler.getMaxUnits() << "." << std::endl << std::endl;
-			break;
-		case 4:
-			s = enterSemester();
-			std::cout << "What would you like the unit limit for " << s.ToString() << " to be (0 for default)? ";
 			lim = InputChecker::getIntRange(0, 21, "Input invalid. Limit must be a number from 0 to 21. ");
 			CourseScheduler.setSemesterUnitLimit(s, lim);
 			std::cout << std::endl << s.ToString() << " unit limit is now ";
@@ -1149,6 +1139,10 @@ void Menu::printScheduleRestrictions() const {
 			for (const auto &c : i.restricted)
 				output += c.ToString() + " ";
 			output += "\n";
+
+			if (i.maxUnits > 0) {
+				output += "\t\tMax units this semester is " + std::to_string(i.maxUnits) + " units.\n";
+			}
 		}
 		output += "\n";
 
@@ -1185,11 +1179,26 @@ void Menu::printRemainingCourses(const CourseGraph &g, std::list<CourseModule> t
 		vertex *v = remainingCourses.search(toBeRemoved.front());
 		if (v != nullptr) {
 			deletePrereqs(remainingCourses, *v);
-			toBeRemoved.pop_front();
 		}
+		toBeRemoved.pop_front();
 	}
 
-	printAllCourses(remainingCourses);
+	printAllCourses(remainingCourses, "Remaining courses to be taken:");
+}
+
+void Menu::printCompletedCourses(const CourseGraph &g, std::list<CourseModule> taken) {
+	CourseGraph remainingCourses(Courses);
+	std::list<CourseModule> toBeRemoved(CourseScheduler.getCompletedCourses());
+	while (!toBeRemoved.empty()) {
+		vertex *v = remainingCourses.search(toBeRemoved.front());
+		if (v != nullptr) {
+			deletePrereqs(remainingCourses, *v);
+		}
+		toBeRemoved.pop_front();
+	}
+
+	printAllCourses(Courses - remainingCourses, "Completed courses:");
+
 }
 
 void Menu::editCourse(CourseModule &c) {

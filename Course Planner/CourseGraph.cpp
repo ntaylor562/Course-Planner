@@ -167,36 +167,12 @@ const int CourseGraph::size() const {
 	return vertices.size();
 }
 
-void CourseGraph::printCourses() const {
-	if (vertices.empty()) return;
-	int spacing = 15;
-	std::cout << std::left;
-
-	for (std::vector<vertex*>::const_iterator i = vertices.begin(); i != vertices.end(); ++i) {
-		std::cout << std::setw(spacing) << (*i)->course;
+CourseGraph CourseGraph::operator-(const CourseGraph &g) const {
+	CourseGraph newGraph(*this);
+	for (const auto &v : g) {
+		newGraph.remove(v->course);
 	}
-	std::cout << std::endl << std::endl;
-
-	for (const auto &i : vertices) {
-		std::cout << i->course << std::endl;
-		
-		if (!i->prerequisites.empty()) {
-			std::cout << "Prerequisites: ";
-			for (const auto &i : i->prerequisites)
-				std::cout << i->course << " ";
-			std::cout << std::endl;
-		}
-
-		if (!i->prerequisiteFor.empty()) {
-			std::cout << "Prerequisite for: ";
-			for (const auto &i : i->prerequisiteFor)
-				std::cout << i->course << " ";
-			std::cout << std::endl;
-		}
-
-		std::cout << std::endl;
-	}
-
+	return newGraph;
 }
 
 void CourseGraph::addEdge(const CourseModule &u, const CourseModule &v) {

@@ -265,12 +265,16 @@ void Menu::mainMenu() {
 			<< "3 - Edit an existing course" << std::endl
 			<< "4 - Remove a course" << std::endl
 			<< "5 - Search courses" << std::endl
-			<< "6 - Generate schedule" << std::endl
-			<< "7 - Save courses" << std::endl
-			<< "8 - Settings" << std::endl << std::endl;
+			<< "6 - Add electives" << std::endl
+			<< "7 - Generate schedule" << std::endl
+			<< "8 - Save courses" << std::endl
+			<< "9 - Settings" << std::endl << std::endl;
 
 		std::cout << "Enter a choice: ";
 		int userChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+		std::set<vertex *> allElectives; //Used to add electives
+		int secondUserChoice = 0; //Used in add electives submenu
+		Major *selectedMajor = nullptr; //The major whose electives the user wants to add
 		switch (userChoice) {
 		case 0: //Exit
 			exit = true;
@@ -309,16 +313,94 @@ void Menu::mainMenu() {
 			system("cls");
 			subMenuCourseSearch();
 			break;
-		case 6: //Generate schedule
+		case 6:
+			system("cls");
+			loadMajors();
+
+			do {
+				std::cout << "Select your major: " << std::endl;
+
+				std::cout << "0 - None" << std::endl;
+				int count = 1;
+				for (const auto &i : majorList) {
+					std::cout << count++ << " - " << i->getMajor() << " - " << i->getTitle() << std::endl;
+				}
+
+				std::cout << std::endl << "Enter a choice: ";
+
+				secondUserChoice = InputChecker::getInt("Input invalid. Enter a choice: ");
+
+				std::cout << std::endl << std::endl;
+
+				if (secondUserChoice == 0) {
+					return;
+				}
+				else if (1 <= secondUserChoice && secondUserChoice <= majorList.size()) {
+					std::list<Major *>::iterator it = majorList.begin();
+					for (int i = 0; i < secondUserChoice; ++i)
+						++it;
+					selectedMajor = *(--it);
+					break;
+				}
+				else {
+					std::cout << "Invalid choice." << std::endl << std::endl;
+					system("pause");
+					system("cls");
+				}
+			} while (secondUserChoice != 0);
+
+			for (const auto &e : selectedMajor->getElectives()) {
+				for (const auto &v : e.electives) {
+					allElectives.insert(v);
+				}
+			}
+
+			while (secondUserChoice != 0) {
+				std::cout << "Select any courses you don't already have" << std::endl << std::endl;
+				std::cout << "0 - Return" << std::endl;
+				int count = 1;
+				for (const auto &v : allElectives) {
+					std::cout << count++ << " - " << v->course << " - " << v->course.getCourseTitle() << " (" << v->course.getUnits() << ")" << std::endl;
+				}
+				std::cout << std::endl << "Enter a choice: ";
+				secondUserChoice = InputChecker::getIntRange(0, allElectives.size(), "Input invalid. Enter a choice: ");
+				std::cout << std::endl;
+
+				//User returns
+				if (secondUserChoice == 0) break;
+				
+				count = 0;
+				std::set<vertex *>::const_iterator it = allElectives.begin();
+				for (const auto &v : allElectives) {
+					if (++count == secondUserChoice) break;
+					++it;
+				}
+
+				if (Courses.search((*it)->course) != nullptr) {
+					std::cout << "Input invalid. Pick a course you have not selected already." << std::endl << std::endl;
+					system("pause");
+					system("cls");
+					continue;
+				}
+				//Inserting the vertex into the graph if the user didn't return
+				if (secondUserChoice != 0) {
+					Courses.insert(**(it));
+					std::cout << (*it)->course << " has been added." << std::endl << std::endl;
+					system("pause");
+				}
+				system("cls");
+			}
+			break;
+		case 7: //Generate schedule
 			system("cls");
 			subMenuCourseScheduler();
 			break;
-		case 7: //Save courses
+		case 8: //Save courses
 			CourseData::store(Courses, courseDataFileName);
 			std::cout << "Data has been saved to " << courseDataFileName << std::endl << std::endl;
 			system("pause");
 			break;
-		case 8:
+		case 9:
 			system("cls");
 			subMenuSettings();
 			break;

@@ -236,7 +236,7 @@ public:
 	/**
 	 * @brief Prints all courses in the list of taken courses as well as their prerequisites
 	 * @param g Graph with all the courses
-	 * @param taken List containing all the courses taht have already been taken
+	 * @param taken List containing all the courses that have already been taken
 	*/
 	void printCompletedCourses(const CourseGraph &g, std::list<CourseModule> taken);
 

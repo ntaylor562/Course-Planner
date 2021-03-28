@@ -50,12 +50,12 @@ const std::list<CourseModule> &Scheduler::getCompletedCourses() const {
 	return completedCourses;
 }
 
-void Scheduler::complete(const CourseModule &c) {
+void Scheduler::markComplete(const CourseModule &c) {
 	if (std::find(completedCourses.begin(), completedCourses.end(), c) == completedCourses.end())
 		completedCourses.push_back(c);
 }
 
-void Scheduler::complete(const std::vector<CourseModule> &vect) {
+void Scheduler::markComplete(const std::vector<CourseModule> &vect) {
 	for (const auto &i : vect) {
 		if (std::find(completedCourses.begin(), completedCourses.end(), i) == completedCourses.end())
 			completedCourses.push_back(i);
@@ -154,6 +154,10 @@ void Scheduler::removeRestriction(const CourseModule &c, Semester::Seasons seaso
 
 	if (resSem->restricted.empty() && !resSem->semesterRestricted && maxUnits == 0) //Semester no longer has restrictions
 		semsWithRestrictions.erase(resSem);
+}
+
+void Scheduler::removeRestriction(const CourseModule &c, const Semester &s) {
+	removeRestriction(c, s.season, s.year);
 }
 
 void Scheduler::removeRestriction(Semester::Seasons season, int year) {

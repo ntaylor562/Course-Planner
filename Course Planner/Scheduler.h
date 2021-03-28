@@ -116,13 +116,13 @@ public:
 	 * @brief Marks the course given as complete by removing it from the graph and adding it to the list of completed courses
 	 * @param c Course completed
 	*/
-	void complete(const CourseModule &c);
+	void markComplete(const CourseModule &c);
 
 	/**
 	 * @brief Marks the courses given as complete by removing them from the graph and adding them to the list of completed courses
 	 * @param vect Vector containing the courses we're marking as complete
 	*/
-	void complete(const std::vector<CourseModule> &vect);
+	void markComplete(const std::vector<CourseModule> &vect);
 
 	/**
 	 * @brief Marks the complete course given as incomplete
@@ -167,6 +167,7 @@ public:
 	 * @param year Year of the semester
 	*/
 	void removeRestriction(const CourseModule &c, Semester::Seasons season, int year);
+	void removeRestriction(const CourseModule &c, const Semester &s);
 
 	/**
 	 * @brief Removes a restriction on a given semester

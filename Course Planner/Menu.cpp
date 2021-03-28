@@ -567,12 +567,13 @@ void Menu::subMenuCourseRemove() {
 	}
 }
 
-//Searches linearly through the course data (subject, number, title, and description)
+//Simple search to search linearly through the course data (subject, number, title, and description)
 void Menu::subMenuCourseSearch() {
 	std::cout << "Search Courses" << std::endl << std::endl
 		<< "Search for something or enter 0 to exit: ";
 	std::string input;
 	std::getline(std::cin, input);
+	std::cout << std::endl;
 
 	//Trim the input in case there are leading or trailing spaces
 	input = input.substr(input.find_first_not_of(" "), std::string::npos);
@@ -587,7 +588,6 @@ void Menu::subMenuCourseSearch() {
 		c = std::tolower(c);
 	}
 
-	//TODO Maybe add a fast search if the search input is in the format SUBJECT NUM (Ex. CECS 100)
 	std::list<std::string> searchData;
 	
 	for (auto it : Courses) { //Initializing searchData
@@ -691,7 +691,7 @@ void Menu::subMenuCourseScheduler() {
 			for (const auto &i : enteredCoursesPointers) {
 				enteredCourses.push_back(*i);
 			}
-			CourseScheduler.complete(enteredCourses);
+			CourseScheduler.markComplete(enteredCourses);
 
 			if(!enteredCourses.empty()) std::cout << "Course(s) marked complete." << std::endl << std::endl;
 			system("pause");
